@@ -1,0 +1,16 @@
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.GeneratedMSBuildEditorConfig.editorconfig
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.AssemblyInfoInputs.cache
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.AssemblyInfo.cs
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.csproj.CoreCompileInputs.cache
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\bin\Debug\net5.0\FileSync.exe
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\bin\Debug\net5.0\FileSync.deps.json
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.json
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.dev.json
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\bin\Debug\net5.0\FileSync.dll
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\bin\Debug\net5.0\ref\FileSync.dll
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\bin\Debug\net5.0\FileSync.pdb
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.dll
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\ref\FileSync.dll
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.pdb
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.genruntimeconfig.cache
+F:\Education\Informatica\Jaar 3\3.3 Network and Security\FTP\FileSync\FileSync\obj\Debug\net5.0\FileSync.csproj.AssemblyReference.cache
