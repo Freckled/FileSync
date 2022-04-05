@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 
-namespace MyNamespace
+namespace FileSync
 {
-    class MyClassCS
+    class FileWatcher
     {
         static void Main()
         {
