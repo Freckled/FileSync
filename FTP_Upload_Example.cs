@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace FileSync
 {
-    public class WebRequestGetExample
+    public class FTPUpload
     {
-        public static async Task Main()
+        public static async Task Upload()
         {
             // Get the object used to communicate with the server.
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://www.contoso.com/test.htm");

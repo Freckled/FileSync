@@ -5,7 +5,7 @@ namespace FileSync
 {
     class FileWatcher
     {
-        static void Main()
+        static void Watch()
         {
             using var watcher = new FileSystemWatcher(@"C:\path\to\folder");
 

@@ -4,9 +4,9 @@ using System.Net;
 
 namespace FileSync
 {
-    public class WebRequestGetExample
+    public class DirList
     {
-        public static void Main()
+        public static void Listing()
         {
             // Get the object used to communicate with the server.
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://www.contoso.com/");

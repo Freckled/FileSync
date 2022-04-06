@@ -7,10 +7,10 @@ namespace FileSync
         static void Main(string[] args)
         {
             //Server server = new Server();
-            Client client = new Client();
+            //Client client = new Client();
             //server.start();
-            client.start();
-            Console.WriteLine("Hello World!");
+            //client.start();
+            //Console.WriteLine("Hello World!");
         }
     }
 }
