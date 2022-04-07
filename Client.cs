@@ -12,7 +12,7 @@ namespace FileSync
         connection:
             try
             {
-                TcpClient client = new TcpClient("127.0.0.1", 1302);
+                TcpClient client = new TcpClient("127.0.0.1", 2503);
                 string messageToSend = "My name is Neo";
                 int byteCount = Encoding.ASCII.GetByteCount(messageToSend + 1);
                 byte[] sendData = Encoding.ASCII.GetBytes(messageToSend);

@@ -5,9 +5,11 @@ namespace FileSync
 {
     class FileWatcher
     {
-        static void Watch()
+        ftp ftp;
+
+        public static void Watch()
         {
-            using var watcher = new FileSystemWatcher(@"C:\path\to\folder");
+            using var watcher = new FileSystemWatcher(@"C:\FileWatcher");
 
             watcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime
@@ -15,7 +17,6 @@ namespace FileSync
                                  | NotifyFilters.FileName
                                  | NotifyFilters.LastAccess
                                  | NotifyFilters.LastWrite
-                                 | NotifyFilters.Security
                                  | NotifyFilters.Size;
 
             watcher.Changed += OnChanged;
@@ -24,7 +25,7 @@ namespace FileSync
             watcher.Renamed += OnRenamed;
             watcher.Error += OnError;
 
-            watcher.Filter = "*.txt";
+            watcher.Filter = "*";
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
 
@@ -45,10 +46,20 @@ namespace FileSync
         {
             string value = $"Created: {e.FullPath}";
             Console.WriteLine(value);
+
+            /*string serverFile = Config.serverDirectory;
+            serverFile += @"\" + e.Name;*/
+            ftp ftp = new ftp(Config.host);
+            ftp.uploadAsync(e.Name);
         }
 
-        private static void OnDeleted(object sender, FileSystemEventArgs e) =>
+        private static void OnDeleted(object sender, FileSystemEventArgs e)
+        {
             Console.WriteLine($"Deleted: {e.FullPath}");
+
+            ftp ftp = new ftp(Config.host);
+            ftp.deleteFTP(e.Name);
+        }
 
         private static void OnRenamed(object sender, RenamedEventArgs e)
         {

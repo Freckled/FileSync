@@ -6,11 +6,11 @@ namespace FileSync
     {
         static void Main(string[] args)
         {
-            //Server server = new Server();
-            //Client client = new Client();
-            //server.start();
-            //client.start();
-            //Console.WriteLine("Hello World!");
+           // Client client = new Client();
+           // client.start();
+
+            FileWatcher watcher = new FileWatcher();
+            FileWatcher.Watch();
         }
     }
 }

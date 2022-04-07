@@ -1,3 +1,10 @@
+using System;
+using System.Net.Sockets;
+using System.Text;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
+using FileSync;
 class ftp
 {
     private string host = null;
@@ -11,8 +18,11 @@ class ftp
     /* Construct Object */
     public ftp(string hostIP, string userName, string password) { host = hostIP; user = userName; pass = password; }
 
+    public ftp() { }
+    public ftp(string hostIP) { host = hostIP; }
+
     /* Download File */
-    public void download(string remoteFile, string localFile)
+    public void downloadFtp(string remoteFile, string localFile)
     {
         try
         {
@@ -55,65 +65,62 @@ class ftp
         return;
     }
 
-    /* Upload File */
-    public void upload(string remoteFile, string localFile)
+
+    public void download(string file)
     {
         try
         {
-            /* Create an FTP Request */
-            ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + remoteFile);
-            /* Log in to the FTP Server with the User Name and Password Provided */
-            ftpRequest.Credentials = new NetworkCredential(user, pass);
-            /* When in doubt, use these options */
-            ftpRequest.UseBinary = true;
-            ftpRequest.UsePassive = true;
-            ftpRequest.KeepAlive = true;
-            /* Specify the Type of FTP Request */
-            ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
-            /* Establish Return Communication with the FTP Server */
-            ftpStream = ftpRequest.GetRequestStream();
-            /* Open a File Stream to Read the File for Upload */
-            FileStream localFileStream = new FileStream(localFile, FileMode.Create);
-            /* Buffer for the Downloaded Data */
-            byte[] byteBuffer = new byte[bufferSize];
-            int bytesSent = localFileStream.Read(byteBuffer, 0, bufferSize);
-            /* Upload the File by Sending the Buffered Data Until the Transfer is Complete */
-            try
+            using (WebClient client = new WebClient())
             {
-                while (bytesSent != 0)
-                {
-                    ftpStream.Write(byteBuffer, 0, bytesSent);
-                    bytesSent = localFileStream.Read(byteBuffer, 0, bufferSize);
-                }
+                client.Credentials = new NetworkCredential(user, pass);
+                client.DownloadFile(Config.serverDir, file);
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-            /* Resource Cleanup */
-            localFileStream.Close();
-            ftpStream.Close();
-            ftpRequest = null;
         }
         catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         return;
     }
 
+    public async Task uploadAsync(string file)
+    {
+        try
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Credentials = new NetworkCredential(user, pass);
+                client.UploadFile(Config.serverDir + file, WebRequestMethods.Ftp.UploadFile, Config.clientDir + file);
+            }
+        }
+        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+
+        return;
+    }
+
+    public void delete(string file)
+    {
+        try
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Credentials = new NetworkCredential(user, pass);
+                //client.(Config.serverDir + file, WebRequestMethods.Ftp.UploadFile, Config.clientDir + file);
+            }
+        }
+        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+    }
+
     /* Delete File */
-    public void delete(string deleteFile)
+    public void deleteFTP(string deleteFile)
     {
         try
         {
             /* Create an FTP Request */
-            ftpRequest = (FtpWebRequest)WebRequest.Create(host + "/" + deleteFile);
-            /* Log in to the FTP Server with the User Name and Password Provided */
+            ftpRequest = (FtpWebRequest)WebRequest.Create("ftp://127.0.0.1:2503/C:/FileWatcherTo/" + deleteFile);
             ftpRequest.Credentials = new NetworkCredential(user, pass);
-            /* When in doubt, use these options */
             ftpRequest.UseBinary = true;
             ftpRequest.UsePassive = true;
             ftpRequest.KeepAlive = true;
-            /* Specify the Type of FTP Request */
             ftpRequest.Method = WebRequestMethods.Ftp.DeleteFile;
-            /* Establish Return Communication with the FTP Server */
             ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-            /* Resource Cleanup */
             ftpResponse.Close();
             ftpRequest = null;
         }
