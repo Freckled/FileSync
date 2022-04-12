@@ -2,44 +2,68 @@
 using System.Net.Sockets;
 using System.Text;
 using System.IO;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace FileSync
 {
     class Server
     {
-        public void start()
+        public int start(int port = 3456)
         {
-            TcpListener listener = new TcpListener(System.Net.IPAddress.Any, 1302);
-            listener.Start();
-            while (true)
+            try
             {
-                Console.WriteLine("Waiting for a connection.");
-                TcpClient client = listener.AcceptTcpClient();
-                Console.WriteLine("Client accepted.");
-                NetworkStream stream = client.GetStream();
-                StreamReader sr = new StreamReader(client.GetStream());
-                StreamWriter sw = new StreamWriter(client.GetStream());
-                try
+                StartListener(port).Wait();
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex);
+                return -1;
+            }
+        }
+
+        private static async Task StartListener(int port)
+        {
+            var tcpListener = TcpListener.Create(port);
+            tcpListener.Start();
+            for (; ; )
+            {
+                Console.WriteLine("[Server] waiting for client(s)...");
+                using (var tcpClient = await tcpListener.AcceptTcpClientAsync())
                 {
-                    byte[] buffer = new byte[1024];
-                    stream.Read(buffer, 0, buffer.Length);
-                    int recv = 0;
-                    foreach (byte b in buffer)
+                    try
                     {
-                        if (b != 0)
+                        Console.WriteLine("[Server] Client has connected");
+                        using (var stream = tcpClient.GetStream())
+                        using (var reader = new StreamReader(stream))
+                        using (var writer = new StreamWriter(stream) { AutoFlush = true })
                         {
-                            recv++;
+                            CommandHandler cmdHandler = new CommandHandler(stream);
+                            byte[] buffer = new byte[4096];
+                            Console.WriteLine("[Server] Reading from client");
+                            
+
+                            var request = await reader.ReadLineAsync();
+                            //Console.WriteLine(request);
+
+                            //insert stuff to do; aka commands etc. Aparte klasse voor afhandelen commandos maken?
+                            string response = await Task.Run(()=> cmdHandler.getResponseAsync(request));
+                          
+                            //string.Format(string.Format("[Server] Client wrote '{0}'", response));
+                            await writer.WriteLineAsync(response);
+                            //for (int i = 0; i < 5; i++)
+                            //{
+                            //    await writer.WriteLineAsync("I am the server! HAHAHA!");
+                            //    Console.WriteLine("[Server] Response has been written");
+                            //    await Task.Delay(TimeSpan.FromSeconds(1));
+                            //}
                         }
                     }
-                    string request = Encoding.UTF8.GetString(buffer, 0, recv);
-                    Console.WriteLine("request received");
-                    sw.WriteLine("You rock!");
-                    sw.Flush();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Something went wrong.");
-                    sw.WriteLine(e.ToString());
+                    catch (Exception)
+                    {
+                        Console.WriteLine("[Server] client connection lost");
+                    }
                 }
             }
         }

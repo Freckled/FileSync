@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "khFiIsJqm8PwRqgngGogX0nz7jBUXKxC6/9ooraNYniVAtzNXNDPRF1UfEhl3Ut9H7ifulCVCOtV0NMD7ZEBOw==",
+  "dgSpecHash": "nMKbPBF37gmkcrYZTrQdeKgmOBKFJKSwR3DstB7MOK/m0778SSuv/TbPzu8libXZH2Qa48t2DckxzIbSM7Dn6g==",
   "success": true,
-  "projectFilePath": "F:\\Education\\Informatica\\Jaar 3\\3.3 Network and Security\\FTP\\FileSync\\FileSync\\FileSync.csproj",
+  "projectFilePath": "F:\\Github\\FileSync\\FileSync.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

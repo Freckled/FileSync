@@ -27,6 +27,6 @@ F:\Github\FileSync\bin\Debug\net5.0\FileSync.deps.json
 F:\Github\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.json
 F:\Github\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.dev.json
 F:\Github\FileSync\bin\Debug\net5.0\FileSync.dll
-F:\Github\FileSync\bin\Debug\net5.0\ref\FileSync.dll
 F:\Github\FileSync\bin\Debug\net5.0\FileSync.pdb
 F:\Github\FileSync\obj\Debug\net5.0\FileSync.genruntimeconfig.cache
+F:\Github\FileSync\obj\Debug\net5.0\refint\FileSync.dll
