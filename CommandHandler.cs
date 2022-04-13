@@ -39,7 +39,7 @@ namespace FileSync
             _controlStream = controlStream;
             _controlReader = new StreamReader(controlStream);
             _controlWriter = new StreamWriter(controlStream);
-            _root = @"D:\test\";//Directory.GetCurrentDirectory();
+            _root = Config.clientDir; //@"D:\test\";//Directory.GetCurrentDirectory();
         }
 
         public async Task<string> getResponseAsync(string command)
