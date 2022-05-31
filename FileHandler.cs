@@ -19,11 +19,9 @@ namespace FileSync
         {
             _file = file;
             //_client = client;
-            
 
                 try
                 {
-                  
                     //TcpClient tcpClient = new TcpClient("127.0.0.1", 2345);
                     Console.WriteLine("Connected. Sending file.");
 
@@ -46,7 +44,6 @@ namespace FileSync
                 }
 
                 Console.Read();
-
 
         }
 

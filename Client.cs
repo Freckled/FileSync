@@ -3,12 +3,15 @@ using System.Net.Sockets;
 using System.Text;
 using System.IO;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace FileSync
 {
     class Client
     {
         private string _serverIP;
+        private int _serverPort;
+        private int _listenerPort;
 
         public Client()
         {
@@ -18,56 +21,23 @@ namespace FileSync
         [Obsolete]
         public async Task startAsync(string serverIP = "127.0.0.1", int serverPort = 3456, int listenerPort = 2345)
         {
-
+            _serverIP = serverIP;
+            _serverPort = serverPort;
+            _listenerPort = listenerPort;
 
         connection:
             try
             {
-                TcpClient client = new TcpClient(serverIP, serverPort);
+                TcpClient client = new TcpClient(_serverIP, _serverPort);
+                IPAddress ipAddress = IPAddress.Parse(_serverIP);
+                IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, _serverPort);
+                if (client.Client.Connected == false) { client.Connect(ipEndPoint); };
 
-                TcpListener dataListener = new TcpListener(listenerPort); // 9,41 = 2345
-                dataListener.Start();
+                TcpListener dataListener = new TcpListener(_listenerPort); // 9,41 = 2345
+                                                                           //dataListener.Start();           
 
-                //for (; ; )
-                //{
-                //    Console.WriteLine("[Server] waiting for client(s)...");
-                //    using (var dataClient = await dataListener.AcceptTcpClientAsync())
-                //    {
-                //        try
-                //        {
-                //            Console.WriteLine("[Server] Client has connected");
-                //            using (var dataStream = dataClient.GetStream())
-                //            using (var reader = new StreamReader(dataStream))
-                //            using (var writer = new StreamWriter(dataStream) { AutoFlush = true })
-                //            {
-
-                //                byte[] buffer = new byte[4096];
-
-                //                var request = await reader.ReadLineAsync();
-                //                //Console.WriteLine(request);
-
-                //                //insert stuff to do; aka commands etc. Aparte klasse voor afhandelen commandos maken?
-                //                //string response = await Task.Run(() => cmdHandler.getResponseAsync(request));
-
-                //                //string.Format(string.Format("[Server] Client wrote '{0}'", response));
-                //                //await writer.WriteLineAsync(response);
-                //                //for (int i = 0; i < 5; i++)
-                //                //{
-                //                //    await writer.WriteLineAsync("I am the server! HAHAHA!");
-                //                //    Console.WriteLine("[Server] Response has been written");
-                //                //    await Task.Delay(TimeSpan.FromSeconds(1));
-                //                //}
-                //            }
-                //        }
-                //        catch (Exception)
-                //        {
-                //            Console.WriteLine("[Server] client connection lost");
-                //        }
-                //    }
-                //}
 
                 NetworkStream stream = client.GetStream();
-
 
                 while (true)
                 {
@@ -84,11 +54,13 @@ namespace FileSync
                     if (message == "get")
                     {
                         FileHandler handler = new FileHandler();
+                        request(stream, message);
                         handler.receiveFile(dataListener);
                     }
 
                     string response = request(stream, message);
-                    Console.WriteLine(response);
+
+                    //Console.WriteLine(response);
 
                     //if (response == "200 Data Connection Established") { request(stream, "get"); }
                     //Console.ReadKey();

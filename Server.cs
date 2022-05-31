@@ -9,7 +9,7 @@ namespace FileSync
 {
     class Server
     {
-        public int start(int port = 3456)
+        public int start(int port = 2503)
         {
             try
             {
@@ -27,7 +27,8 @@ namespace FileSync
         {
             var tcpListener = TcpListener.Create(port);
             tcpListener.Start();
-            for (; ; )
+            
+                for (; ; )
             {
                 Console.WriteLine("[Server] waiting for client(s)...");
                 using (var tcpClient = await tcpListener.AcceptTcpClientAsync())

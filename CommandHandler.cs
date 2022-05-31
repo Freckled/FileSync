@@ -75,7 +75,10 @@ namespace FileSync
                     //    break;
 
                     case "GET":
-                        response = Retrieve(_root + "test.txt");
+                        FileHandler fhandler = new FileHandler();
+                        String file = _root + "test.txt";
+                        fhandler.sendFile(_dataClient, file);
+                        response = "file sent."; //Retrieve(_root + "test.txt");
                         break;
 
                     //case "PUT":
@@ -110,6 +113,11 @@ namespace FileSync
                     //    response = "";
                     //    break;
 
+                    case "TEST":
+                        response = "Test check";
+                        break;
+
+
                     default:
                         response = "502 Command not implemented";
                         break;
@@ -123,8 +131,8 @@ namespace FileSync
         private string Port(string hostPort)
         {
             //_dataConnectionType = DataConnectionType.Active;
-
-            string[] ipAndPort = hostPort.Split(',');
+            
+            string[] ipAndPort = hostPort.Trim().Split(',');
 
             byte[] ipAddress = new byte[4];
             byte[] port = new byte[2];

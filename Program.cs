@@ -17,12 +17,14 @@ namespace FileSync
         {
 
             FileHandler handler = new FileHandler();
-            Console.WriteLine("Mode?:");
+            string file2Send = @"d:\FileWather\test.txt";
+            Console.WriteLine("Mode; 1-Server, 2-Client:");
             string message = Console.ReadLine();
+            
 
             switch (message)
             {
-                case "server":
+                case "1":
                     Server server = new Server();
                     server.start();
 
@@ -32,23 +34,31 @@ namespace FileSync
                         Console.WriteLine("Unable to start [Server]");
                     }
                     break;
-                case "client":
+                case "2":
                     Client client = new Client();
                     client.startAsync(Config.serverIp, Config.serverPort);
                     break;
 
-                case "ftserver":
+                case "ftget":
                     TcpListener dataListener = TcpListener.Create(Config.dataPort);
                     dataListener.Start();
                     handler.receiveFile(dataListener);
                     break;
 
-                case "ftclient":
+                case "ftsend":
                     TcpClient dataClient = new TcpClient(Config.serverIp, Config.dataPort);
-                    string file2Send = @"d:\test\d2.mp4";
                     handler.sendFile(dataClient, file2Send);
-                    break; 
+                    break;
 
+                case "fts":
+                    FileTransfer ft = new FileTransfer();
+                    ft.sendFile(file2Send);
+                    break;
+
+                case "ftr":
+                    FileTransfer ft2 = new FileTransfer();
+                    ft2.getFile();
+                    break;
             }
 
         }
