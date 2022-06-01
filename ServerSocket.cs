@@ -11,14 +11,14 @@ namespace FileSync
     {
         private Socket _client;
 
-        public void start()
+        public void start(int port)
         {
 
             // Get Host IP Address that is used to establish a connection
             // In this case, we get one IP address of localhost that is IP : 127.0.0.1
             // If a host has multiple addresses, you will get a list of addresses
             IPAddress ipAddress = (Dns.Resolve(IPAddress.Any.ToString())).AddressList[1];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Config.clientPort);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
             CommandHandler2 cmdHandler = new CommandHandler2();
             try
             {

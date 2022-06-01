@@ -11,31 +11,31 @@ namespace FileSync
 {
     public class FileTransfer
     {
-        public void sendFile(String filepath, Socket socket)
+        public void sendFile(string filePath, string IP, int port)
         {
             string ip = GetIP();
-            IPAddress[] ipAddress = Dns.GetHostAddresses("127.0.0.1");//Server
-                                                                      //IPAddress[] ipAddress = Dns.GetHostAddresses("127.0.0.1");//Local
-            IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], Config.dataPort);
-            //Socket socket = new Socket(SocketType.Stream, ProtocolType.IP);
+            IPAddress[] ipAddress = Dns.GetHostAddresses(IP);//Server
+             //IPAddress[] ipAddress = Dns.GetHostAddresses("127.0.0.1");//Local
+            IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], port);
+            Socket socket = new Socket(SocketType.Stream, ProtocolType.IP);
             
             socket.Connect(ipEnd);
-            socket.SendFile(filepath);
+            socket.SendFile(filePath);
         }
 
-        public void getFile()
+        public void getFile(string IP, int port)
         {
             try
             {
                 string ip = GetIP();               
-                IPAddress[] ipAddress = Dns.GetHostAddresses("127.0.0.1");//Server
+                IPAddress[] ipAddress = Dns.GetHostAddresses(IP);//Server
                                                                               //IPAddress[] ipAddress = Dns.GetHostAddresses("127.0.0.1");//Local
-                IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], 9987);
+                IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], port);
                 Socket clientSock = new Socket(SocketType.Stream, ProtocolType.IP);
                 clientSock.Listen();
 
                 byte[] clientData = new byte[1024 * 5000];
-                string receivedPath = "C:/client/";
+                string receivedPath = Config.clientDir;
 
                 int receivedBytesLen = clientSock.Receive(clientData);
 

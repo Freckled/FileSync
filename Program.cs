@@ -25,23 +25,18 @@ namespace FileSync
             switch (message)
             {
                 case "1":
-                    //Server server = new Server();
-                    //server.start();
 
-                    //int serverstart = server.start();
-                    //if (serverstart == -1)
-                    //{
-                    //    Console.WriteLine("Unable to start [Server]");
-                    //}
                     ServerSocket server = new ServerSocket();
-                    server.start();
+                    server.start(Config.clientPort);
 
                     break;
                 case "2":
-                    //Client client = new Client(Config.serverIp, Config.serverPort);
-                    //client.startAsync();
                     ClientSocket client = new ClientSocket("192.168.1.144", Config.serverPort, Config.clientPort);
                     client.connect();
+
+                    FileTransfer ft = new FileTransfer();
+                    ft.getFile("192.168.1.144", Config.dataPort);
+
                     string response = client.sendCommand("get");
                     Console.WriteLine(response);
                     break;

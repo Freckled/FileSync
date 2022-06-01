@@ -72,10 +72,10 @@ namespace FileSync
                     case "GET":
 
                         FileTransfer ft = new FileTransfer();
-                        ft.sendFile
-                        String file = _root + "test.txt";
-                        fhandler.sendFile(_dataClient, file);
-                        response = "file sent."; //Retrieve(_root + "test.txt");
+                        //ft.sendFile
+                        //String file = _root + "test.txt";
+                        //fhandler.sendFile(_dataClient, file);
+                        //response = "file sent."; //Retrieve(_root + "test.txt");
                         break;
 
                     //case "PUT":
