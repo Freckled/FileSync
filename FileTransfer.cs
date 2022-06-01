@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace FileSync
 {
-    internal class FileTransfer
+    public class FileTransfer
     {
-        public void sendFile(String filepath)
+        public void sendFile(String filepath, Socket socket)
         {
             string ip = GetIP();
             IPAddress[] ipAddress = Dns.GetHostAddresses("127.0.0.1");//Server
                                                                       //IPAddress[] ipAddress = Dns.GetHostAddresses("127.0.0.1");//Local
-            IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], 9987);
-            Socket socket = new Socket(SocketType.Stream, ProtocolType.IP);
+            IPEndPoint ipEnd = new IPEndPoint(ipAddress[0], Config.dataPort);
+            //Socket socket = new Socket(SocketType.Stream, ProtocolType.IP);
             
             socket.Connect(ipEnd);
             socket.SendFile(filepath);

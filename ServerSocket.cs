@@ -18,7 +18,7 @@ namespace FileSync
             // In this case, we get one IP address of localhost that is IP : 127.0.0.1
             // If a host has multiple addresses, you will get a list of addresses
             IPAddress ipAddress = (Dns.Resolve(IPAddress.Any.ToString())).AddressList[1];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 2345);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Config.clientPort);
             CommandHandler2 cmdHandler = new CommandHandler2();
             try
             {

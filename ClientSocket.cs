@@ -18,8 +18,7 @@ namespace FileSync
 
         Socket _clientSocket;
 
-
-        public ClientSocket(string serverIP = "127.0.0.1", int serverPort = 3456, int listenerPort = 2345)
+        public ClientSocket(string serverIP = "127.0.0.1", int serverPort = 2305, int listenerPort = 2305)
         {
             _serverIP = IPAddress.Parse(serverIP);
             _serverPort = serverPort;
@@ -33,19 +32,23 @@ namespace FileSync
             {
                 IPAddress ipAddress = IPAddress.Parse("192.168.1.144");
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, 2345);
+                IPEndPoint remoteDataEP = new IPEndPoint(ipAddress, 11305);
 
                 try
                 {
 
                     // Connect to Remote EndPoint -- needs to be created each time (see error below)
-                    Socket sender = new Socket(ipAddress.AddressFamily,
+                    Socket _clientSocket = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
+                    _clientSocket.Connect(remoteEP);
 
-                    _clientSocket = sender;
-                    sender.Connect(remoteEP);
+                    Socket _dataSocket = new Socket(ipAddress.AddressFamily,
+                    SocketType.Stream, ProtocolType.Tcp);
+                    _clientSocket.Connect(remoteEP);
+
 
                     Console.WriteLine("Socket connected to {0}",
-                    sender.RemoteEndPoint.ToString());
+                    _clientSocket.RemoteEndPoint.ToString());
 
                     // Release the socket.
                     //sender.Shutdown(SocketShutdown.Both);

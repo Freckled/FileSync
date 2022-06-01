@@ -70,7 +70,9 @@ namespace FileSync
                     //    break;
 
                     case "GET":
-                        FileHandler fhandler = new FileHandler();
+
+                        FileTransfer ft = new FileTransfer();
+                        ft.sendFile
                         String file = _root + "test.txt";
                         fhandler.sendFile(_dataClient, file);
                         response = "file sent."; //Retrieve(_root + "test.txt");
