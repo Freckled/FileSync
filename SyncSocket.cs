@@ -144,7 +144,6 @@ namespace FileSync
 
         public void getFile()
         {
-
             byte[] Rec_bytes = new byte[100];
             int messageLength = _socket.Receive(Rec_bytes);
             Console.WriteLine("Received...");

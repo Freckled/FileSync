@@ -30,14 +30,15 @@ namespace FileSync
                     server.start(Config.clientPort);
 
                     break;
+
                 case "2":
                     ClientSocket client = new ClientSocket("192.168.1.144", Config.serverPort, Config.clientPort);
                     client.connect();
 
-                    FileTransfer ft = new FileTransfer();
-                    ft.getFile("192.168.1.144", Config.dataPort);
-
+                    //TODO klaarstaan voor de file receive.  aka; nieuwe socket openen en luisteren.
+                    //TODO bestand daadwerkelijk ontvangen. 
                     string response = client.sendCommand("get");
+
                     Console.WriteLine(response);
                     break;
             }
