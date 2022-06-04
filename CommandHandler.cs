@@ -70,9 +70,9 @@ namespace FileSync
                     //    break;
 
                     case "GET":
-
+                        string filePath = Config.clientDir + "test.txt";
                         FileTransfer ft = new FileTransfer();
-                        //ft.sendFile
+                        ft.sendFile(filePath, "192.168.1.144", Config.dataPort);
                         //String file = _root + "test.txt";
                         //fhandler.sendFile(_dataClient, file);
                         //response = "file sent."; //Retrieve(_root + "test.txt");

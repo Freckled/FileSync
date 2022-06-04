@@ -9,8 +9,7 @@ namespace FileSync
 {
     class ServerSocket
     {
-        private Socket _client;
-
+        
         public void start(int port)
         {
 
