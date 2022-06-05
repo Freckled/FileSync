@@ -70,11 +70,7 @@ namespace FileSync
                     //    break;
 
                     case "GET":
-
-                        SyncSocket sock = new SyncSocket("192.168.1.144", 11305);
-                        String file = "D:\\FileWatcher\\test.txt";
-                        sock.sendFileAsync(file);
-                        response = "sending file";
+                        response = "sending file..."; //Retrieve(_root + "test.txt");
                         break;
 
                     //case "PUT":
@@ -276,10 +272,7 @@ namespace FileSync
                     //    break;
 
                     case "GET":
-                        FileHandler fhandler = new FileHandler();
-                        String file = _root + "test.txt";
-                        fhandler.sendFile(_dataClient, file);
-                        response = "file sent."; //Retrieve(_root + "test.txt");
+                        response = "sending file..."; //Retrieve(_root + "test.txt");
                         break;
 
                     //case "PUT":

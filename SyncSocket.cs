@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Threading.Tasks;
 using System.Net;
+using System.Threading;
 
 namespace FileSync
 {
@@ -20,14 +21,9 @@ namespace FileSync
             remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
         }
 
-        public void ServerStart(int port)
+        public void ServerStart()
         {
-
-            // Get Host IP Address that is used to establish a connection
-            // In this case, we get one IP address of localhost that is IP : 127.0.0.1
-            // If a host has multiple addresses, you will get a list of addresses
-            IPAddress ipAddress = (Dns.Resolve(IPAddress.Any.ToString())).AddressList[1];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
+            //Start new command handler to handle incoming commands
             CommandHandler2 cmdHandler = new CommandHandler2();
             try
             {
@@ -35,59 +31,55 @@ namespace FileSync
                 // Create a Socket that will use Tcp protocol
                 Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 // A Socket must be associated with an endpoint using the Bind method
-                listener.Bind(localEndPoint);
-                // Specify how many requests a Socket can listen before it gives Server busy response.
-                // We will listen 10 requests at a time
-
-
+                listener.Bind(remoteEndPoint);
 
                 //create a loop so it keeps listening
                 while (true)
                 {
 
                     listener.Listen(10);
-
                     Console.WriteLine("Waiting for a connection...");
-                    Socket handler = listener.Accept();
+                    Socket clientSocket = listener.Accept();
 
-                    Console.WriteLine("Connected to " + handler.RemoteEndPoint.ToString());
+                    Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
 
                     // Incoming data from the client.
                     string data = null;
                     byte[] bytes = null;
 
                     bytes = new byte[1024];
-                    int bytesRec = handler.Receive(bytes);
+                    int bytesRec = clientSocket.Receive(bytes);
                     data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
                     Console.WriteLine("Text received : {0}", data);
                     string response = cmdHandler.getResponse(data);
 
                     byte[] msg = Encoding.ASCII.GetBytes(response);
-                    handler.Send(msg);
+                    clientSocket.Send(msg);
 
+                    ///////////////////////////////////////
+                    // test send action after---- -if works, make command handler give back the action todo then run that after
+                    if (data.Contains("get"))
+                    {
+                        SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
+                        fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
+                    }
+                    ///////////////////////////////////////
                 }
-
-                //handler.Shutdown(SocketShutdown.Both);
-                //handler.Close();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
 
-            //Console.WriteLine("\n Press any key to continue...");
-            //Console.ReadKey();
 
         }
 
         public void connectToRemote()
-        {
-
-               
+        {              
                 try
                 {
-
+                                       
                     // Connect to Remote EndPoint -- needs to be created each time (see error below)
                     _socket = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
@@ -99,8 +91,6 @@ namespace FileSync
 
                     // Release the socket.
                     //sender.Shutdown(SocketShutdown.Both);
-
-
                 }
                 catch (ArgumentNullException ane)
                 {
@@ -121,7 +111,7 @@ namespace FileSync
 
         public string sendCommand(string command)
         {
-
+            connectToRemote();
             string response = null;
             byte[] bytes = null;
 
@@ -156,6 +146,7 @@ namespace FileSync
                 Console.WriteLine("Sending {0} with buffers to the host.{1}", fileLoc, Environment.NewLine);
                 //_socket.SendFile(fileName, preBuf, postBuf, TransmitFileOptions.UseDefaultWorkerThread);
                 _socket.SendFile(fileLoc);
+                Console.WriteLine("File Transfer started");
                 return "File transfer started";
             }
             catch(SocketException se)
@@ -194,6 +185,7 @@ namespace FileSync
 
                 }
                 ///
+                Console.WriteLine("transfer complete");
                 return "Filetransfer complete";
             }
             catch (Exception e)

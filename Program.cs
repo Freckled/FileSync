@@ -1,57 +1,45 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace FileSync
 {
     class Program
     {
-        enum Mode
-        {
-            server,
-            client,
-            ftserver,
-            ftclient
-        }
-
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
 
-            FileHandler handler = new FileHandler();
-            string file2Send = @"d:\FileWather\test.txt";
             Console.WriteLine("Mode; 1-Server, 2-Client, 3-FileWait, 4-FileSend:");
             string message = Console.ReadLine();
-
 
             switch (message)
             {
                 case "1":
-
-                    ServerSocket server = new ServerSocket();
-                    server.start(Config.clientPort);
+                    SyncSocket server = new SyncSocket("192.168.1.144", Config.serverPort);
+                    server.ServerStart();
                     break;
 
+
                 case "2":
-                    ClientSocket client = new ClientSocket("192.168.1.144", Config.serverPort, Config.clientPort);
-                    client.connect();
+                    SyncSocket client = new SyncSocket("192.168.1.144", Config.clientPort);
+                    SyncSocket fileSocket2 = new SyncSocket("192.168.1.144", 11305);
 
-                    //TODO klaarstaan voor de file receive.  aka; nieuwe socket openen en luisteren.
-                    //TODO bestand daadwerkelijk ontvangen. 
                     string response = client.sendCommand("get");
-
                     Console.WriteLine(response);
+
+                    var fileResponse2 = await fileSocket2.getFileAsync();
+                    Console.WriteLine(fileResponse2);
                     break;
 
                 case "3":
-
                     SyncSocket fileSocket = new SyncSocket("192.168.1.144", 11305);
-                    var fileResponse = fileSocket.getFileAsync();
+                    var fileResponse = await fileSocket.getFileAsync();
                     Console.WriteLine(fileResponse);
                     break;
 
                 case "4":
-
                     SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                    fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
+                    await fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
 
                     break;
 
