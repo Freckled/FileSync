@@ -170,7 +170,6 @@ namespace FileSync
 
         public async Task<string> getFileAsync()
         {
-            connectToRemote();
             try
             {
                 // Create a Socket that will use Tcp protocol

@@ -41,21 +41,19 @@ namespace FileSync
                     Console.WriteLine(response);
                     break;
 
-                //case "3":
+                case "3":
 
-                //    SyncSocket fileSocket = new SyncSocket("192.168.1.144", 11305);
-                //    fileSocket.connectToRemote();
-                //    var fileResponse = fileSocket.getFile();
-                //    Console.WriteLine(fileResponse);
-                //    break;
+                    SyncSocket fileSocket = new SyncSocket("192.168.1.144", 11305);
+                    var fileResponse = fileSocket.getFileAsync();
+                    Console.WriteLine(fileResponse);
+                    break;
 
-                //case "4":
+                case "4":
 
-                //    SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                //    fileSocketSend.connectToRemote();
-                //    fileSocketSend.sendFile();
-                    
-                //    break;
+                    SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
+                    fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
+
+                    break;
 
 
             }
