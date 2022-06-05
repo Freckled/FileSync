@@ -10,6 +10,15 @@ namespace FileSync
     internal class SyncSocket
     {
         private Socket _socket;
+        
+        private IPAddress ipAddress;
+        private IPEndPoint remoteEndPoint;
+
+        public SyncSocket(string remoteIP, int remotePort)
+        {
+            ipAddress = IPAddress.Parse(remoteIP);
+            remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
+        }
 
         public void ServerStart(int port)
         {
@@ -72,21 +81,17 @@ namespace FileSync
 
         }
 
-        public void connectTo(string remoteIP, int remotePort)
+        public void connectToRemote()
         {
 
-            try
-            {
-                IPAddress ipAddress = IPAddress.Parse(remoteIP);
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, remotePort);
-                
+               
                 try
                 {
 
                     // Connect to Remote EndPoint -- needs to be created each time (see error below)
                     _socket = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
-                    _socket.Connect(remoteEP);
+                    _socket.Connect(remoteEndPoint);
 
 
                     Console.WriteLine("Socket connected to {0}",
@@ -110,11 +115,7 @@ namespace FileSync
                     Console.WriteLine("Unexpected exception : {0}", e.ToString());
                 }
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
+
 
         }
 
@@ -137,20 +138,70 @@ namespace FileSync
             return response;
         }
 
-        public void sendFile()
+        public async Task<string> sendFileAsync(string fileLoc)
         {
+            //string fileName = "D:\\FileWatcher\\test.txt";
+            connectToRemote();
+            // Create the preBuffer data.
+            try
+            {
+                string string1 = String.Format("This is text data that precedes the file.{0}", Environment.NewLine);
+                byte[] preBuf = Encoding.ASCII.GetBytes(string1);
 
+                // Create the postBuffer data.
+                string string2 = String.Format("This is text data that will follow the file.{0}", Environment.NewLine);
+                byte[] postBuf = Encoding.ASCII.GetBytes(string2);
+
+                //Send file fileName with buffers and default flags to the remote device.
+                Console.WriteLine("Sending {0} with buffers to the host.{1}", fileLoc, Environment.NewLine);
+                //_socket.SendFile(fileName, preBuf, postBuf, TransmitFileOptions.UseDefaultWorkerThread);
+                _socket.SendFile(fileLoc);
+                return "File transfer started";
+            }
+            catch(SocketException se)
+            {
+                return "File transfer failed";
+            }
+
+            // Release the socket.
+            //_socket.Shutdown(SocketShutdown.Both);
+            //_socket.Close();
         }
 
-        public void getFile()
+        public async Task<string> getFileAsync()
         {
-            byte[] Rec_bytes = new byte[100];
-            int messageLength = _socket.Receive(Rec_bytes);
-            Console.WriteLine("Received...");
-            for (int i = 0; i < messageLength; i++)
-                Console.Write(Convert.ToChar(Rec_bytes[i]));
-        }
-                    
+            connectToRemote();
+            try
+            {
+                // Create a Socket that will use Tcp protocol
+                _socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                _socket.Bind(remoteEndPoint);
+                _socket.Listen(10);
+
+                Console.WriteLine("Waiting for filetransfer...");
+                Socket _dataSocket = await _socket.AcceptAsync();
+
+                ///receive file
+                try
+                {
+                    using (NetworkStream networkStream = new NetworkStream(_dataSocket))
+                    using (FileStream fileStream = File.Open("D:\\FileWatcherTo\\test.txt", FileMode.OpenOrCreate))
+                    {
+                        networkStream.CopyTo(fileStream);
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+                ///
+                return "Filetransfer complete";
+            }
+            catch (Exception e)
+            {
+                return "Error transferring files";
+            }
+        }           
 
     }
 }

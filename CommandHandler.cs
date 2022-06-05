@@ -70,12 +70,11 @@ namespace FileSync
                     //    break;
 
                     case "GET":
-                        string filePath = Config.clientDir + "test.txt";
-                        FileTransfer ft = new FileTransfer();
-                        ft.sendFile(filePath, "192.168.1.144", Config.dataPort);
-                        //String file = _root + "test.txt";
-                        //fhandler.sendFile(_dataClient, file);
-                        //response = "file sent."; //Retrieve(_root + "test.txt");
+
+                        SyncSocket sock = new SyncSocket("192.168.1.144", 11305);
+                        String file = "D:\\FileWatcher\\test.txt";
+                        sock.sendFileAsync(file);
+                        response = "sending file";
                         break;
 
                     //case "PUT":
