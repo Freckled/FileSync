@@ -21,11 +21,13 @@ namespace FileSync
         public Response getResponse(string command)
         {
             string responseString = null;
+            string fileName;
 
             string[] commandCode = command.Split(' ');
 
             string cmd = commandCode[0].ToUpperInvariant();
             string arguments = command.Length > 1 ? command.Substring(commandCode[0].Length) : null;
+            arguments = arguments.Trim();
 
             if (string.IsNullOrWhiteSpace(arguments))
                 arguments = null;
@@ -35,7 +37,7 @@ namespace FileSync
                 switch (cmd)
                 {
                     case "GET":
-                        string fileName = arguments;
+                        fileName = arguments;
                         //response = "sending " + fileName; //Retrieve(_root + "test.txt");
                         responseString = "sending " + fileName; //Retrieve(_root + "test.txt");
 
@@ -49,6 +51,12 @@ namespace FileSync
                         _response = new Response(responseString, ActionType.NONE);
                         break;
 
+
+                    case "SEND":
+                        fileName = arguments;
+                        responseString = "reveiving file";
+                        _response = new Response(responseString, ActionType.GETFILE, fileName);
+                        break;
                     //case "PUT":
                     //    response = "";
                     //    break;

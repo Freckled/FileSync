@@ -21,14 +21,20 @@ namespace FileSync
 
 
                 case "2":
+                    //TODO klaarstaan voor de file receive.  aka; nieuwe socket openen en luisteren.
+                    //TODO bestand daadwerkelijk ontvangen. 
                     SyncSocket client = new SyncSocket("192.168.1.144", Config.clientPort);
                     SyncSocket fileSocket2 = new SyncSocket("192.168.1.144", 11305);
 
-                    string response = client.sendCommand("get");
+                    string file2get = "D:\\FileWatcher\\test.txt";
+                    string response = client.sendCommand("get " + file2get);
                     Console.WriteLine(response);
 
-                    var fileResponse2 = await fileSocket2.getFileAsync();
-                    Console.WriteLine(fileResponse2);
+                    Response response2 = new Response(response, ActionType.GETFILE);
+                    response2.runAction(fileSocket2);
+
+                    //var fileResponse2 = await fileSocket2.getFileAsync();
+                    //Console.WriteLine(response);
                     break;
 
                 case "3":

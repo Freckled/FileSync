@@ -57,9 +57,9 @@ namespace FileSync
                     ///
                     if (socket != null)
                     {
-                        SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                        //fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");                        
-                        fileSocketSend.sendFileAsync(_fileName);
+                        //SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
+                        //socket.sendFileAsync("D:\\FileWatcher\\test.txt");
+                        socket.sendFileAsync(_fileName);
                     }
                     ////////////////////////////
                     break;
@@ -72,8 +72,8 @@ namespace FileSync
                     ///
                     if (socket != null)
                     {
-                        SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                        fileSocketSend.getFileAsync();
+                        //SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
+                        socket.getFileAsync();
                     }
                     ////////////////////////////
                     break;
