@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace FileSync
 {
-    internal class SyncSocket
+    public class SyncSocket
     {
         private Socket _socket;
         
@@ -24,7 +24,7 @@ namespace FileSync
         public void ServerStart()
         {
             //Start new command handler to handle incoming commands
-            CommandHandler2 cmdHandler = new CommandHandler2();
+            CommandHandler cmdHandler = new CommandHandler();
             try
             {
 
@@ -52,27 +52,35 @@ namespace FileSync
                     data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
                     Console.WriteLine("Text received : {0}", data);
-                    string response = cmdHandler.getResponse(data);
+                    Response response = cmdHandler.getResponse(data);
 
-                    byte[] msg = Encoding.ASCII.GetBytes(response);
+                    byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
                     clientSocket.Send(msg);
+                    SyncSocket socket = new SyncSocket("192.168.1.144", 11305);
+                    response.runAction(socket);
 
-                    ///////////////////////////////////////
-                    // test send action after---- -if works, make command handler give back the action todo then run that after
-                    if (data.Contains("get"))
-                    {
-                        SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                        fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
-                    }
-                    ///////////////////////////////////////
+                    /////////////////////////////////////////
+                    //// test send action after---- -if works, make command handler give back the action todo then run that after
+                    //if (data.Contains("get")) // if response.Contains("sending")
+                    //{
+                    //    SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
+                    //    fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
+                    //}
+                    /////////////////////////////////////////
+                    /////test get
+                    //if (data.Contains("send"))
+                    //{
+                    //    SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
+                    //    fileSocketSend.getFileAsync();
+                    //}
+                    /////////////////////////////////////////
+
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
-
-
         }
 
         public void connectToRemote()
@@ -104,8 +112,6 @@ namespace FileSync
                 {
                     Console.WriteLine("Unexpected exception : {0}", e.ToString());
                 }
-
-
 
         }
 
@@ -170,7 +176,7 @@ namespace FileSync
 
                 Console.WriteLine("Waiting for filetransfer...");
                 Socket _dataSocket = await _socket.AcceptAsync();
-
+                
                 ///receive file
                 try
                 {
