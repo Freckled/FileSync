@@ -57,6 +57,7 @@ namespace FileSync
                         responseString = "reveiving file";
                         _response = new Response(responseString, ActionType.GETFILE, fileName);
                         break;
+
                     //case "PUT":
                     //    response = "";
                     //    break;
@@ -84,6 +85,11 @@ namespace FileSync
                     //case "REST":
                     //    response = "";
                     //    break;
+
+                    //case "LIST":
+                    //    response = "";
+                    //    break;
+
 
                     case "TEST":
                         responseString = "Test check";

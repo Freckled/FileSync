@@ -37,7 +37,7 @@ namespace FileSync
                 while (true)
                 {
 
-                    listener.Listen(10);
+                    listener.Listen(100000);
                     Console.WriteLine("Waiting for a connection...");
                     Socket clientSocket = listener.Accept();
 
@@ -56,6 +56,7 @@ namespace FileSync
 
                     byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
                     clientSocket.Send(msg);
+
                     SyncSocket socket = new SyncSocket("192.168.1.144", 11305);
                     response.runAction(socket);
 

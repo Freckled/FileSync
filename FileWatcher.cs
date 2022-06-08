@@ -5,8 +5,7 @@ namespace FileSync
 {
     class FileWatcher
     {
-        ftp ftp;
-
+        
         public static void Watch()
         {
             using var watcher = new FileSystemWatcher(@"C:\FileWatcher");
@@ -49,16 +48,13 @@ namespace FileSync
 
             /*string serverFile = Config.serverDirectory;
             serverFile += @"\" + e.Name;*/
-            ftp ftp = new ftp(Config.host);
-            ftp.uploadAsync(e.Name);
+
         }
 
         private static void OnDeleted(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
 
-            ftp ftp = new ftp(Config.host);
-            ftp.deleteFTP(e.Name);
         }
 
         private static void OnRenamed(object sender, RenamedEventArgs e)
