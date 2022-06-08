@@ -20,6 +20,10 @@ namespace FileSync
             ipAddress = IPAddress.Parse(remoteIP);
             remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
         }
+        public SyncSocket(IPEndPoint endPoint)
+        {
+            remoteEndPoint = endPoint;
+        }
 
         public void ServerStart()
         {
@@ -41,6 +45,9 @@ namespace FileSync
                     Console.WriteLine("Waiting for a connection...");
                     Socket clientSocket = listener.Accept();
 
+                    //note the client IP
+                    string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
+
                     Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
 
                     // Incoming data from the client.
@@ -57,7 +64,7 @@ namespace FileSync
                     byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
                     clientSocket.Send(msg);
 
-                    SyncSocket socket = new SyncSocket("192.168.1.144", 11305);
+                    SyncSocket socket = new SyncSocket(clientIP, 11305);
                     response.runAction(socket);
 
                     /////////////////////////////////////////
@@ -87,8 +94,7 @@ namespace FileSync
         public void connectToRemote()
         {              
                 try
-                {
-                                       
+                {                                       
                     // Connect to Remote EndPoint -- needs to be created each time (see error below)
                     _socket = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
@@ -138,7 +144,9 @@ namespace FileSync
         public async Task<string> sendFileAsync(string fileLoc)
         {
             //string fileName = "D:\\FileWatcher\\test.txt";
+            
             connectToRemote();
+            var y = _socket.Connected;
             // Create the preBuffer data.
             try
             {
@@ -170,26 +178,35 @@ namespace FileSync
         {
             try
             {
+                var errorCount = 0;
                 // Create a Socket that will use Tcp protocol
                 _socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 _socket.Bind(remoteEndPoint);
                 _socket.Listen(10);
 
                 Console.WriteLine("Waiting for filetransfer...");
-                Socket _dataSocket = await _socket.AcceptAsync();
-                
+                Socket _dataSocket = _socket.Accept();
+
                 ///receive file
+                int tries = 0;
+                while (tries < 3) { 
                 try
                 {
                     using (NetworkStream networkStream = new NetworkStream(_dataSocket))
                     using (FileStream fileStream = File.Open("D:\\FileWatcherTo\\test.txt", FileMode.OpenOrCreate))
                     {
+                        errorCount = 0;
                         networkStream.CopyTo(fileStream);
                     }
                 }
                 catch (Exception ex)
                 {
-
+                        tries++;
+                        if (tries <= 3)
+                    {
+                            throw;
+                    }
+                }
                 }
                 ///
                 Console.WriteLine("transfer complete");

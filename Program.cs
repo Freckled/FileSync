@@ -10,12 +10,14 @@ namespace FileSync
         {
 
             Console.WriteLine("Mode; 1-Server, 2-Client, 3-FileWait, 4-FileSend:");
+            string _serverIP = "192.168.1.144";
+            string _clientIP = "192.168.1.144";
             string message = Console.ReadLine();
 
             switch (message)
             {
                 case "1":
-                    SyncSocket server = new SyncSocket("192.168.1.144", Config.serverPort);
+                    SyncSocket server = new SyncSocket(_serverIP, Config.serverPort);
                     server.ServerStart();
                     break;
 
@@ -23,8 +25,10 @@ namespace FileSync
                 case "2":
                     //TODO klaarstaan voor de file receive.  aka; nieuwe socket openen en luisteren.
                     //TODO bestand daadwerkelijk ontvangen. 
-                    SyncSocket client = new SyncSocket("192.168.1.144", Config.clientPort);
-                    SyncSocket fileSocket2 = new SyncSocket("192.168.1.144", 11305);
+                    
+                    
+                    SyncSocket client = new SyncSocket(_serverIP, Config.clientPort);
+                    SyncSocket fileSocket2 = new SyncSocket(_serverIP, 11305);
 
                     string file2get = "D:\\FileWatcher\\test.txt";
                     string response = client.sendCommand("get " + file2get);
@@ -38,13 +42,13 @@ namespace FileSync
                     break;
 
                 case "3":
-                    SyncSocket fileSocket = new SyncSocket("192.168.1.144", 11305);
+                    SyncSocket fileSocket = new SyncSocket(_serverIP, 11305);
                     var fileResponse = await fileSocket.getFileAsync();
                     Console.WriteLine(fileResponse);
                     break;
 
                 case "4":
-                    SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
+                    SyncSocket fileSocketSend = new SyncSocket(_clientIP, 11305);
                     await fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
 
                     break;
