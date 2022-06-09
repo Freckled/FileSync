@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace FileSync
 
             Console.WriteLine("Mode; 1-Server, 2-Client, 3-FileWait, 4-FileSend:");
             string _serverIP = "192.168.1.144";
-            string _clientIP = "192.168.1.144";
+            string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  //"192.168.1.144";
             string message = Console.ReadLine();
 
             switch (message)
@@ -28,7 +29,7 @@ namespace FileSync
                     
                     
                     SyncSocket client = new SyncSocket(_serverIP, Config.clientPort);
-                    SyncSocket fileSocket2 = new SyncSocket(_serverIP, 11305);
+                    SyncSocket fileSocket2 = new SyncSocket(_clientIP, 11305);
 
                     string file2get = "D:\\FileWatcher\\test.txt";
                     string response = client.sendCommand("get " + file2get);

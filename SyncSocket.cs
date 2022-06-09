@@ -29,6 +29,7 @@ namespace FileSync
         {
             //Start new command handler to handle incoming commands
             CommandHandler cmdHandler = new CommandHandler();
+            reboot:
             try
             {
 
@@ -36,7 +37,8 @@ namespace FileSync
                 Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 // A Socket must be associated with an endpoint using the Bind method
                 listener.Bind(remoteEndPoint);
-
+                //listener.Connect(remoteEndPoint);
+                
                 //create a loop so it keeps listening
                 while (true)
                 {
@@ -58,7 +60,7 @@ namespace FileSync
                     int bytesRec = clientSocket.Receive(bytes);
                     data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-                    Console.WriteLine("Text received : {0}", data);
+                    Console.WriteLine("Command : {0}", data);
                     Response response = cmdHandler.getResponse(data);
 
                     byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
@@ -88,6 +90,8 @@ namespace FileSync
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                Console.WriteLine("restarting server...");
+                goto reboot;
             }
         }
 
@@ -182,6 +186,7 @@ namespace FileSync
                 // Create a Socket that will use Tcp protocol
                 _socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 _socket.Bind(remoteEndPoint);
+                //_socket.Connect(remoteEndPoint);
                 _socket.Listen(10);
 
                 Console.WriteLine("Waiting for filetransfer...");
