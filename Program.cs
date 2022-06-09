@@ -11,7 +11,7 @@ namespace FileSync
         {
 
             Console.WriteLine("Mode; 1-Server, 2-Client, 3-FileWait, 4-FileSend:");
-            string _serverIP = "192.168.1.144";
+            string _serverIP = "192.168.1.144";//"84.241.204.248";x;
             string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  //"192.168.1.144";
             string message = Console.ReadLine();
 
@@ -21,7 +21,6 @@ namespace FileSync
                     SyncSocket server = new SyncSocket(_serverIP, Config.serverPort);
                     server.ServerStart();
                     break;
-
 
                 case "2":
                     //TODO klaarstaan voor de file receive.  aka; nieuwe socket openen en luisteren.

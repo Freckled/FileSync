@@ -44,7 +44,9 @@ namespace FileSync
                 {
 
                     listener.Listen(100000);
-                    Console.WriteLine("Waiting for a connection...");
+                    Console.Clear();
+                    Console.WriteLine("Server starterd, waiting for a connection...");
+                    Console.WriteLine("Listening on :{0}",remoteEndPoint.ToString());
                     Socket clientSocket = listener.Accept();
 
                     //note the client IP
@@ -60,30 +62,16 @@ namespace FileSync
                     int bytesRec = clientSocket.Receive(bytes);
                     data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-                    Console.WriteLine("Command : {0}", data);
+                    Console.WriteLine("Command received: {0}", data);
                     Response response = cmdHandler.getResponse(data);
 
                     byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
                     clientSocket.Send(msg);
 
+                    //TODO put creating socket e.d. in runAction?
                     SyncSocket socket = new SyncSocket(clientIP, 11305);
+                    Console.WriteLine("Reply sent : {0}", response.getResponseString());
                     response.runAction(socket);
-
-                    /////////////////////////////////////////
-                    //// test send action after---- -if works, make command handler give back the action todo then run that after
-                    //if (data.Contains("get")) // if response.Contains("sending")
-                    //{
-                    //    SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                    //    fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
-                    //}
-                    /////////////////////////////////////////
-                    /////test get
-                    //if (data.Contains("send"))
-                    //{
-                    //    SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                    //    fileSocketSend.getFileAsync();
-                    //}
-                    /////////////////////////////////////////
 
                 }
             }
@@ -148,7 +136,7 @@ namespace FileSync
         public async Task<string> sendFileAsync(string fileLoc)
         {
             //string fileName = "D:\\FileWatcher\\test.txt";
-            
+            var fileSizeBytes = new FileInfo(fileLoc).Length;
             connectToRemote();
             var y = _socket.Connected;
             // Create the preBuffer data.
@@ -174,15 +162,14 @@ namespace FileSync
             }
 
             // Release the socket.
-            //_socket.Shutdown(SocketShutdown.Both);
-            //_socket.Close();
+            _socket.Shutdown(SocketShutdown.Both);
+            _socket.Close();
         }
 
-        public async Task<string> getFileAsync()
+        public async Task<string> getFileAsync(int fileLength = 187252503)
         {
             try
             {
-                var errorCount = 0;
                 // Create a Socket that will use Tcp protocol
                 _socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 _socket.Bind(remoteEndPoint);
@@ -193,27 +180,26 @@ namespace FileSync
                 Socket _dataSocket = _socket.Accept();
 
                 ///receive file
-                int tries = 0;
-                while (tries < 3) { 
+
                 try
                 {
                     using (NetworkStream networkStream = new NetworkStream(_dataSocket))
                     using (FileStream fileStream = File.Open("D:\\FileWatcherTo\\test.txt", FileMode.OpenOrCreate))
                     {
-                        errorCount = 0;
-                        networkStream.CopyTo(fileStream);
+
+                        while (fileStream.Length < fileLength)
+                        {
+                            networkStream.CopyTo(fileStream);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                        tries++;
-                        if (tries <= 3)
-                    {
-                            throw;
-                    }
+                    Console.WriteLine(ex.ToString());
+                    throw;
+
                 }
-                }
-                ///
+
                 Console.WriteLine("transfer complete");
                 return "Filetransfer complete";
             }
