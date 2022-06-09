@@ -32,6 +32,7 @@ namespace FileSync
 
                     string file2get = "D:\\FileWatcher\\test.txt";
                     string response = client.sendCommand("get " + file2get);
+                    
                     Console.WriteLine(response);
 
                     Response response2 = new Response(response, ActionType.GETFILE);

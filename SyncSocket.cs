@@ -155,12 +155,12 @@ namespace FileSync
                 _socket.SendFile(fileLoc);
                 Console.WriteLine("File Transfer started");
                 return "File transfer started";
+                
             }
             catch(SocketException se)
             {
                 return "File transfer failed";
             }
-
             // Release the socket.
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();

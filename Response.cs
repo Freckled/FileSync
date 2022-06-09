@@ -18,7 +18,6 @@ namespace FileSync
 
     public class Response
     {
-
         private string _reponseString;
         private Enum _action;
         private string _fileName;
@@ -39,7 +38,6 @@ namespace FileSync
         {
             return _reponseString;
         }
-
 
         public void runAction(SyncSocket socket = null)
         {

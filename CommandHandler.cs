@@ -39,7 +39,7 @@ namespace FileSync
                     case "GET":
                         fileName = arguments;
                         //response = "sending " + fileName; //Retrieve(_root + "test.txt");
-                        responseString = "sending " + fileName; //Retrieve(_root + "test.txt");
+                        responseString = "SEND " + fileName + fileSize; //Retrieve(_root + "test.txt");
 
                         _response = new Response(responseString, ActionType.SENDFILE, fileName);
 
