@@ -10,7 +10,7 @@ namespace FileSync
         static async Task Main(string[] args)
         {
 
-            Console.WriteLine("Mode; 1-Server, 2-Client, 3-FileWait, 4-FileSend:");
+            Console.WriteLine("Mode; 1-Server, 2-Client, 3-DirTest, 4-?:");
             string _serverIP = "192.168.1.144";//"84.241.204.248";x;
             string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  //"192.168.1.144";
             string message = Console.ReadLine();
@@ -43,16 +43,20 @@ namespace FileSync
                     break;
 
                 case "3":
-                    SyncSocket fileSocket = new SyncSocket(_serverIP, 11305);
-                    var fileResponse = await fileSocket.getFileAsync();
-                    Console.WriteLine(fileResponse);
+                    FileHelper fh = new FileHelper();
+                    Console.WriteLine(fh.GetFilesFromDir("d:\\FileWatcher"));
+
                     break;
 
                 case "4":
-                    SyncSocket fileSocketSend = new SyncSocket(_clientIP, 11305);
-                    await fileSocketSend.sendFileAsync("D:\\FileWatcher\\test.txt");
 
                     break;
+
+                case "5":
+
+                    break;
+
+
 
 
             }
