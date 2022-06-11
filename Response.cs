@@ -22,7 +22,7 @@ namespace FileSync
         SERVER,
         CLIENT        
     }
-
+    [Serializable]
     public class Response
     {
         private string _clientMessage;
@@ -31,7 +31,6 @@ namespace FileSync
         private Enum _serverAction;
         private string _fileName;
         private long _fileSize;
-        private Socket _socket;
 
         public Response(string clientMessage, string serverMessage, Enum clientAction, Enum serverAction, string fileName=null, long fileSize=0)
         {

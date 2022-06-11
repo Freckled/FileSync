@@ -15,30 +15,25 @@ namespace FileSync
         public static byte[] Serialize(Response response)
         {
             if (response == null)
-            {
                 return null;
-            }
-            using (var ms = new MemoryStream())
-            {
-                var serializer = new DataContractSerializer(typeof(Response));
-                serializer.WriteObject(ms, response);
-                return ms.ToArray();
-            }
+
+            BinaryFormatter bf = new BinaryFormatter();
+            MemoryStream ms = new MemoryStream();
+            bf.Serialize(ms, response);
+
+            return ms.ToArray();
 
         }
 
-        public static Response Deserialize(byte[] response)
+        public static Response Deserialize(byte[] arrBytes)
         {
-            if (response == null)
-            {
-                return default(Response);
-            }
-            using (var memStream = new MemoryStream(response))
-            {
-                var serializer = new DataContractSerializer(typeof(Response));
-                var obj = (Response)serializer.ReadObject(memStream);
-                return obj;
-            }
+            MemoryStream memStream = new MemoryStream();
+            BinaryFormatter binForm = new BinaryFormatter();
+            memStream.Write(arrBytes, 0, arrBytes.Length);
+            memStream.Seek(0, SeekOrigin.Begin);
+            Response obj = (Response)binForm.Deserialize(memStream);
+
+            return obj;
 
         }
 
