@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Net;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace FileSync
 {
@@ -51,6 +52,7 @@ namespace FileSync
 
                     //note the client IP
                     string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
+                    IPEndPoint dataEndPoint = new IPEndPoint(IPAddress.Parse(clientIP), Config.dataPort);
 
                     Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
 
@@ -60,18 +62,24 @@ namespace FileSync
 
                     bytes = new byte[1024];
                     int bytesRec = clientSocket.Receive(bytes);
-                    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                    //data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+
+                    Response response = Serializer.Deserialize(bytes);
+                    data = response.getMessage(ConnectorType.SERVER);
 
                     Console.WriteLine("Command received: {0}", data);
-                    Response response = cmdHandler.getResponse(data);
+                    Response response2 = cmdHandler.getResponse(data);
 
-                    byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
+                    //byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
+                    byte[] msg = Serializer.Serialize(response2);
+
                     clientSocket.Send(msg);
 
                     //TODO put creating socket e.d. in runAction?
-                    SyncSocket socket = new SyncSocket(clientIP, 11305);
-                    Console.WriteLine("Reply sent : {0}", response.getResponseString());
-                    response.runAction(socket);
+                    //SyncSocket socket = new SyncSocket(clientIP, 11305);
+                    Console.WriteLine("Reply sent : {0}", response.getMessage(ConnectorType.CLIENT));
+                                                            
+                    response.runAction(ConnectorType.SERVER, dataEndPoint);
 
                 }
             }
@@ -133,10 +141,11 @@ namespace FileSync
             return response;
         }
 
-        public async Task<string> sendFileAsync(string fileLoc)
+        public async Task<string> sendFileAsync(string fileName)
         {
-            //string fileName = "D:\\FileWatcher\\test.txt";
-            var fileSizeBytes = new FileInfo(fileLoc).Length;
+            string fileLoc = Config.serverDir + fileName;
+               //string fileName = "D:\\FileWatcher\\test.txt";
+               var fileSizeBytes = new FileInfo(fileLoc).Length;
             connectToRemote();
             var y = _socket.Connected;
             // Create the preBuffer data.
@@ -207,7 +216,24 @@ namespace FileSync
             {
                 return "Error transferring files";
             }
-        }           
+        }
 
+        public static byte[] ReceiveAll(Socket socket)
+        {
+            var buffer = new List<byte>();
+
+            while (socket.Available > 0)
+            {
+                var currByte = new Byte[1];
+                var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
+
+                if (byteCounter.Equals(1))
+                {
+                    buffer.Add(currByte[0]);
+                }
+            }
+
+            return buffer.ToArray();
+        }
     }
 }

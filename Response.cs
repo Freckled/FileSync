@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,62 +17,80 @@ namespace FileSync
         NONE
     }
 
+    public enum ConnectorType
+    {
+        SERVER,
+        CLIENT        
+    }
+
     public class Response
     {
-        private string _reponseString;
-        private Enum _action;
+        private string _clientMessage;
+        private string _serverMessage;
+        private Enum _clientAction;
+        private Enum _serverAction;
         private string _fileName;
+        private long _fileSize;
         private Socket _socket;
 
-        public Response(string reponseString, Enum action, string fileName = null)
+        public Response(string clientMessage, string serverMessage, Enum clientAction, Enum serverAction, string fileName=null, long fileSize=0)
         {
-            _reponseString = reponseString;
-            _action = action;
+            _clientMessage = clientMessage;
+            _serverMessage = serverMessage;
+            _clientAction = clientAction;
+            _serverAction = serverAction;
 
             if (!String.IsNullOrEmpty(fileName))
             {
                 _fileName = fileName;
+                _fileSize = fileSize;
             }
 
         }
-        public string getResponseString()
+
+        public string getMessage(ConnectorType type=ConnectorType.CLIENT)
         {
-            return _reponseString;
+            if (type == ConnectorType.SERVER)
+            {
+                return _serverMessage;
+            }
+            else
+            {
+                return _clientMessage;
+            }
+            
         }
 
-        public void runAction(SyncSocket socket = null)
+        public void runAction(ConnectorType type = ConnectorType.CLIENT, IPEndPoint endPoint = null)
         {
+            Enum _action = null;
+            if (type == ConnectorType.SERVER)
+            {
+                _action = _serverAction;
+            }
+            else
+            {
+                _action = _clientAction;
+            }
+
             switch (_action){
                 case ActionType.DELETE:
-                    //FileHandler fhs = new FileHandler();
-                    //fileHandler.deleteFile(fileName);
+
                     break;
 
                 case ActionType.SENDFILE:
-                    //FileHandler fhs = new FileHandler(socket);
-                    //fileHandler.sendFileAsync(fileName);
-
-                    //////////TEMP//////////////
-                    ///
-                    if (socket != null)
+                    if (endPoint != null)
                     {
-                        //SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                        //socket.sendFileAsync("D:\\FileWatcher\\test.txt");
-                        socket.sendFileAsync(_fileName);
+                        FileHandler fhs = new FileHandler(endPoint);
+                        fhs.SendFile(_fileName);
                     }
-                    ////////////////////////////
                     break;
 
                 case ActionType.GETFILE:
-                    //FileHandler fhg = new FileHandler(socket);
-                    //fileHandler.getFileAsync(fileName);
-
-                    //////////TEMP//////////////
-                    ///
-                    if (socket != null)
+                    if (endPoint != null)
                     {
-                        //SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                        socket.getFileAsync();
+                        FileHandler fhs = new FileHandler(endPoint);
+                        fhs.GetFile(_fileName, _fileSize);
                     }
                     ////////////////////////////
                     break;

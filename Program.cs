@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -30,13 +31,34 @@ namespace FileSync
                     SyncSocket client = new SyncSocket(_serverIP, Config.clientPort);
                     SyncSocket fileSocket2 = new SyncSocket(_clientIP, 11305);
 
-                    string file2get = "D:\\FileWatcher\\test.txt";
-                    string response = client.sendCommand("get " + file2get);
-                    
-                    Console.WriteLine(response);
+                    Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); 
+                    string filename = "test.txt";
 
-                    Response response2 = new Response(response, ActionType.GETFILE);
-                    response2.runAction(fileSocket2);
+                    Response response = new Response("", "get " + filename,ActionType.NONE,ActionType.SENDFILE);
+
+                    byte[] cmdResponse = Serializer.Serialize(response);
+                    
+                    byte[] bytes = null;
+                    bytes = new byte[1024];
+
+
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort);
+                    IPEndPoint dataEndpoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.dataPort);
+                    socket.Connect(endPoint);
+                    socket.Send(cmdResponse);
+
+                    byte[] bytearr = SyncSocket.ReceiveAll(socket);
+                              
+                    Response serverResponse = Serializer.Deserialize(bytearr);
+
+                    //string response = client.sendCommand("get " + file2get);
+
+
+
+                    Console.WriteLine(serverResponse.getMessage());
+                    serverResponse.runAction(ConnectorType.CLIENT, dataEndpoint);
+
+                    //response2.runAction();
 
                     //var fileResponse2 = await fileSocket2.getFileAsync();
                     //Console.WriteLine(response);

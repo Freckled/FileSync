@@ -38,25 +38,28 @@ namespace FileSync
                 {
                     case "GET":
                         fileName = arguments;
+                        string fileLoc = Config.serverDir;
+                        long fileSizeBytes = new FileInfo(fileLoc + fileName).Length;
                         //response = "sending " + fileName; //Retrieve(_root + "test.txt");
-                        responseString = "SEND " + fileName; //Retrieve(_root + "test.txt");
+                        responseString = "SEND " + fileName + " " + fileSizeBytes; //Retrieve(_root + "test.txt");
 
-                        _response = new Response(responseString, ActionType.SENDFILE, fileName);
+                        _response = new Response(responseString, "sending file", ActionType.GETFILE, ActionType.SENDFILE, fileName, fileSizeBytes);
+                      
 
                         break;
 
                     case "PORT":
                         //response = Port(arguments);
                         responseString = Port(arguments);
-                        _response = new Response(responseString, ActionType.NONE);
+                        _response = new Response(responseString, "", ActionType.NONE, ActionType.NONE);
                         break;
 
 
-                    case "SEND":
-                        fileName = arguments;
-                        responseString = "reveiving file";
-                        _response = new Response(responseString, ActionType.GETFILE, fileName);
-                        break;
+                    //case "SEND":
+                    //    fileName = arguments;
+                    //    responseString = "reveiving file";
+                    //    _response = new Response(responseString,"", ActionType.GETFILE,ActionType.NONE fileName);
+                    //    break;
 
                     //case "PUT":
                     //    response = "";
@@ -91,15 +94,15 @@ namespace FileSync
                     //    break;
 
 
-                    case "TEST":
-                        responseString = "Test check";
-                        _response = new Response(responseString, ActionType.NONE);
-                        break;
+                    //case "TEST":
+                    //    responseString = "Test check";
+                    //    _response = new Response(responseString, ActionType.NONE);
+                    //    break;
 
 
                     default:
                         responseString = "502 Command not implemented"; ;
-                        _response = new Response(responseString, ActionType.NONE);
+                        _response = new Response(responseString, responseString, ActionType.NONE, ActionType.NONE);
                         break;
                 }
             }
