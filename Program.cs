@@ -11,14 +11,15 @@ namespace FileSync
         {
 
             Console.WriteLine("Mode; 1-Server, 2-Client, 3-DirTest, 4-?:");
-            string _serverIP = "192.168.1.144";//"84.241.204.248";x;
+            string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();// "192.168.1.144";//"84.241.204.248";x;
             string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  //"192.168.1.144";
             string message = Console.ReadLine();
 
             switch (message)
             {
                 case "1":
-                    SyncSocket server = new SyncSocket(_serverIP, Config.serverPort);
+
+                    Connection server = new Connection(_serverIP, Config.serverPort);
                     server.ServerStart();
                     break;
 
@@ -27,16 +28,16 @@ namespace FileSync
                     //TODO bestand daadwerkelijk ontvangen. 
                     
                     
-                    SyncSocket client = new SyncSocket(_serverIP, Config.clientPort);
-                    SyncSocket fileSocket2 = new SyncSocket(_clientIP, 11305);
+                    //SyncSocket client = new SyncSocket(_serverIP, Config.clientPort);
+                    //SyncSocket fileSocket2 = new SyncSocket(_clientIP, 11305);
 
-                    string file2get = "D:\\FileWatcher\\test.txt";
-                    string response = client.sendCommand("get " + file2get);
+                    //string file2get = "D:\\FileWatcher\\test.txt";
+                    //string response = client.sendCommand("get " + file2get);
                     
-                    Console.WriteLine(response);
+                    //Console.WriteLine(response);
 
-                    Response response2 = new Response(response, ActionType.GETFILE);
-                    response2.runAction(fileSocket2);
+                    //Response response2 = new Response(response, ActionType.GETFILE);
+                    //response2.runAction(fileSocket2);
 
                     //var fileResponse2 = await fileSocket2.getFileAsync();
                     //Console.WriteLine(response);

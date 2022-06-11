@@ -20,7 +20,7 @@ namespace FileSync
 
         public Response getResponse(string command)
         {
-            string responseString = null;
+            string message = null;
             string fileName;
 
             string[] commandCode = command.Split(' ');
@@ -32,30 +32,30 @@ namespace FileSync
             if (string.IsNullOrWhiteSpace(arguments))
                 arguments = null;
 
-            if (responseString == null)
+            if (message == null)
             {
                 switch (cmd)
                 {
                     case "GET":
                         fileName = arguments;
                         //response = "sending " + fileName; //Retrieve(_root + "test.txt");
-                        responseString = "SEND " + fileName; //Retrieve(_root + "test.txt");
+                        message = "SEND " + fileName; //Retrieve(_root + "test.txt");
 
-                        _response = new Response(responseString, ActionType.SENDFILE, fileName);
+                        _response = new Response(message, ActionType.SENDFILE, fileName);
 
                         break;
 
                     case "PORT":
                         //response = Port(arguments);
-                        responseString = Port(arguments);
-                        _response = new Response(responseString, ActionType.NONE);
+                        message = Port(arguments);
+                        _response = new Response(message, ActionType.NONE);
                         break;
 
 
                     case "SEND":
                         fileName = arguments;
-                        responseString = "reveiving file";
-                        _response = new Response(responseString, ActionType.GETFILE, fileName);
+                        message = "reveiving file";
+                        _response = new Response(message, ActionType.GETFILE, fileName);
                         break;
 
                     //case "PUT":
@@ -92,14 +92,14 @@ namespace FileSync
 
 
                     case "TEST":
-                        responseString = "Test check";
-                        _response = new Response(responseString, ActionType.NONE);
+                        message = "Test check";
+                        _response = new Response(message, ActionType.NONE);
                         break;
 
 
                     default:
-                        responseString = "502 Command not implemented"; ;
-                        _response = new Response(responseString, ActionType.NONE);
+                        message = "502 Command not implemented"; ;
+                        _response = new Response(message, ActionType.NONE);
                         break;
                 }
             }

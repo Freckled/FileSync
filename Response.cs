@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,14 +19,14 @@ namespace FileSync
 
     public class Response
     {
-        private string _reponseString;
+        private string _message;
         private Enum _action;
         private string _fileName;
         private Socket _socket;
 
-        public Response(string reponseString, Enum action, string fileName = null)
+        public Response(string message, Enum action, string fileName = null)
         {
-            _reponseString = reponseString;
+            _message = message;
             _action = action;
 
             if (!String.IsNullOrEmpty(fileName))
@@ -36,44 +37,29 @@ namespace FileSync
         }
         public string getResponseString()
         {
-            return _reponseString;
+            return _message;
         }
 
-        public void runAction(SyncSocket socket = null)
+        public void runAction(IPEndPoint endPoint, long fileLength = 0)
         {
             switch (_action){
                 case ActionType.DELETE:
-                    //FileHandler fhs = new FileHandler();
-                    //fileHandler.deleteFile(fileName);
                     break;
 
                 case ActionType.SENDFILE:
-                    //FileHandler fhs = new FileHandler(socket);
-                    //fileHandler.sendFileAsync(fileName);
 
-                    //////////TEMP//////////////
-                    ///
-                    if (socket != null)
+                    if (endPoint != null)
                     {
-                        //SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                        //socket.sendFileAsync("D:\\FileWatcher\\test.txt");
-                        socket.sendFileAsync(_fileName);
+                        FileHandler.SendFile(endPoint, _fileName);
                     }
-                    ////////////////////////////
                     break;
 
                 case ActionType.GETFILE:
-                    //FileHandler fhg = new FileHandler(socket);
-                    //fileHandler.getFileAsync(fileName);
 
-                    //////////TEMP//////////////
-                    ///
-                    if (socket != null)
+                    if (endPoint != null)
                     {
-                        //SyncSocket fileSocketSend = new SyncSocket("192.168.1.144", 11305);
-                        socket.getFileAsync();
+                        FileHandler.GetFile(endPoint, fileLength);
                     }
-                    ////////////////////////////
                     break;
 
                 default:
