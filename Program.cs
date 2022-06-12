@@ -24,23 +24,15 @@ namespace FileSync
                     break;
 
                 case "2":
-                    //TODO klaarstaan voor de file receive.  aka; nieuwe socket openen en luisteren.
-                    //TODO bestand daadwerkelijk ontvangen. 
-                    
-                    
-                    //SyncSocket client = new SyncSocket(_serverIP, Config.clientPort);
-                    //SyncSocket fileSocket2 = new SyncSocket(_clientIP, 11305);
 
-                    //string file2get = "D:\\FileWatcher\\test.txt";
-                    //string response = client.sendCommand("get " + file2get);
-                    
-                    //Console.WriteLine(response);
+                    Connection client = new Connection(_serverIP, Config.serverPort);
+                    string resp = client.sendCommand("get test.txt");
 
-                    //Response response2 = new Response(response, ActionType.GETFILE);
-                    //response2.runAction(fileSocket2);
+                    CommandHandler cmd = new CommandHandler();
+                    Response response = cmd.getResponse(resp);
 
-                    //var fileResponse2 = await fileSocket2.getFileAsync();
-                    //Console.WriteLine(response);
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
+                    response.runAction(endPoint);
                     break;
 
                 case "3":
