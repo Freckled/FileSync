@@ -12,6 +12,8 @@ namespace FileSync
         private string _root;
         private string _currentDirectory;
         IPEndPoint _dataEndpoint;
+        IPEndPoint _remoteEndpoint;
+
         Response _response;
 
         public CommandHandler()

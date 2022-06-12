@@ -14,6 +14,7 @@ namespace FileSync
         DELETE,
         SENDFILE,
         GETFILE,
+        GETFILES,
         NONE
     }
 
@@ -23,13 +24,14 @@ namespace FileSync
         private Enum _action;
         private string _fileName;
         private long _fileSize;
+        private List<KeyValuePair<string, string>> dirList;
 
 
         public Response(string message, Enum action, string fileName = null, long fileSize = 0)
         {
             _message = message;
             _action = action;
-
+            
             if (!String.IsNullOrEmpty(fileName))
             {
                 _fileName = fileName;
@@ -37,13 +39,22 @@ namespace FileSync
             }
 
         }
+
+        public Response(string message, Enum action, List<KeyValuePair<string, string>> dirList)
+        {
+            _message = message;
+            _action = action;
+            this.dirList = dirList;
+        }
+
         public string getResponseString()
         {
             return _message;
         }
 
-        public void runAction(IPEndPoint endPoint)
+        public void runAction(IPEndPoint endPoint = null)
         {
+                      
             switch (_action){
                 case ActionType.DELETE:
                     break;
@@ -60,7 +71,16 @@ namespace FileSync
 
                     if (endPoint != null)
                     {
-                        FileHandler.GetFile(endPoint, _fileSize);
+                        FileHandler.GetFile(endPoint, _fileName, _fileSize);
+                    }
+                    break;
+
+
+                case ActionType.GETFILES:
+
+                    if (endPoint != null)
+                    {
+                        FileHandler.GetFiles(endPoint, dirList);
                     }
                     break;
 

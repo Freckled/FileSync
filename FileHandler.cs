@@ -12,9 +12,9 @@ namespace FileSync
     public class FileHandler
     {
 
-        public static void GetFile(IPEndPoint endPoint, long fileLength)
+        public static void GetFile(IPEndPoint endPoint, string fileName, long fileLength)
         {
-            
+            string filePath = Config.clientDir + fileName;
             try
             {
                 // Create a Socket that will use Tcp protocol
@@ -31,7 +31,7 @@ namespace FileSync
                 try
                 {
                     using (NetworkStream networkStream = new NetworkStream(_dataSocket))
-                    using (FileStream fileStream = File.Open("D:\\FileWatcherTo\\test.txt", FileMode.OpenOrCreate))
+                    using (FileStream fileStream = File.Open(filePath, FileMode.OpenOrCreate))
                     {
 
                         while (fileStream.Length < fileLength)
@@ -75,6 +75,7 @@ namespace FileSync
                 Console.WriteLine("Sending {0} with buffers to the host.{1}", fileLoc, Environment.NewLine);
                 //_socket.SendFile(fileName, preBuf, postBuf, TransmitFileOptions.UseDefaultWorkerThread);
                 socket.SendFile(fileLoc);
+                
                 Console.WriteLine("File Transfer started");
 
                 // Release the socket.
@@ -87,16 +88,21 @@ namespace FileSync
             }            
         }
 
-        public static void GetFiles(IPEndPoint endPoint, List<KeyValuePair<string, string>> list)
+        public static void GetFiles(IPEndPoint remoteEndPoint, List<KeyValuePair<string, string>> list)
         {
-            Connection conn = new Connection(endPoint);
+            Connection conn = new Connection(remoteEndPoint);
+            IPAddress remoteIP = remoteEndPoint.Address;
+
             CommandHandler cmd = new CommandHandler();
+            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
+
 
             for (int i = 0; i < list.Count; i++)
             {                
                 string resp = conn.sendCommand("get " + list[i].Key);
                 Response response = cmd.getResponse(resp);
-                response.runAction(endPoint);
+                
+                response.runAction(dataEndPoint);
             }
 
         }

@@ -34,7 +34,7 @@ namespace FileSync
 
                     //IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-                    response.runAction(endPoint);
+                    response.runAction();
                     break;
 
                 case "3":
@@ -47,7 +47,7 @@ namespace FileSync
 
                     IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
                     //IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-                    response2.runAction(endPoint2);
+                    response2.runAction();
 
                     break;
 
