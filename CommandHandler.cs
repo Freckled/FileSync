@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 
@@ -38,8 +39,10 @@ namespace FileSync
                 {
                     case "GET":
                         fileName = arguments;
+                        string filePath = Config.serverDir + fileName;
+                        long fileSize = new FileInfo(filePath).Length;
                         //response = "sending " + fileName; //Retrieve(_root + "test.txt");
-                        message = "SEND " + fileName; //Retrieve(_root + "test.txt");
+                        message = "SEND " + fileName + " " + fileSize; //Retrieve(_root + "test.txt");
 
                         _response = new Response(message, ActionType.SENDFILE, fileName);
 
@@ -53,9 +56,11 @@ namespace FileSync
 
 
                     case "SEND":
-                        fileName = arguments;
+                        var argSplit = arguments.Split(' ');
+                        fileName = argSplit[0]; //arguments;
+                        fileSize = (long)Convert.ToDouble(argSplit[1]);
                         message = "reveiving file";
-                        _response = new Response(message, ActionType.GETFILE, fileName);
+                        _response = new Response(message, ActionType.GETFILE, fileName, fileSize);
                         break;
 
                     //case "PUT":
@@ -89,7 +94,32 @@ namespace FileSync
                     //case "LIST":
                     //    response = "";
                     //    break;
+                    case "LIST":
+                        message = "DIRLIST";
+                        var files = FileHelper.listFilesWithDateTime(Config.serverDir);
+                        foreach(var file in files)
+                        {
+                            message += " " + file.Key + "|" + file.Value.Replace(" ","|");
+                        }                        
+                        _response = new Response(message, ActionType.NONE);
+                        break;
 
+                    case "DIRLIST":
+                        message = "DIRLIST"; //if lists are equal change to nothing
+                        var LocalfileList = FileHelper.listFilesWithDateTime(Config.clientDir);
+                        var argSplitFiles = arguments.Split(' ');
+                        List<KeyValuePair<string, string>> remoteFileList = new List<KeyValuePair<string, string>>();
+
+                        foreach (string file in argSplitFiles)
+                        {
+                            var fileSplit = file.Split("|");
+                            remoteFileList.Add(new KeyValuePair<string, string>(fileSplit[0], fileSplit[1] + " " + fileSplit[2]));
+                        }
+
+                        //List<string> fileListToGet = FileHelper.CompareFileList(LocalfileList, remoteFileList);
+                        var files2Get = FileHelper.CompareFileList2(LocalfileList, remoteFileList);
+                        _response = new Response(message, ActionType.GETFILES, files2Get);
+                        break;
 
                     case "TEST":
                         message = "Test check";

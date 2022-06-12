@@ -13,15 +13,16 @@ namespace FileSync
         private IPAddress ipAddress;
         private IPEndPoint remoteEndPoint;
         private IPEndPoint dataEndpoint;
+        private IPEndPoint localEndPoint;
 
         public Connection(string remoteIP, int remotePort)
         {
             ipAddress = IPAddress.Parse(remoteIP);
             remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
             dataEndpoint = new IPEndPoint(ipAddress, Config.dataPort);
-
-
+            localEndPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort);
         }
+
         public Connection(IPEndPoint endPoint)
         {
             remoteEndPoint = endPoint;
@@ -31,22 +32,30 @@ namespace FileSync
         {
             //Start new command handler to handle incoming commands
             CommandHandler cmdHandler = new CommandHandler();
+
+
+
         reboot:
             try
             {
-
                 // Create a Socket that will use Tcp protocol
                 Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 // A Socket must be associated with an endpoint using the Bind method
-                listener.Bind(remoteEndPoint);
-                //listener.Connect(remoteEndPoint);
-
+                //if (listener.LocalEndPoint == null) { 
+                //    listener.Bind(remoteEndPoint);
+                //}
+                if (listener.LocalEndPoint == null)
+                {
+                    listener.Bind(localEndPoint);
+                }
                 //create a loop so it keeps listening
                 while (true)
                 {
 
+                    //listener.Connect(remoteEndPoint);                    
+
                     listener.Listen(100000);
-                    Console.Clear();
+                    //Console.Clear();
                     Console.WriteLine("Server starterd, waiting for a connection...");
                     Console.WriteLine("Listening on :{0}", remoteEndPoint.ToString());
                     Socket clientSocket = listener.Accept();
@@ -81,7 +90,7 @@ namespace FileSync
             {
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("restarting server...");
-                goto reboot;
+                //goto reboot;
             }
         }
 

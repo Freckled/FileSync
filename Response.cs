@@ -22,9 +22,10 @@ namespace FileSync
         private string _message;
         private Enum _action;
         private string _fileName;
-        private Socket _socket;
+        private long _fileSize;
 
-        public Response(string message, Enum action, string fileName = null)
+
+        public Response(string message, Enum action, string fileName = null, long fileSize = 0)
         {
             _message = message;
             _action = action;
@@ -32,6 +33,7 @@ namespace FileSync
             if (!String.IsNullOrEmpty(fileName))
             {
                 _fileName = fileName;
+                _fileSize = fileSize;
             }
 
         }
@@ -40,7 +42,7 @@ namespace FileSync
             return _message;
         }
 
-        public void runAction(IPEndPoint endPoint, long fileLength = 0)
+        public void runAction(IPEndPoint endPoint)
         {
             switch (_action){
                 case ActionType.DELETE:
@@ -58,7 +60,7 @@ namespace FileSync
 
                     if (endPoint != null)
                     {
-                        FileHandler.GetFile(endPoint, fileLength);
+                        FileHandler.GetFile(endPoint, _fileSize);
                     }
                     break;
 

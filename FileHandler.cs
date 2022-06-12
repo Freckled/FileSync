@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Net;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace FileSync
 {
@@ -38,6 +39,7 @@ namespace FileSync
                             networkStream.CopyTo(fileStream);
                         }
                     }
+                    _dataSocket.Close();
                 }
                 catch (Exception ex)
                 {
@@ -82,10 +84,22 @@ namespace FileSync
             catch (SocketException se)
             {
                 
+            }            
+        }
+
+        public static void GetFiles(IPEndPoint endPoint, List<KeyValuePair<string, string>> list)
+        {
+            Connection conn = new Connection(endPoint);
+            CommandHandler cmd = new CommandHandler();
+
+            for (int i = 0; i < list.Count; i++)
+            {                
+                string resp = conn.sendCommand("get " + list[i].Key);
+                Response response = cmd.getResponse(resp);
+                response.runAction(endPoint);
             }
-            
-            
 
         }
+
     }
 }

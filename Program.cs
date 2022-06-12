@@ -26,18 +26,28 @@ namespace FileSync
                 case "2":
 
                     Connection client = new Connection(_serverIP, Config.serverPort);
-                    string resp = client.sendCommand("get test.txt");
+                    //string resp = client.sendCommand("get test.txt");
+                    string resp = client.sendCommand("List");
 
                     CommandHandler cmd = new CommandHandler();
                     Response response = cmd.getResponse(resp);
 
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
+                    //IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
                     response.runAction(endPoint);
                     break;
 
                 case "3":
-                    FileHelper fh = new FileHelper();
-                    Console.WriteLine(fh.GetFilesFromDir("d:\\FileWatcher"));
+                    Connection client2 = new Connection(_serverIP, Config.serverPort);
+                    string resp2 = client2.sendCommand("get test.txt");
+                    //string resp2 = client2.sendCommand("List");
+
+                    CommandHandler cmd2 = new CommandHandler();
+                    Response response2 = cmd2.getResponse(resp2);
+
+                    IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
+                    //IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
+                    response2.runAction(endPoint2);
 
                     break;
 

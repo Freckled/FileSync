@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,15 +8,26 @@ using System.Threading.Tasks;
 
 namespace FileSync
 {
-    public class FileHelper
+    public static class FileHelper
     {
-        public string[] GetFilesFromDir(string dir)
+        public static string[] GetFilesFromDir(string dir)
         {
             string[] filePaths = Directory.GetFiles(dir, "*", SearchOption.AllDirectories);
             return filePaths;
         }
 
-        public string GetFileFromDirByName(string name, string dir)
+        //public static string[] GetFilesFromDirNames(string dir)
+        //{
+        //    string[] filePaths = Directory.GetFiles(dir, "*", SearchOption.AllDirectories);
+        //    foreach (string fileName in filePaths)
+        //    {
+        //        List<string> FileList = new List<string>();
+        //        FileList.Add(Path.GetFileName(fileName));
+        //    }
+        //    return filePaths;
+        //}
+
+        public static string GetFileFromDirByName(string name, string dir)
         {
             dir = (dir != "") ? dir : Config.clientDirectory;
 
@@ -23,20 +35,20 @@ namespace FileSync
             return filePaths.GetValue(0).ToString();
         }
 
-        public DateTime GetModifiedDateTime(string file)
+        public static DateTime GetModifiedDateTime(string file)
         {
             return System.IO.File.GetLastWriteTime(file);
         }
 
-        public Boolean IsClientNew(string clientFile, string serverFile)
+        public static Boolean IsClientNew(string clientFile, string serverFile)
         {
             if (!File.Exists(clientFile))
             {
                 return false;
             }
 
-            var clientDateTimeModified = this.GetModifiedDateTime(clientFile);
-            var serverDateTimeModified = this.GetModifiedDateTime(serverFile);
+            var clientDateTimeModified = GetModifiedDateTime(clientFile);
+            var serverDateTimeModified = GetModifiedDateTime(serverFile);
             return (clientDateTimeModified > serverDateTimeModified) ? true : false;
         }
 
@@ -46,16 +58,16 @@ namespace FileSync
         /// <param name="name"></param>
         /// <param name="dir"></param>
         /// <returns></returns>
-        public string[] arrayOfFilesWithDate(string name, string dir)
+        public static string[] arrayOfFilesWithDate(string name, string dir)
         {
             string seperator = ";";
             List<String> filesList = new List<String>();
 
             String[] serverFilesArray;
 
-            foreach (var file in this.GetFilesFromDir(Config.clientDirectory))
+            foreach (var file in GetFilesFromDir(Config.clientDirectory))
             {
-                string fileNameWithDateTime = file + seperator + this.GetModifiedDateTime(file).ToString();
+                string fileNameWithDateTime = file + seperator + GetModifiedDateTime(file).ToString();
                 filesList.Add(fileNameWithDateTime);
             }
 
@@ -66,57 +78,101 @@ namespace FileSync
         /// Send list to server client
         /// </summary>
         /// <returns></returns>
-        public List<KeyValuePair<string, string>> listFilesWithDateTimeServer()
+        public static List<KeyValuePair<string, string>> listFilesWithDateTime(string dir)
         {
             var serverList = new List<KeyValuePair<string, string>>();
             int i = 0;
 
-            foreach (var file in this.GetFilesFromDir(Config.serverDirectory))
+            foreach (var file in GetFilesFromDir(dir))
             {
-                serverList.Insert(i, new KeyValuePair<string, string>(file, this.GetModifiedDateTime(file).ToString()));
+                serverList.Insert(i, new KeyValuePair<string, string>(Path.GetFileName(file), GetModifiedDateTime(file).ToString()));
                 i++;
             }
 
             return serverList;
+        }
+
+        public static List<string> CompareFileList(List<KeyValuePair<string, string>> localFileList, List<KeyValuePair<string, string>> remoteFileList)
+        {
+            List<string> tmpList = new List<string>();
+
+            for (int i = 0; i < localFileList.Count; i++)
+            {
+                if (remoteFileList.All(x => x.Key.Contains(localFileList[i].Key)))
+                {
+                    
+                }
+            }
+            return tmpList;
+
+
+        }
+
+
+        public static List<KeyValuePair<string, string>> CompareFileList2(List<KeyValuePair<string, string>> localFileList, List<KeyValuePair<string, string>> remoteFileList)
+        {
+            List<KeyValuePair<string, string>> tmpList = new List<KeyValuePair<string, string>>();
+
+            //set Datime to GB
+            var cultureInfo = new CultureInfo("en-GB");
+            for (int i = 0; i < remoteFileList.Count; i++)
+            {
+                if (localFileList.All(x => x.Key.Contains(remoteFileList[i].Key)))
+                {
+                    var dateTimeL = DateTime.Parse(localFileList.First(c => c.Key == remoteFileList[i].Key).Value, cultureInfo);
+                    var dateTimeR = DateTime.Parse(remoteFileList[i].Value, cultureInfo);
+
+                    if (dateTimeR > dateTimeL)
+                    {
+                        tmpList.Add(new KeyValuePair<string, string>(remoteFileList[i].Key, remoteFileList[i].Value));
+
+                    }
+                }
+                else
+                {
+                    tmpList.Add(new KeyValuePair<string, string>(remoteFileList[i].Key, remoteFileList[i].Value));
+                }
+            }
+            return tmpList;
         }
 
         /// <summary>
         /// Send list to server client
         /// </summary>
         /// <returns></returns>
-        public List<KeyValuePair<string, string>> listFilesWithDateTimeClient()
-        {
-            var serverList = new List<KeyValuePair<string, string>>();
-            int i = 0;
+        //public static List<KeyValuePair<string, string>> listFilesWithDateTimeClient()
+        //{
+        //    var serverList = new List<KeyValuePair<string, string>>();
+        //    int i = 0;
 
-            foreach (var file in this.GetFilesFromDir(Config.clientDirectory))
-            {
-                serverList.Insert(i, new KeyValuePair<string, string>(file, this.GetModifiedDateTime(file).ToString()));
-                i++;
-            }
+        //    foreach (var file in GetFilesFromDir(Config.clientDir))
+        //    {
+        //        serverList.Insert(i, new KeyValuePair<string, string>(file, GetModifiedDateTime(file).ToString()));
+        //        i++;
+        //    }
 
-            return serverList;
-        }
-        public List<KeyValuePair<string, string>> getListWithFilesToChange()
-        {
-            var finalList = new List<KeyValuePair<string, string>>();
-            var listClient = this.listFilesWithDateTimeClient();
-            var listServer = this.listFilesWithDateTimeServer();
-            int i = 0;
-            foreach (KeyValuePair<string, string> file in listClient)
-            {
-                string fileName = file.Key;
-                string dateTime = file.Value;
+        //    return serverList;
+        //}
+        //public static List<KeyValuePair<string, string>> getListWithFilesToChange()
+        //{
+        //    var finalList = new List<KeyValuePair<string, string>>();
+        //    var listClient = listFilesWithDateTimeClient();
+        //    var listServer = listFilesWithDateTimeServer();
+        //    int i = 0;
+        //    foreach (KeyValuePair<string, string> file in listClient)
+        //    {
+        //        string fileName = file.Key;
+        //        string dateTime = file.Value;
 
-                string fileserver = listServer.Find(kvp => kvp.Key == fileName).Value;
-                if (fileserver == null)
-                {
-                    finalList.Insert(i, new KeyValuePair<string, string>(fileName, dateTime));
-                    i++;
-                }
-            }
+        //        string fileserver = listServer.Find(kvp => kvp.Key == fileName).Value;
+        //        if (fileserver == null)
+        //        {
+        //            finalList.Insert(i, new KeyValuePair<string, string>(fileName, dateTime));
+        //            i++;
+        //        }
+        //    }
 
-            return finalList;
-        }
+        //    return finalList;
+        //}
     }
 }
