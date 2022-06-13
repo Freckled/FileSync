@@ -85,24 +85,6 @@ namespace FileSync
                 Console.WriteLine(e.ToString());
             }
         }
-
-        //public static void GetFiles(IPEndPoint remoteEndPoint, List<KeyValuePair<string, string>> list)
-        //{
-        //    Connection conn = new Connection(remoteEndPoint);
-        //    IPAddress remoteIP = remoteEndPoint.Address;
-
-        //    CommandHandler cmd = new CommandHandler();
-        //    IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
-
-
-        //    for (int i = 0; i < list.Count; i++)
-        //    {
-        //        string resp = conn.sendCommand("get " + list[i].Key);
-        //        Response response = cmd.getResponse(resp);
-        //        response.runAction(dataEndPoint);
-        //    }
-
-        //}
         public static void GetFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
         {
             Connection conn = new Connection(remoteEndPoint);

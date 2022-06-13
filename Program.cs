@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FileSync
@@ -9,8 +10,8 @@ namespace FileSync
     {
         static async Task Main(string[] args)
         {
-
-            Console.WriteLine("Mode; 1-Server, 2-ClientAskList, 3-get single file, 4-?:");
+        start:
+            Console.WriteLine("Mode; 1-Server, 2-GetNewerFiles, 3-GetFile, 4-SendNewerFiles, 5-Exit");
             string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();// "192.168.1.144";//"84.241.204.248";x;
             string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  //"192.168.1.144";
             string message = Console.ReadLine();
@@ -52,30 +53,37 @@ namespace FileSync
                     break;
 
                 case "4":
-                    //Connection client4 = new Connection(_serverIP, Config.serverPort);
-                    ////string resp = client.sendCommand("get test.txt");
-                    //string resp4 = client4.sendCommand("List");
+                    Connection client4 = new Connection(_serverIP, Config.serverPort);
+                    //string resp = client.sendCommand("get test.txt");
+                    string resp4 = client4.sendCommand("List");
 
-                    //CommandHandler cmd4 = new CommandHandler();
-                    //Response response4 = cmd4.getResponse(resp4);
+                    CommandHandler cmd4 = new CommandHandler();
+                    Response response4 = cmd4.getResponse(resp4);
 
-                    ////IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
-                    //IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-                    //response4.runAction(endPoint4);
+                    //IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
+                    IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
+                    response4.runAction(endPoint4);
 
-                    //string resp4b = client4.sendCommand("Asklist");
-                    //Response response4b = cmd4.getResponse(resp4b);
-                    //response4b.runAction(endPoint4);
+
+                    string resp4b = client4.sendCommand("Asklist");
+                    Response response4b = cmd4.getResponse(resp4b);
+                    client4.sendCommand(response4b.getResponseString());
+                    response4b.runAction(endPoint4);
+
+
                     break;
 
                 case "5":
-
+                    System.Environment.Exit(0);
                     break;
 
-
-
+               default:
+                    goto start;
+                    break;
 
             }
+            Console.WriteLine("--------------------------------------");
+            goto start;
 
         }
     }
