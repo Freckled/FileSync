@@ -12,9 +12,11 @@ namespace FileSync
     public class FileHandler
     {
 
-        public static void GetFile(IPEndPoint endPoint, string fileName, long fileLength)
+        public static void GetFile(IPEndPoint endPoint, string fileName, long fileLength, DateTime? modDate)
         {
             string filePath = Config.clientDir + fileName;
+            DateTime fileModDate = modDate ?? DateTime.Now;
+
 
             try
             {
@@ -43,6 +45,7 @@ namespace FileSync
                     }
                     _dataSocket.Close();
                     socket.Close();
+                    File.SetLastWriteTime(filePath, fileModDate);
                     Console.WriteLine("filetransfer complete " + fileName + " " + fileLength);
                 }
                 catch (Exception ex)
@@ -64,24 +67,23 @@ namespace FileSync
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(endPoint);
             string fileLoc = Config.serverDir + fileName;
-        
+
             try
             {
                 //Send file fileName to the remote device.
                 Console.WriteLine("Sending file : {0} {1}", fileLoc, Environment.NewLine);
-                
                 socket.SendFile(fileLoc);
                 Console.WriteLine("File Transfer started");
 
                 // Release the socket.
-                socket.Shutdown(SocketShutdown.Both);
+                //socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
             }
             catch (Exception e)
             {
                 Console.WriteLine("File Transfer failed");
                 Console.WriteLine(e.ToString());
-            }            
+            }
         }
 
         public static void GetFiles(IPEndPoint remoteEndPoint, List<KeyValuePair<string, string>> list)
@@ -94,9 +96,9 @@ namespace FileSync
 
 
             for (int i = 0; i < list.Count; i++)
-            {                
+            {
                 string resp = conn.sendCommand("get " + list[i].Key);
-                Response response = cmd.getResponse(resp);                
+                Response response = cmd.getResponse(resp);
                 response.runAction(dataEndPoint);
             }
 

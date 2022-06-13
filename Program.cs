@@ -10,7 +10,7 @@ namespace FileSync
         static async Task Main(string[] args)
         {
 
-            Console.WriteLine("Mode; 1-Server, 2-Client, 3-DirTest, 4-?:");
+            Console.WriteLine("Mode; 1-Server, 2-ClientAskList, 3-get single file, 4-?:");
             string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();// "192.168.1.144";//"84.241.204.248";x;
             string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  //"192.168.1.144";
             string message = Console.ReadLine();
@@ -34,7 +34,7 @@ namespace FileSync
 
                     //IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-                    response.runAction();
+                    response.runAction(endPoint);
                     break;
 
                 case "3":
@@ -47,12 +47,25 @@ namespace FileSync
 
                     IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
                     //IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-                    response2.runAction();
+                    response2.runAction(endPoint2);
 
                     break;
 
                 case "4":
+                    //Connection client4 = new Connection(_serverIP, Config.serverPort);
+                    ////string resp = client.sendCommand("get test.txt");
+                    //string resp4 = client4.sendCommand("List");
 
+                    //CommandHandler cmd4 = new CommandHandler();
+                    //Response response4 = cmd4.getResponse(resp4);
+
+                    ////IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
+                    //IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
+                    //response4.runAction(endPoint4);
+
+                    //string resp4b = client4.sendCommand("Asklist");
+                    //Response response4b = cmd4.getResponse(resp4b);
+                    //response4b.runAction(endPoint4);
                     break;
 
                 case "5":

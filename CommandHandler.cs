@@ -12,8 +12,6 @@ namespace FileSync
         private string _root;
         private string _currentDirectory;
         IPEndPoint _dataEndpoint;
-        IPEndPoint _remoteEndpoint;
-
         Response _response;
 
         public CommandHandler()
@@ -43,8 +41,9 @@ namespace FileSync
                         fileName = arguments;
                         string filePath = Config.serverDir + fileName;
                         long fileSize = new FileInfo(filePath).Length;
+                        string fileModDate = FileHelper.GetModifiedDateTime(filePath).ToString(Config.cultureInfo);
                         //response = "sending " + fileName; //Retrieve(_root + "test.txt");
-                        message = "SEND " + fileName + " " + fileSize; //Retrieve(_root + "test.txt");
+                        message = "SEND " + fileName + " " + fileSize + " " + fileModDate; //Retrieve(_root + "test.txt");
 
                         _response = new Response(message, ActionType.SENDFILE, fileName);
 
@@ -61,41 +60,11 @@ namespace FileSync
                         var argSplit = arguments.Split(' ');
                         fileName = argSplit[0]; //arguments;
                         fileSize = (long)Convert.ToDouble(argSplit[1]);
+                        var ModDate = DateTime.Parse(argSplit[2] + " " + argSplit[3], Config.cultureInfo);
                         message = "reveiving file";
-                        _response = new Response(message, ActionType.GETFILE, fileName, fileSize);
+                        _response = new Response(message, ActionType.GETFILE, fileName, fileSize, ModDate);
                         break;
 
-                    //case "PUT":
-                    //    response = "";
-                    //    break;
-
-                    //case "DELETE":
-                    //    response = "";
-                    //    break;
-
-                    //case "SIZE":
-                    //    response = "";
-                    //    break;
-
-                    //case "PASV":
-                    //    response = Passive();
-                    //    break;
-
-                    //case "CLOSE":
-                    //    response = "";
-                    //    break;
-
-                    //case "REIN":
-                    //    response = "";
-                    //    break;
-
-                    //case "REST":
-                    //    response = "";
-                    //    break;
-
-                    //case "LIST":
-                    //    response = "";
-                    //    break;
                     case "LIST":
                         message = "DIRLIST";
                         var files = FileHelper.listFilesWithDateTime(Config.serverDir);
@@ -121,6 +90,11 @@ namespace FileSync
                         //List<string> fileListToGet = FileHelper.CompareFileList(LocalfileList, remoteFileList);
                         var files2Get = FileHelper.CompareFileList2(LocalfileList, remoteFileList);
                         _response = new Response(message, ActionType.GETFILES, files2Get);
+                        break;
+
+                    case "ASKLIST":
+                        message = "LIST";
+                        _response = new Response(message, ActionType.NONE);
                         break;
 
                     case "TEST":

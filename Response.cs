@@ -25,19 +25,20 @@ namespace FileSync
         private string _fileName;
         private long _fileSize;
         private List<KeyValuePair<string, string>> dirList;
+        DateTime? _modDate;
 
 
-        public Response(string message, Enum action, string fileName = null, long fileSize = 0)
+        public Response(string message, Enum action, string fileName = null, long fileSize = 0, DateTime? modDate = null)
         {
             _message = message;
             _action = action;
-            
+
             if (!String.IsNullOrEmpty(fileName))
             {
                 _fileName = fileName;
                 _fileSize = fileSize;
+                _modDate = modDate;
             }
-
         }
 
         public Response(string message, Enum action, List<KeyValuePair<string, string>> dirList)
@@ -52,10 +53,10 @@ namespace FileSync
             return _message;
         }
 
-        public void runAction(IPEndPoint endPoint = null)
+        public void runAction(IPEndPoint endPoint)
         {
-                      
-            switch (_action){
+            switch (_action)
+            {
                 case ActionType.DELETE:
                     break;
 
@@ -71,10 +72,9 @@ namespace FileSync
 
                     if (endPoint != null)
                     {
-                        FileHandler.GetFile(endPoint, _fileName, _fileSize);
+                        FileHandler.GetFile(endPoint, _fileName, _fileSize, _modDate);
                     }
                     break;
-
 
                 case ActionType.GETFILES:
 
@@ -83,7 +83,6 @@ namespace FileSync
                         FileHandler.GetFiles(endPoint, dirList);
                     }
                     break;
-
                 default:
                     break;
 

@@ -26,6 +26,7 @@ namespace FileSync
         public Connection(IPEndPoint endPoint)
         {
             remoteEndPoint = endPoint;
+            ipAddress = endPoint.Address;
         }
 
         public void ServerStart()
@@ -44,12 +45,9 @@ namespace FileSync
                 }
                 //create a loop so it keeps listening
                 while (true)
-                {
-
-                    //listener.Connect(remoteEndPoint);                    
-
-                    listener.Listen(100000);
-                    //Console.Clear();
+                {                             
+                    listener.Listen(100);
+                    Console.Clear();
                     Console.WriteLine("Server starterd, waiting for a connection...");
                     Console.WriteLine("Listening on :{0}", remoteEndPoint.ToString());
                     Socket clientSocket = listener.Accept();
@@ -84,13 +82,12 @@ namespace FileSync
             {
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("restarting server...");
-                //goto reboot;
+                goto reboot;
             }
         }
 
         public string sendCommand(string command)
         {
-
             Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
             socket.Connect(remoteEndPoint);
