@@ -96,31 +96,6 @@ namespace FileSync
         /// compares two dirlists and returns files on the remote that arent in local or are newer on the remote
         /// </summary>
         /// <returns>List<string></returns>
-        public static List<string> CompareFileList(List<KeyValuePair<string, string>> localFileList, List<KeyValuePair<string, string>> remoteFileList)
-        {
-            List<string> tmpList = new List<string>();
-
-            //set Datime to GB
-
-            for (int i = 0; i < remoteFileList.Count; i++)
-            {
-                if (localFileList.All(x => x.Key.Contains(remoteFileList[i].Key)))
-                {
-                    var dateTimeL = DateTime.Parse(localFileList.First(c => c.Key == remoteFileList[i].Key).Value, Config.cultureInfo);
-                    var dateTimeR = DateTime.Parse(remoteFileList[i].Value, Config.cultureInfo);
-
-                    if (dateTimeR > dateTimeL)
-                    {
-                        tmpList.Add(remoteFileList[i].Key);
-                    }
-                }
-                else
-                {
-                    tmpList.Add(remoteFileList[i].Key);
-                }
-            }
-            return tmpList;
-        }
 
 
         public static List<KeyValuePair<string, string>> CompareFileList2(List<KeyValuePair<string, string>> localFileList, List<KeyValuePair<string, string>> remoteFileList)
@@ -132,13 +107,13 @@ namespace FileSync
                 return tmpList;
             }
             //set Datime to GB
-            var cultureInfo = new CultureInfo("en-GB");
+            
             for (int i = 0; i < remoteFileList.Count; i++)
             {
                 if (localFileList.All(x => x.Key.Contains(remoteFileList[i].Key)))
                 {
-                    var dateTimeL = DateTime.Parse(localFileList.First(c => c.Key == remoteFileList[i].Key).Value, cultureInfo);
-                    var dateTimeR = DateTime.Parse(remoteFileList[i].Value, cultureInfo);
+                    var dateTimeL = DateTime.Parse(localFileList.First(c => c.Key == remoteFileList[i].Key).Value, Config.cultureInfo);
+                    var dateTimeR = DateTime.Parse(remoteFileList[i].Value, Config.cultureInfo);
 
                     if (dateTimeR > dateTimeL)
                     {
