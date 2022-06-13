@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace FileSync
 {
+    public class Global
+    {
+        public static string rootDir { get; set; }
+    }
     class Program
     {
         static async Task Main(string[] args)
@@ -19,13 +23,13 @@ namespace FileSync
             switch (message)
             {
                 case "1":
-
+                    Global.rootDir = Config.serverDir;
                     Connection server = new Connection(_serverIP, Config.serverPort);
                     server.ServerStart();
                     break;
 
                 case "2":
-
+                    Global.rootDir = Config.clientDir;
                     Connection client = new Connection(_serverIP, Config.serverPort);
                     //string resp = client.sendCommand("get test.txt");
                     string resp = client.sendCommand("List");
@@ -39,6 +43,7 @@ namespace FileSync
                     break;
 
                 case "3":
+                    Global.rootDir = Config.clientDir;
                     Connection client2 = new Connection(_serverIP, Config.serverPort);
                     string resp2 = client2.sendCommand("get test.txt");
                     //string resp2 = client2.sendCommand("List");
@@ -53,6 +58,7 @@ namespace FileSync
                     break;
 
                 case "4":
+                    Global.rootDir = Config.clientDir;
                     Connection client4 = new Connection(_serverIP, Config.serverPort);
                     //string resp = client.sendCommand("get test.txt");
                     string resp4 = client4.sendCommand("List");
@@ -64,8 +70,7 @@ namespace FileSync
                     IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
                     response4.runAction(endPoint4);
 
-
-                    string resp4b = client4.sendCommand("Asklist");
+                    string resp4b = client4.sendCommand("");
                     Response response4b = cmd4.getResponse(resp4b);
                     client4.sendCommand(response4b.getResponseString());
                     response4b.runAction(endPoint4);

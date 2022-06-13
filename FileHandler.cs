@@ -14,7 +14,7 @@ namespace FileSync
 
         public static void GetFile(IPEndPoint endPoint, string fileName, long fileLength, DateTime? modDate)
         {
-            string filePath = Config.clientDir + fileName;
+            string filePath = Global.rootDir + fileName;
             DateTime fileModDate = modDate ?? DateTime.Now;
 
 
@@ -66,7 +66,7 @@ namespace FileSync
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(endPoint);
-            string fileLoc = Config.serverDir + fileName;
+            string fileLoc = Global.rootDir + fileName;
 
             try
             {

@@ -8,7 +8,7 @@ namespace FileSync
         
         public static void Watch()
         {
-            using var watcher = new FileSystemWatcher(@"C:\FileWatcher");
+            using var watcher = new FileSystemWatcher(Global.rootDir);
 
             watcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime

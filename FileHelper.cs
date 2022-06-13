@@ -29,7 +29,7 @@ namespace FileSync
 
         public static string GetFileFromDirByName(string name, string dir)
         {
-            dir = (dir != "") ? dir : Config.clientDirectory;
+            dir = (dir != "") ? dir : Global.rootDir;
 
             string[] filePaths = Directory.GetFiles(dir, name);
             return filePaths.GetValue(0).ToString();
@@ -65,7 +65,7 @@ namespace FileSync
 
             String[] serverFilesArray;
 
-            foreach (var file in GetFilesFromDir(Config.clientDirectory))
+            foreach (var file in GetFilesFromDir(Global.rootDir))
             {
                 string fileNameWithDateTime = file + seperator + GetModifiedDateTime(file).ToString();
                 filesList.Add(fileNameWithDateTime);

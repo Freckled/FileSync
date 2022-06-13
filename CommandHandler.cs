@@ -39,7 +39,7 @@ namespace FileSync
                 {
                     case "GET":
                         fileName = arguments;
-                        string filePath = Config.serverDir + fileName;
+                        string filePath = Global.rootDir + fileName;
                         long fileSize = new FileInfo(filePath).Length;
                         string fileModDate = FileHelper.GetModifiedDateTime(filePath).ToString(Config.cultureInfo);
                         //response = "sending " + fileName; //Retrieve(_root + "test.txt");
@@ -67,7 +67,7 @@ namespace FileSync
 
                     case "LIST":
                         message = "DIRLIST";
-                        var files = FileHelper.listFilesWithDateTime(Config.serverDir);
+                        var files = FileHelper.listFilesWithDateTime(Global.rootDir);
                         foreach(var file in files)
                         {
                             message += " " + file.Key + "|" + file.Value.Replace(" ","|");
@@ -77,7 +77,7 @@ namespace FileSync
 
                     case "DIRLIST":
                         message = "test"; //if lists are equal change to nothing
-                        var LocalfileList = FileHelper.DictFilesWithDateTime(Config.clientDir);
+                        var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
                         //var LocalfileList = FileHelper.listFilesWithDateTime(Config.clientDir);
                         var argSplitFiles = arguments.Split(' ');
                         //List<KeyValuePair<string, string>> remoteFileList = new List<KeyValuePair<string, string>>(); 
