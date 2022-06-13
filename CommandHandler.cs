@@ -97,7 +97,7 @@ namespace FileSync
 
                     case "ASKLIST":
                         message = "LIST";
-                        _response = new Response(message, ActionType.NONE);
+                        _response = new Response(message, ActionType.SENDMESSAGE);
                         break;
 
                     case "TEST":

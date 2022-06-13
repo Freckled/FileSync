@@ -15,6 +15,7 @@ namespace FileSync
         SENDFILE,
         GETFILE,
         GETFILES,
+        SENDMESSAGE,
         NONE
     }
 
@@ -84,6 +85,16 @@ namespace FileSync
                         FileHandler.GetFiles(endPoint, dirList);
                     }
                     break;
+
+                case ActionType.SENDMESSAGE:
+
+                    if (endPoint != null)
+                    {
+                        Connection con = new Connection(endPoint);
+                        con.sendCommand(_message);
+                    }
+                    break;
+
                 default:
                     break;
 
