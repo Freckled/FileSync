@@ -85,34 +85,52 @@ namespace FileSync
 
             foreach (var file in GetFilesFromDir(dir))
             {
-                serverList.Insert(i, new KeyValuePair<string, string>(Path.GetFileName(file), GetModifiedDateTime(file).ToString()));
+                serverList.Insert(i, new KeyValuePair<string, string>(Path.GetFileName(file), GetModifiedDateTime(file).ToString(Config.cultureInfo)));
                 i++;
             }
 
             return serverList;
         }
 
+        /// <summary>
+        /// compares two dirlists and returns files on the remote that arent in local or are newer on the remote
+        /// </summary>
+        /// <returns>List<string></returns>
         public static List<string> CompareFileList(List<KeyValuePair<string, string>> localFileList, List<KeyValuePair<string, string>> remoteFileList)
         {
             List<string> tmpList = new List<string>();
 
-            for (int i = 0; i < localFileList.Count; i++)
+            //set Datime to GB
+
+            for (int i = 0; i < remoteFileList.Count; i++)
             {
-                if (remoteFileList.All(x => x.Key.Contains(localFileList[i].Key)))
+                if (localFileList.All(x => x.Key.Contains(remoteFileList[i].Key)))
                 {
-                    
+                    var dateTimeL = DateTime.Parse(localFileList.First(c => c.Key == remoteFileList[i].Key).Value, Config.cultureInfo);
+                    var dateTimeR = DateTime.Parse(remoteFileList[i].Value, Config.cultureInfo);
+
+                    if (dateTimeR > dateTimeL)
+                    {
+                        tmpList.Add(remoteFileList[i].Key);
+                    }
+                }
+                else
+                {
+                    tmpList.Add(remoteFileList[i].Key);
                 }
             }
             return tmpList;
-
-
         }
 
 
         public static List<KeyValuePair<string, string>> CompareFileList2(List<KeyValuePair<string, string>> localFileList, List<KeyValuePair<string, string>> remoteFileList)
         {
             List<KeyValuePair<string, string>> tmpList = new List<KeyValuePair<string, string>>();
-
+            if (localFileList.Count == 0)
+            {
+                tmpList = remoteFileList;
+                return tmpList;
+            }
             //set Datime to GB
             var cultureInfo = new CultureInfo("en-GB");
             for (int i = 0; i < remoteFileList.Count; i++)
@@ -135,6 +153,9 @@ namespace FileSync
             }
             return tmpList;
         }
+
+
+
 
         /// <summary>
         /// Send list to server client

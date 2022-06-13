@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,5 +19,6 @@ namespace FileSync
         public static string clientDir = @"d:\FileWatcherTo\";
         public static string serverDir = "D:/FileWatcher/";
         public static readonly int dataPort = 11305;
+        public static readonly CultureInfo cultureInfo = new CultureInfo("en-GB");
     }
 }

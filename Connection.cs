@@ -33,17 +33,11 @@ namespace FileSync
             //Start new command handler to handle incoming commands
             CommandHandler cmdHandler = new CommandHandler();
 
-
-
         reboot:
             try
             {
                 // Create a Socket that will use Tcp protocol
                 Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                // A Socket must be associated with an endpoint using the Bind method
-                //if (listener.LocalEndPoint == null) { 
-                //    listener.Bind(remoteEndPoint);
-                //}
                 if (listener.LocalEndPoint == null)
                 {
                     listener.Bind(localEndPoint);
@@ -98,6 +92,7 @@ namespace FileSync
         {
 
             Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
             socket.Connect(remoteEndPoint);
             Console.WriteLine("Socket connected to {0}", socket.RemoteEndPoint.ToString());
 
