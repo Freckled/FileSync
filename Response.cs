@@ -24,7 +24,8 @@ namespace FileSync
         private Enum _action;
         private string _fileName;
         private long _fileSize;
-        private List<KeyValuePair<string, string>> dirList;
+        //private List<KeyValuePair<string, string>> dirList;
+        private Dictionary<string, string> dirList;
         DateTime? _modDate;
 
 
@@ -41,7 +42,7 @@ namespace FileSync
             }
         }
 
-        public Response(string message, Enum action, List<KeyValuePair<string, string>> dirList)
+        public Response(string message, Enum action, Dictionary<string, string> dirList)
         {
             _message = message;
             _action = action;
