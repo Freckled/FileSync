@@ -16,7 +16,7 @@ namespace FileSync
 
         public CommandHandler()
         {
-            _root = Config.clientDir; //@"D:\test\";//Directory.GetCurrentDirectory();
+            _root = Config.clientDir;
         }
 
         public Response getResponse(string command)
@@ -42,15 +42,13 @@ namespace FileSync
                         string filePath = Global.rootDir + fileName;
                         long fileSize = new FileInfo(filePath).Length;
                         string fileModDate = FileHelper.GetModifiedDateTime(filePath).ToString(Config.cultureInfo);
-                        //response = "sending " + fileName; //Retrieve(_root + "test.txt");
-                        message = "SEND " + fileName + " " + fileSize + " " + fileModDate; //Retrieve(_root + "test.txt");
+                        message = "SEND " + fileName + " " + fileSize + " " + fileModDate;
 
                         _response = new Response(message, ActionType.SENDFILE, fileName);
 
                         break;
 
                     case "PORT":
-                        //response = Port(arguments);
                         message = Port(arguments);
                         _response = new Response(message, ActionType.NONE);
                         break;
@@ -58,7 +56,7 @@ namespace FileSync
 
                     case "SEND":
                         var argSplit = arguments.Split(' ');
-                        fileName = argSplit[0]; //arguments;
+                        fileName = argSplit[0];
                         fileSize = (long)Convert.ToDouble(argSplit[1]);
                         var ModDate = DateTime.Parse(argSplit[2] + " " + argSplit[3], Config.cultureInfo);
                         message = "reveiving file";
@@ -78,9 +76,8 @@ namespace FileSync
                     case "DIRLIST":
                         message = "test"; //if lists are equal change to nothing
                         var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
-                        //var LocalfileList = FileHelper.listFilesWithDateTime(Config.clientDir);
                         var argSplitFiles = arguments.Split(' ');
-                        //List<KeyValuePair<string, string>> remoteFileList = new List<KeyValuePair<string, string>>(); 
+
                         Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
 
                         foreach (string file in argSplitFiles)
@@ -89,9 +86,7 @@ namespace FileSync
                             remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
                         }
 
-                        //List<string> fileListToGet = FileHelper.CompareFileList(LocalfileList, remoteFileList);
                         var files2Get = FileHelper.CompareDir(LocalfileList, remoteFileList);
-                        //var files2Get = FileHelper.CompareFileList2(LocalfileList, remoteFileList);
                         _response = new Response(message, ActionType.GETFILES, files2Get);
                         break;
 
@@ -118,9 +113,7 @@ namespace FileSync
 
 
         private string Port(string hostPort)
-        {
-            //_dataConnectionType = DataConnectionType.Active;
-            
+        {         
             string[] ipAndPort = hostPort.Trim().Split(',');
 
             byte[] ipAddress = new byte[4];
@@ -146,14 +139,8 @@ namespace FileSync
 
 
 
-        private string[] List()
-        {
-            String[] listing = Directory.GetFiles(Directory.GetCurrentDirectory());
-            return listing;
-        }
+
 
 
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FileSync
 {
-
     public enum ActionType
     {
         DELETE,
@@ -25,7 +24,6 @@ namespace FileSync
         private Enum _action;
         private string _fileName;
         private long _fileSize;
-        //private List<KeyValuePair<string, string>> dirList;
         private Dictionary<string, string> dirList;
         DateTime? _modDate;
 
@@ -96,6 +94,7 @@ namespace FileSync
                     break;
 
                 default:
+                    throw new NotImplementedException("Action type is not supported.");
                     break;
 
             }

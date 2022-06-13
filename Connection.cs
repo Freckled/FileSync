@@ -71,7 +71,6 @@ namespace FileSync
                     byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
                     clientSocket.Send(msg);
 
-                    //TODO put creating socket e.d. in runAction?
                     Console.WriteLine("Reply sent : {0}", response.getResponseString());
                     
                     response.runAction(dataEndpoint);
