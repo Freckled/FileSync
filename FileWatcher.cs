@@ -45,10 +45,6 @@ namespace FileSync
         {
             string value = $"Created: {e.FullPath}";
             Console.WriteLine(value);
-
-            /*string serverFile = Config.serverDirectory;
-            serverFile += @"\" + e.Name;*/
-
         }
 
         private static void OnDeleted(object sender, FileSystemEventArgs e)

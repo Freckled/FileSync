@@ -17,23 +17,20 @@ namespace FileSync
             string filePath = Global.rootDir + fileName;
             DateTime fileModDate = modDate ?? DateTime.Now;
 
-
             try
             {
                 // Create a Socket that will use Tcp protocol
                 Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
                 socket.Bind(endPoint);
-                //_socket.Connect(remoteEndPoint);
                 socket.Listen(10);
 
                 Console.WriteLine("Waiting for filetransfer...");
                 Socket _dataSocket = socket.Accept();
 
-                ///receive file
-
                 try
                 {
+                    //Receive file
                     using (NetworkStream networkStream = new NetworkStream(_dataSocket))
                     using (FileStream fileStream = File.Open(filePath, FileMode.OpenOrCreate))
                     {
@@ -76,7 +73,6 @@ namespace FileSync
                 Console.WriteLine("File Transfer started");
 
                 // Release the socket.
-                //socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
             }
             catch (Exception e)
