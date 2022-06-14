@@ -99,5 +99,23 @@ namespace FileSync
         }
 
 
+        public static void SendFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
+        {
+
+            Connection conn = new Connection(remoteEndPoint);
+            IPAddress remoteIP = remoteEndPoint.Address;
+
+            CommandHandler cmd = new CommandHandler();
+            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
+
+            foreach (KeyValuePair<string, string> entry in list)
+            {
+                string resp = conn.sendCommand("send " + entry.Key + entry.Value);
+                //Response response = cmd.getResponse(resp);
+                FileHandler.SendFile(dataEndPoint, entry.Key);
+            }
+
+        }
+
     }
 }

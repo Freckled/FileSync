@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -53,6 +54,7 @@ namespace FileSync
                     break;
 
                 case "4":
+                    //get newest files from server.                    
                     Global.rootDir = Config.clientDir;
                     Connection client4 = new Connection(_serverIP, Config.serverPort);
                     string resp4 = client4.sendCommand("List");
@@ -63,10 +65,18 @@ namespace FileSync
                     IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
                     response4.runAction(endPoint4);
 
-                    string resp4b = client4.sendCommand("");
-                    Response response4b = cmd4.getResponse(resp4b);
-                    client4.sendCommand(response4b.getResponseString());
-                    response4b.runAction(endPoint4);
+
+                    //send newest files to server
+                    //steps
+                    //1 create local file list
+                    //2 get remote filelist
+                    //compare, get only newest files on client
+                    //send
+                    remoteFileList = resp4.getFileList
+                    Dictionary <string,string> sendFileList = FileHelper.CompareDir(remoteFileList, localFileList);
+
+
+
                     break;
 
                 case "5":

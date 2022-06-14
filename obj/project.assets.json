@@ -8,23 +8,23 @@
     "net5.0": []
   },
   "packageFolders": {
-    "C:\\Users\\creat\\.nuget\\packages\\": {},
-    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Freckled\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\Github\\FileSync\\FileSync.csproj",
+      "projectUniqueName": "C:\\Users\\Freckled\\Source\\Repos\\FileSync\\FileSync.csproj",
       "projectName": "FileSync",
-      "projectPath": "F:\\Github\\FileSync\\FileSync.csproj",
-      "packagesPath": "C:\\Users\\creat\\.nuget\\packages\\",
-      "outputPath": "F:\\Github\\FileSync\\obj\\",
+      "projectPath": "C:\\Users\\Freckled\\Source\\Repos\\FileSync\\FileSync.csproj",
+      "packagesPath": "C:\\Users\\Freckled\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Freckled\\Source\\Repos\\FileSync\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\creat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Freckled\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

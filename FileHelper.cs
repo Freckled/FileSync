@@ -39,8 +39,26 @@ namespace FileSync
             return serverList;
         }
 
-        public static Dictionary<string, string> CompareDir(Dictionary<string, string> localFileList, Dictionary<string, string> remoteFileList)
+        /// <summary>
+        /// Compares directory listing of remote host and local host.
+        /// returns dictionary <filename, datetime modified> of files that are newer on host
+        /// </summary>
+        ///<returns>Dictionary <string,string> </string></returns>
+        public static Dictionary<string, string> CompareDir(Dictionary<string, string> localFileList, Dictionary<string, string> remoteFileList, Boolean localLeading = true)
         {
+            if (localLeading = false)
+            {
+                var list1 = localFileList;
+                var list2 = remoteFileList;
+            }
+            else
+            {
+                var list2 = localFileList;
+                var list1 = remoteFileList;
+
+            }
+            
+            
             Dictionary<string, string> tmpDict = new Dictionary<string, string>();
 
             if (localFileList.Count == 0 || localFileList == null)
