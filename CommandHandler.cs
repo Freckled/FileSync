@@ -86,7 +86,7 @@ namespace FileSync
                             remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
                         }
 
-                        var files2Get = FileHelper.CompareDir(LocalfileList, remoteFileList);
+                        var files2Get = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
                         _response = new Response(message, ActionType.GETFILES, files2Get);
                         break;
 

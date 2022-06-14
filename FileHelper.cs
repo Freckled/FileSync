@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace FileSync
 {
+    public enum outPutNewest
+    {
+        REMOTE,
+        LOCAL
+    }
     public static class FileHelper
     {
         public static string[] GetFilesFromDir(string dir)
@@ -44,33 +49,34 @@ namespace FileSync
         /// returns dictionary <filename, datetime modified> of files that are newer on host
         /// </summary>
         ///<returns>Dictionary <string,string> </string></returns>
-        public static Dictionary<string, string> CompareDir(Dictionary<string, string> localFileList, Dictionary<string, string> remoteFileList, Boolean localLeading = true)
+        public static Dictionary<string, string> CompareDir(Dictionary<string, string> localFileList, Dictionary<string, string> remoteFileList, outPutNewest output = outPutNewest.REMOTE)
         {
-            if (localLeading = false)
+            Dictionary<string, string> list1;
+            Dictionary<string, string> list2;
+
+            if (output == outPutNewest.REMOTE)
             {
-                var list1 = localFileList;
-                var list2 = remoteFileList;
+                list1 = localFileList;
+                list2 = remoteFileList;
             }
             else
             {
-                var list2 = localFileList;
-                var list1 = remoteFileList;
-
+                list2 = localFileList;
+                list1 = remoteFileList;
             }
-            
-            
+                        
             Dictionary<string, string> tmpDict = new Dictionary<string, string>();
 
-            if (localFileList.Count == 0 || localFileList == null)
+            if (list1.Count == 0 || list1 == null)
             {
-                return remoteFileList;
+                return list2;
             }
 
-            foreach (KeyValuePair<string, string> entry in remoteFileList)
+            foreach (KeyValuePair<string, string> entry in list2)
             {
-                if (localFileList.ContainsKey(entry.Key))
+                if (list1.ContainsKey(entry.Key))
                 {
-                    var dateTimeL = DateTime.Parse(localFileList[entry.Key], Config.cultureInfo);
+                    var dateTimeL = DateTime.Parse(list1[entry.Key], Config.cultureInfo);
                     var dateTimeR = DateTime.Parse(entry.Value, Config.cultureInfo);
 
                     if (dateTimeR > dateTimeL)

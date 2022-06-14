@@ -56,26 +56,7 @@ namespace FileSync
                 case "4":
                     //get newest files from server.                    
                     Global.rootDir = Config.clientDir;
-                    Connection client4 = new Connection(_serverIP, Config.serverPort);
-                    string resp4 = client4.sendCommand("List");
-
-                    CommandHandler cmd4 = new CommandHandler();
-                    Response response4 = cmd4.getResponse(resp4);
-
-                    IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-                    response4.runAction(endPoint4);
-
-
-                    //send newest files to server
-                    //steps
-                    //1 create local file list
-                    //2 get remote filelist
-                    //compare, get only newest files on client
-                    //send
-                    remoteFileList = resp4.getFileList
-                    Dictionary <string,string> sendFileList = FileHelper.CompareDir(remoteFileList, localFileList);
-
-
+                    SyncFiles();
 
                     break;
 
@@ -92,5 +73,36 @@ namespace FileSync
             goto start;
 
         }
+
+        public static void SyncFiles()
+        {
+            string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
+            Connection client4 = new Connection(_serverIP, Config.serverPort);
+            string resp4 = client4.sendCommand("List");
+
+            CommandHandler cmd4 = new CommandHandler();
+            Response response4 = cmd4.getResponse(resp4);
+
+            IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
+            response4.runAction(endPoint4);
+
+
+
+
+
+            //var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
+            //var argSplitFiles = arguments.Split(' ');
+
+            //Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
+
+            //foreach (string file in argSplitFiles)
+            //{
+            //    var fileSplit = file.Split("|");
+            //    remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+            //}
+
+            //var files2Get = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
+        }
+
     }
 }
