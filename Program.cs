@@ -10,16 +10,19 @@ namespace FileSync
     public class Global
     {
         public static string rootDir { get; set; }
+        public static string remoteIP { get; set; }
     }
     class Program
     {
         static async Task Main(string[] args)
         {
         start:
-            Console.WriteLine("Mode; 1-Server, 2-GetNewerFiles, 3-GetFile, 4-SendNewerFiles, 5-Exit");
+            Console.WriteLine("Mode; 1-Server, 2-client, 3-client [input server IP], 4-Exit");
             string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  
             string message = Console.ReadLine();
+
+            Global.remoteIP = _serverIP;
 
             switch (message)
             {
@@ -30,37 +33,19 @@ namespace FileSync
                     break;
 
                 case "2":
+                    //get newest files from server.                    
                     Global.rootDir = Config.clientDir;
-                    Connection client = new Connection(_serverIP, Config.serverPort);
-                    string resp = client.sendCommand("List");
-
-                    CommandHandler cmd = new CommandHandler();
-                    Response response = cmd.getResponse(resp);
-
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-                    response.runAction(endPoint);
+                    SyncFiles(_serverIP);
+                    Console.WriteLine("Files synchronized");
+                    MonitorChanges();
                     break;
 
                 case "3":
-                    Global.rootDir = Config.clientDir;
-                    Connection client2 = new Connection(_serverIP, Config.serverPort);
-                    string resp2 = client2.sendCommand("get test.txt");
-
-                    CommandHandler cmd2 = new CommandHandler();
-                    Response response2 = cmd2.getResponse(resp2);
-
-                    IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.dataPort);
-                    response2.runAction(endPoint2);
+                    Console.WriteLine("input server IP");
+                    Global.remoteIP = Console.ReadLine();
                     break;
 
                 case "4":
-                    //get newest files from server.                    
-                    Global.rootDir = Config.clientDir;
-                    SyncFiles();
-
-                    break;
-
-                case "5":
                     System.Environment.Exit(0);
                     break;
 
@@ -71,37 +56,44 @@ namespace FileSync
             }
             Console.WriteLine("--------------------------------------");
             goto start;
-
         }
 
-        public static void SyncFiles()
+        public static void SyncFiles(string _serverIP)
         {
-            string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
-            Connection client4 = new Connection(_serverIP, Config.serverPort);
-            string resp4 = client4.sendCommand("List");
 
-            CommandHandler cmd4 = new CommandHandler();
-            Response response4 = cmd4.getResponse(resp4);
+            Connection client = new Connection(_serverIP, Config.serverPort);
+            //ask for a fileList
+            string resp = client.sendCommand("List");
 
-            IPEndPoint endPoint4 = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
-            response4.runAction(endPoint4);
+            CommandHandler cmd = new CommandHandler();
+            Response response = cmd.getResponse(resp);
 
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
+            response.runAction(endPoint);
 
+            //compose list from response
+            string[] commandCode = resp.Split(' ');
+            string arguments = resp.Length > 1 ? resp.Substring(commandCode[0].Length) : null;
+            arguments = arguments.Trim();
 
+            var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
+            var argSplitFiles = arguments.Split(' ');
 
+            Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
 
-            //var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
-            //var argSplitFiles = arguments.Split(' ');
+            foreach (string file in argSplitFiles)
+            {
+                var fileSplit = file.Split("|");
+                remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+            }
 
-            //Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
+            var dirListSend = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
+            FileHandler.SendFiles(endPoint, dirListSend);
+        }
 
-            //foreach (string file in argSplitFiles)
-            //{
-            //    var fileSplit = file.Split("|");
-            //    remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
-            //}
-
-            //var files2Get = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
+        public static void MonitorChanges()
+        {
+            FileWatcher.Watch();
         }
 
     }

@@ -39,6 +39,7 @@ namespace FileSync
             {
                 // Create a Socket that will use Tcp protocol
                 Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                listener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
                 if (listener.LocalEndPoint == null)
                 {
                     listener.Bind(localEndPoint);

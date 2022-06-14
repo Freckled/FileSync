@@ -93,6 +93,10 @@ namespace FileSync
                     }
                     break;
 
+                case ActionType.NONE:
+                    break;
+
+
                 default:
                     throw new NotImplementedException("Action type is not supported.");
                     break;

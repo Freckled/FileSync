@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GGNdKqAycLMfQQD/lM1PBf7l/Nm6YNYh2SToodyYZRbKpv7ila8sQH+tQ0KVAzbExMtgvqYcimV08ud3QCf8Lw==",
+  "dgSpecHash": "nMKbPBF37gmkcrYZTrQdeKgmOBKFJKSwR3DstB7MOK/m0778SSuv/TbPzu8libXZH2Qa48t2DckxzIbSM7Dn6g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Freckled\\Source\\Repos\\FileSync\\FileSync.csproj",
+  "projectFilePath": "F:\\Github\\FileSync\\FileSync.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

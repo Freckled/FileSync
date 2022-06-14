@@ -74,7 +74,7 @@ namespace FileSync
                         break;
 
                     case "DIRLIST":
-                        message = "test"; //if lists are equal change to nothing
+                        message = "Listing"; //if lists are equal change to nothing
                         var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
                         var argSplitFiles = arguments.Split(' ');
 
@@ -97,6 +97,32 @@ namespace FileSync
 
                     case "TEST":
                         message = "Test check";
+                        _response = new Response(message, ActionType.NONE);
+                        break;
+
+                    case "DELETE":
+                        message = "deleting file";
+                        fileName = arguments;
+                        FileInfo fiDel = new FileInfo(Global.rootDir + fileName);
+                        if (fiDel.Exists)
+                        {
+                            // Move file with a new name. Hence renamed.  
+                            File.Delete(Global.rootDir + fileName);
+                        }                        
+                        _response = new Response(message, ActionType.NONE);
+                        break;
+
+                    case "RENAME":
+                        string [] argsplit = arguments.Split(' ');
+                        string oldFileName = argsplit[0];
+                        string newFileName = argsplit[1];
+                        message = "renaming file "+ oldFileName + " to "+ newFileName;
+                        FileInfo fi = new FileInfo(Global.rootDir + oldFileName);
+                        if (fi.Exists)
+                        {
+                            // Move file with a new name. Hence renamed.  
+                            fi.MoveTo(Global.rootDir + newFileName);
+                        }
                         _response = new Response(message, ActionType.NONE);
                         break;
 
