@@ -1,114 +1,121 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
+using System.Net;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace FileSync
 {
-    internal class FileHandler
+    public class FileHandler
     {
-        private string _file;
-        //private TcpClient _client;
-        private TcpListener _listener;
 
-        public void sendFile(TcpClient client, string file)
+        public static void GetFile(IPEndPoint endPoint, string fileName, long fileLength, DateTime? modDate)
         {
-            _file = file;
-            //_client = client;
-            
+            string filePath = Global.rootDir + fileName;
+            DateTime fileModDate = modDate ?? DateTime.Now;
+
+            try
+            {
+                // Create a Socket that will use Tcp protocol
+                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
+                socket.Bind(endPoint);
+                socket.Listen(10);
+
+                Console.WriteLine("Waiting for filetransfer...");
+                Socket _dataSocket = socket.Accept();
 
                 try
                 {
-                  
-                    //TcpClient tcpClient = new TcpClient("127.0.0.1", 2345);
-                    Console.WriteLine("Connected. Sending file.");
+                    //Receive file
+                    using (NetworkStream networkStream = new NetworkStream(_dataSocket))
+                    using (FileStream fileStream = File.Open(filePath, FileMode.OpenOrCreate))
+                    {
 
-                    StreamWriter sWriter = new StreamWriter(client.GetStream());
-                    byte[] bytes = File.ReadAllBytes(_file);
-
-                    sWriter.WriteLine(bytes.Length.ToString());
-                    sWriter.Flush();
-
-                    sWriter.WriteLine(_file);
-                    sWriter.Flush();
-
-                    Console.WriteLine("Sending file");
-                    client.Client.SendFile(_file);
-
+                        while (fileStream.Length < fileLength)
+                        {
+                            networkStream.CopyTo(fileStream);
+                        }
+                    }
+                    _dataSocket.Close();
+                    socket.Close();
+                    File.SetLastWriteTime(filePath, fileModDate);
+                    Console.WriteLine("filetransfer complete " + fileName + " " + fileLength);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.Write(e.Message);
+                    Console.WriteLine(ex.ToString());
+                    throw;
+
                 }
-
-                Console.Read();
-
-
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                throw;
+            }
         }
 
-        public void receiveFile(TcpListener listener)
+        public static void SendFile(IPEndPoint endPoint, string fileName)
         {
-            // Listen on port 1234    
-            //TcpListener tcpListener = new TcpListener(IPAddress.Any, 2345);
-            
-            
-            listener.Start();
-            Console.WriteLine("Server started");
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(endPoint);
+            string fileLoc = Global.rootDir + fileName;
 
-            //Infinite loop to connect to new clients    
-            while (true)
+            try
             {
-                // Accept a TcpClient    
-                TcpClient tcpClient = listener.AcceptTcpClient();
+                //Send file fileName to the remote device.
+                Console.WriteLine("Sending file : {0} {1}", fileLoc, Environment.NewLine);
+                socket.SendFile(fileLoc);
+                Console.WriteLine("File Transfer started");
 
-                Console.WriteLine("Connected to client");
+                // Release the socket.
+                socket.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("File Transfer failed");
+                Console.WriteLine(e.ToString());
+            }
+        }
+        public static void GetFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
+        {
+            Connection conn = new Connection(remoteEndPoint);
+            IPAddress remoteIP = remoteEndPoint.Address;
 
-                StreamReader reader = new StreamReader(tcpClient.GetStream());
+            CommandHandler cmd = new CommandHandler();
+            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
 
-                // The first message from the client is the file size    
-                string cmdFileSize = reader.ReadLine();
-
-                // The first message from the client is the filename    
-                string cmdFileName = reader.ReadLine();
-
-                int length = Convert.ToInt32(cmdFileSize);
-                byte[] buffer = new byte[length];
-                int received = 0;
-                int read = 0;
-                int size = 1024;
-                int remaining = 0;
-
-                // Read bytes from the client using the length sent from the client    
-                while (received < length)
-                {
-                    remaining = length - received;
-                    if (remaining < size)
-                    {
-                        size = remaining;
-                    }
-
-                    read = tcpClient.GetStream().Read(buffer, received, size);
-                    received += read;
-                }
-
-                // Save the file using the filename sent by the client    
-                using (FileStream fStream = new FileStream(Path.GetFileName(cmdFileName), FileMode.Create))
-                {
-                    fStream.Write(buffer, 0, buffer.Length);
-                    fStream.Flush();
-                    fStream.Close();
-                }
-
-                Console.WriteLine("File received and saved in " + Environment.CurrentDirectory);
+            foreach (KeyValuePair<string, string> entry in list)
+            {
+                string resp = conn.sendCommand("get " + entry.Key);
+                Response response = cmd.getResponse(resp);
+                response.runAction(dataEndPoint);
             }
 
-
         }
 
+
+        public static void SendFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
+        {
+
+            Connection conn = new Connection(remoteEndPoint);
+            IPAddress remoteIP = remoteEndPoint.Address;
+
+            CommandHandler cmd = new CommandHandler();
+            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
+
+            foreach (KeyValuePair<string, string> entry in list)
+            {
+                string resp = conn.sendCommand("send " + entry.Key + entry.Value);
+                //Response response = cmd.getResponse(resp);
+                FileHandler.SendFile(dataEndPoint, entry.Key);
+            }
+
+        }
 
     }
 }

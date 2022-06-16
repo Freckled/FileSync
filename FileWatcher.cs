@@ -1,15 +1,15 @@
 using System;
 using System.IO;
+using System.Net;
 
 namespace FileSync
 {
     class FileWatcher
     {
-        ftp ftp;
 
         public static void Watch()
         {
-            using var watcher = new FileSystemWatcher(@"C:\FileWatcher");
+            using var watcher = new FileSystemWatcher(Global.rootDir);
 
             watcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime
@@ -29,7 +29,8 @@ namespace FileSync
             watcher.IncludeSubdirectories = true;
             watcher.EnableRaisingEvents = true;
 
-            Console.WriteLine("Press enter to exit.");
+            //Console.WriteLine("Press enter to exit.");
+            Console.WriteLine("Monitoring root folder. Press enter to exit.");
             Console.ReadLine();
         }
 
@@ -37,6 +38,7 @@ namespace FileSync
         {
             if (e.ChangeType != WatcherChangeTypes.Changed)
             {
+                Program.SyncFiles(Global.remoteIP);
                 return;
             }
             Console.WriteLine($"Changed: {e.FullPath}");
@@ -46,19 +48,14 @@ namespace FileSync
         {
             string value = $"Created: {e.FullPath}";
             Console.WriteLine(value);
-
-            /*string serverFile = Config.serverDirectory;
-            serverFile += @"\" + e.Name;*/
-            ftp ftp = new ftp(Config.host);
-            ftp.uploadAsync(e.Name);
         }
 
         private static void OnDeleted(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
-
-            ftp ftp = new ftp(Config.host);
-            ftp.deleteFTP(e.Name);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.serverPort);
+            Connection con = new Connection(endPoint);
+            con.sendCommand("delete " + e.Name);
         }
 
         private static void OnRenamed(object sender, RenamedEventArgs e)
@@ -66,6 +63,11 @@ namespace FileSync
             Console.WriteLine($"Renamed:");
             Console.WriteLine($"    Old: {e.OldFullPath}");
             Console.WriteLine($"    New: {e.FullPath}");
+
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.serverPort);
+            Connection con = new Connection(endPoint);
+            con.sendCommand("rename " + e.OldName + " " + e.Name);
+
         }
 
         private static void OnError(object sender, ErrorEventArgs e) =>
