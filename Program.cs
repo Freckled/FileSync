@@ -14,6 +14,10 @@ namespace FileSync
     }
     class Program
     {
+        /// <summary>
+        /// Main entrypoint of the app.
+        /// </summary>
+        /// <returns></returns>
         static async Task Main(string[] args)
         {
         start:
@@ -58,6 +62,14 @@ namespace FileSync
             goto start;
         }
 
+
+        /// <summary>
+        /// Synchronize the files with those on the remote host. Will request any newer files it doesnt have and send
+        /// files it has that are newer than those on the remote host. 
+        /// </summary>
+        /// <param name="_serverIP">the string containing the Server Ipv4 IPAddress</param>
+        /// <param name="fileName">name of the file to receive</param>
+        /// <returns></returns>
         public static void SyncFiles(string _serverIP)
         {
 
@@ -91,6 +103,10 @@ namespace FileSync
             FileHandler.SendFiles(endPoint, dirListSend);
         }
 
+        /// <summary>
+        /// Calls the Filewatcher to monitor the folder for any changes to files (local)
+        /// </summary>
+        /// <returns></returns>
         public static void MonitorChanges()
         {
             FileWatcher.Watch();

@@ -18,6 +18,10 @@ namespace FileSync
         NONE
     }
 
+    /// <summary>
+    /// Response class
+    /// </summary>
+    /// <returns></returns>
     public class Response
     {
         private string _message;
@@ -53,6 +57,11 @@ namespace FileSync
             return _message;
         }
 
+        /// <summary>
+        /// Runs the selected action
+        /// </summary>
+        /// <param name="endPoint">The remote IPEndPoint</param>
+        /// <returns></returns>
         public void runAction(IPEndPoint endPoint)
         {
             switch (_action)
@@ -95,7 +104,6 @@ namespace FileSync
 
                 case ActionType.NONE:
                     break;
-
 
                 default:
                     throw new NotImplementedException("Action type is not supported.");
