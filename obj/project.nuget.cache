@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "nMKbPBF37gmkcrYZTrQdeKgmOBKFJKSwR3DstB7MOK/m0778SSuv/TbPzu8libXZH2Qa48t2DckxzIbSM7Dn6g==",
+  "dgSpecHash": "AMlc32JAxigMx20u5jCVavEk2wN09xfpQwt/kL0AMlIMCEFj24qt8SYfYdB+fJ1Kdaa7XXUWabdeKfepdlg7oA==",
   "success": true,
   "projectFilePath": "F:\\Github\\FileSync\\FileSync.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\creat\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.17\\microsoft.netcore.app.host.win-x64.5.0.17.nupkg.sha512"
+  ],
   "logs": []
 }
