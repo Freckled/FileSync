@@ -13,7 +13,7 @@ namespace FileSync
         public static readonly string serverDirectory = @"D:\Test\drop";
         public static readonly string clientIp = "127.0.0.1";
         public static readonly int clientPort = 2503;
-        public static readonly string serverIp = "192.168.1.144";
+        public static readonly string serverIp = "192.168.1.120";
         public static readonly int serverPort = 2503;
         public static readonly string host = "ftp://127.0.0.1:2503/C:/FileWatcherTo";
         public static string clientDir = @"d:\FileWatcherTo\";

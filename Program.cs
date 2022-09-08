@@ -45,8 +45,12 @@ namespace FileSync
                     break;
 
                 case "3":
+                    Global.rootDir = Config.clientDir;
                     Console.WriteLine("input server IP");
                     Global.remoteIP = Console.ReadLine();
+                    SyncFiles(Global.remoteIP);
+                    Console.WriteLine("Files synchronized");
+                    MonitorChanges();
                     break;
 
                 case "4":
