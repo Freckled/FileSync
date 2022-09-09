@@ -27,6 +27,7 @@ namespace FileSync
             string message = Console.ReadLine();
 
             Global.remoteIP = _serverIP;
+            //Global.remoteIP = "192.168.1.120";
 
             switch (message)
             {
@@ -39,7 +40,7 @@ namespace FileSync
                 case "2":
                     //get newest files from server.                    
                     Global.rootDir = Config.clientDir;
-                    SyncFiles(_serverIP);
+                    SyncFiles(Global.remoteIP);
                     Console.WriteLine("Files synchronized");
                     MonitorChanges();
                     break;
