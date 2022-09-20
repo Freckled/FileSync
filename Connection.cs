@@ -20,7 +20,7 @@ namespace FileSync
             ipAddress = IPAddress.Parse(remoteIP);
             remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
             dataEndpoint = new IPEndPoint(ipAddress, Config.dataPort);
-            //localEndPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort);
+            //localEndPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort); 
             localEndPoint = new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), Config.serverPort);
         }
 

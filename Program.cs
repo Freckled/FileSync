@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -56,6 +57,26 @@ namespace FileSync
 
                 case "4":
                     System.Environment.Exit(0);
+                    break;
+
+
+
+                case "test":
+                    String strHostName = string.Empty;
+                    IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
+                    IPAddress[] addr = ipEntry.AddressList;
+
+                    for (int i = 0; i < addr.Length; i++)
+                    {
+                        Console.WriteLine("IP Address {0}: {1} ", i, addr[i].ToString());
+                    }
+
+                    IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+
+                    var ippaddress = host
+                        .AddressList
+                        .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                    Console.WriteLine(ippaddress);
                     break;
 
                default:
