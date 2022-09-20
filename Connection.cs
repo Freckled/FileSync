@@ -20,7 +20,8 @@ namespace FileSync
             ipAddress = IPAddress.Parse(remoteIP);
             remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
             dataEndpoint = new IPEndPoint(ipAddress, Config.dataPort);
-            localEndPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort);
+            //localEndPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort);
+            localEndPoint = new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), Config.serverPort);
         }
 
         public Connection(IPEndPoint endPoint)
@@ -107,6 +108,19 @@ namespace FileSync
             response += Encoding.ASCII.GetString(bytes, 0, bytesRec);
             Console.WriteLine("Text received : {0}", response);
             return response;
+        }
+
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
     }
