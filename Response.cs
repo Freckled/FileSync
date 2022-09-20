@@ -64,6 +64,7 @@ namespace FileSync
         /// <returns></returns>
         public void runAction(IPEndPoint endPoint)
         {
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(Global.localIP), Config.serverPort);
             switch (_action)
             {
                 case ActionType.DELETE:
@@ -78,19 +79,27 @@ namespace FileSync
                     break;
 
                 case ActionType.GETFILE:
-
-                    if (endPoint != null)
+                    //todo uncomment/comment if not working
+                    if (localEndPoint != null)
                     {
-                        FileHandler.GetFile(endPoint, _fileName, _fileSize, _modDate);
+                        FileHandler.GetFile(localEndPoint, _fileName, _fileSize, _modDate);
                     }
+
+                    //if (endPoint != null)
+                    //{
+                    //    FileHandler.GetFile(endPoint, _fileName, _fileSize, _modDate);
+                    //}
                     break;
 
                 case ActionType.GETFILES:
-
-                    if (endPoint != null)
+                    if (localEndPoint != null)
                     {
-                        FileHandler.GetFiles(endPoint, dirList);
+                        FileHandler.GetFiles(localEndPoint, dirList);
                     }
+                    //if (endPoint != null)
+                    //{
+                    //    FileHandler.GetFiles(endPoint, dirList);
+                    //}
                     break;
 
                 case ActionType.SENDMESSAGE:

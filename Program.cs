@@ -12,6 +12,7 @@ namespace FileSync
     {
         public static string rootDir { get; set; }
         public static string remoteIP { get; set; }
+        public static string localIP { get; set; }
     }
     class Program
     {
@@ -23,18 +24,23 @@ namespace FileSync
         {
         start:
             Console.WriteLine("Mode; 1-Server, 2-client, 3-client [input server IP], 4-Exit");
-            string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
-            string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();  
+            //TODO change array to only pick the IPv4 one
+            //string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
+            //string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
+            string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
+            
+            
             string message = Console.ReadLine();
 
-            Global.remoteIP = _serverIP;
+            Global.remoteIP = IP;
+            Global.localIP = IP;
             //Global.remoteIP = "192.168.1.120";
 
             switch (message)
             {
                 case "1":
                     Global.rootDir = Config.serverDir;
-                    Connection server = new Connection(_serverIP, Config.serverPort);
+                    Connection server = new Connection(Global.remoteIP, Config.serverPort);
                     server.ServerStart();
                     break;
 
@@ -62,21 +68,19 @@ namespace FileSync
 
 
                 case "test":
-                    String strHostName = string.Empty;
-                    IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
-                    IPAddress[] addr = ipEntry.AddressList;
+                    //String strHostName = string.Empty;
+                    //IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
+                    //IPAddress[] addr = ipEntry.AddressList;
 
-                    for (int i = 0; i < addr.Length; i++)
-                    {
-                        Console.WriteLine("IP Address {0}: {1} ", i, addr[i].ToString());
-                    }
+                    //for (int i = 0; i < addr.Length; i++)
+                    //{
+                    //    Console.WriteLine("IP Address {0}: {1} ", i, addr[i].ToString());
+                    //}                                       
 
-                    IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-
-                    var ippaddress = host
+                    var _localIP = Dns.GetHostEntry(Dns.GetHostName())
                         .AddressList
                         .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-                    Console.WriteLine(ippaddress);
+                    Console.WriteLine(_localIP);
                     break;
 
                default:
