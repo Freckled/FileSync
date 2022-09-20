@@ -23,13 +23,12 @@ namespace FileSync
         static async Task Main(string[] args)
         {
         start:
-            Console.WriteLine("Mode; 1-Server, 2-client, 3-client [input server IP], 4-Exit");
+            Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 3-Exit");
             //TODO change array to only pick the IPv4 one
             //string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             //string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
             string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
-            
-            
+                       
             string message = Console.ReadLine();
 
             Global.remoteIP = IP;
@@ -44,15 +43,15 @@ namespace FileSync
                     server.ServerStart();
                     break;
 
-                case "2":
-                    //get newest files from server.                    
-                    Global.rootDir = Config.clientDir;
-                    SyncFiles(Global.remoteIP);
-                    Console.WriteLine("Files synchronized");
-                    MonitorChanges();
-                    break;
+                //case "2":
+                //    //get newest files from server.                    
+                //    Global.rootDir = Config.clientDir;
+                //    SyncFiles(Global.remoteIP);
+                //    Console.WriteLine("Files synchronized");
+                //    MonitorChanges();
+                //    break;
 
-                case "3":
+                case "2":
                     Global.rootDir = Config.clientDir;
                     Console.WriteLine("input server IP");
                     Global.remoteIP = Console.ReadLine();
@@ -61,10 +60,9 @@ namespace FileSync
                     MonitorChanges();
                     break;
 
-                case "4":
+                case "3":
                     System.Environment.Exit(0);
                     break;
-
 
 
                 case "test":
