@@ -51,7 +51,7 @@ namespace FileSync
                     listener.Listen(100);
                     Console.Clear();
                     Console.WriteLine("Server starterd, waiting for a connection...");
-                    Console.WriteLine("Listening on :{0}", remoteEndPoint.ToString());
+                    Console.WriteLine("Listening on : {0}", remoteEndPoint.ToString());
                     Socket clientSocket = listener.Accept();
 
                     //note the client IP
@@ -91,6 +91,7 @@ namespace FileSync
         {
             Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
+            //change to actual remote not IP
             socket.Connect(remoteEndPoint);
             Console.WriteLine("Socket connected to {0}", socket.RemoteEndPoint.ToString());
 

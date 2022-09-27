@@ -65,6 +65,7 @@ namespace FileSync
         public void runAction(IPEndPoint endPoint)
         {
             IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(Global.localIP), Config.serverPort);
+            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.serverPort);
             switch (_action)
             {
                 case ActionType.DELETE:
@@ -94,7 +95,8 @@ namespace FileSync
                 case ActionType.GETFILES:
                     if (localEndPoint != null)
                     {
-                        FileHandler.GetFiles(localEndPoint, dirList);
+                        FileHandler.GetFiles(remoteEndPoint, dirList);
+                        //FileHandler.GetFiles(localEndPoint, dirList);
                     }
                     //if (endPoint != null)
                     //{
