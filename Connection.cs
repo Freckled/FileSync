@@ -49,7 +49,7 @@ namespace FileSync
                 while (true)
                 {                             
                     listener.Listen(100);
-                    Console.Clear();
+                    //Console.Clear();
                     Console.WriteLine("Server starterd, waiting for a connection...");
                     Console.WriteLine("Listening on : {0}", remoteEndPoint.ToString());
                     Socket clientSocket = listener.Accept();

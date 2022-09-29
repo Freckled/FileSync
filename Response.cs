@@ -66,6 +66,7 @@ namespace FileSync
         {
             IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(Global.localIP), Config.serverPort);
             IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.serverPort);
+            IPEndPoint remoteDataEndPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.dataPort);
             switch (_action)
             {
                 case ActionType.DELETE:
@@ -83,7 +84,7 @@ namespace FileSync
                     //todo uncomment/comment if not working
                     if (localEndPoint != null)
                     {
-                        FileHandler.GetFile(localEndPoint, _fileName, _fileSize, _modDate);
+                        FileHandler.GetFile(remoteDataEndPoint, _fileName, _fileSize, _modDate);
                     }
 
                     //if (endPoint != null)
