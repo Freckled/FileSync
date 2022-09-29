@@ -24,16 +24,13 @@ namespace FileSync
         {
         start:
             Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 3-Exit");
-            //TODO change array to only pick the IPv4 one
-            //string _serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
-            //string _clientIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
+            //get local IPv4
             string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
                        
             string message = Console.ReadLine();
 
             Global.remoteIP = IP;
             Global.localIP = IP;
-            //Global.remoteIP = "192.168.1.120";
 
             switch (message)
             {
@@ -43,21 +40,15 @@ namespace FileSync
                     server.ServerStart();
                     break;
 
-                //case "2":
-                //    //get newest files from server.                    
-                //    Global.rootDir = Config.clientDir;
-                //    SyncFiles(Global.remoteIP);
-                //    Console.WriteLine("Files synchronized");
-                //    MonitorChanges();
-                //    break;
-
                 case "2":
                     Global.rootDir = Config.clientDir;
                     Console.WriteLine("input server IP");
                     Global.remoteIP = Console.ReadLine();
                     SyncFiles(Global.remoteIP);
                     Console.WriteLine("Files synchronized");
-                    MonitorChanges();
+                    //Monitor changes
+                    FileWatcher.Watch(); 
+                    //MonitorChanges();
                     break;
 
                 case "3":
@@ -65,16 +56,7 @@ namespace FileSync
                     break;
 
 
-                case "test":
-                    //String strHostName = string.Empty;
-                    //IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
-                    //IPAddress[] addr = ipEntry.AddressList;
-
-                    //for (int i = 0; i < addr.Length; i++)
-                    //{
-                    //    Console.WriteLine("IP Address {0}: {1} ", i, addr[i].ToString());
-                    //}                                       
-
+                case "test":                                                      
                     var _localIP = Dns.GetHostEntry(Dns.GetHostName())
                         .AddressList
                         .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
@@ -135,10 +117,10 @@ namespace FileSync
         /// Calls the Filewatcher to monitor the folder for any changes to files (local)
         /// </summary>
         /// <returns></returns>
-        public static void MonitorChanges()
-        {
-            FileWatcher.Watch();
-        }
+        //public static void MonitorChanges()
+        //{
+        //    FileWatcher.Watch();
+        //}
 
     }
 }

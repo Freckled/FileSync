@@ -27,14 +27,8 @@ namespace FileSync
 
             try
             {
-                // Create a Socket that will use Tcp protocol
-                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
-                socket.Bind(endPoint);
-                socket.Listen(10);
-
                 Console.WriteLine("Waiting for filetransfer...");
-                Socket _dataSocket = socket.Accept();
+                Socket _dataSocket = FSSocket.Listen(Config.dataPort);
 
                 try
                 {
@@ -49,7 +43,7 @@ namespace FileSync
                         }
                     }
                     _dataSocket.Close();
-                    socket.Close();
+                    //socket.Close();
                     File.SetLastWriteTime(filePath, fileModDate);
                     Console.WriteLine("filetransfer complete : " + fileName + " " + fileLength);
                 }
@@ -80,8 +74,7 @@ namespace FileSync
         /// <returns></returns>
         public static void SendFile(IPEndPoint endPoint, string fileName)
         {
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(endPoint);
+            Socket socket = FSSocket.Connect(Config.dataPort);
             string fileLoc = Global.rootDir + fileName;
 
             try

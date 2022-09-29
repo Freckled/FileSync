@@ -43,9 +43,7 @@ namespace FileSync
                         long fileSize = new FileInfo(filePath).Length;
                         string fileModDate = FileHelper.GetModifiedDateTime(filePath).ToString(Config.cultureInfo);
                         message = "SEND " + fileName + " " + fileSize + " " + fileModDate;
-
                         _response = new Response(message, ActionType.SENDFILE, fileName);
-
                         break;
 
                     case "PORT":
@@ -126,7 +124,6 @@ namespace FileSync
                         _response = new Response(message, ActionType.NONE);
                         break;
 
-
                     default:
                         message = "502 Command not implemented"; ;
                         _response = new Response(message, ActionType.NONE);
@@ -162,11 +159,6 @@ namespace FileSync
             Console.WriteLine("200 Data Connection Established");
             return "200 Data Connection Established";
         }
-
-
-
-
-
 
     }
 }

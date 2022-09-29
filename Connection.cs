@@ -38,22 +38,11 @@ namespace FileSync
         reboot:
             try
             {
-                // Create a Socket that will use Tcp protocol
-                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                listener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
-                if (listener.LocalEndPoint == null)
-                {
-                    listener.Bind(localEndPoint);
-                }
+                               
                 //create a loop so it keeps listening
                 while (true)
-                {                             
-                    listener.Listen(100);
-                    //Console.Clear();
-                    Console.WriteLine("Server starterd, waiting for a connection...");
-                    Console.WriteLine("Listening on : {0}", remoteEndPoint.ToString());
-                    Socket clientSocket = listener.Accept();
-
+                {
+                    Socket clientSocket = FSSocket.Listen(Config.serverPort);
                     //note the client IP
                     string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
 
@@ -89,12 +78,8 @@ namespace FileSync
 
         public string sendCommand(string command)
         {
-            Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
-            //change to actual remote not IP
-            socket.Connect(remoteEndPoint);
-            Console.WriteLine("Socket connected to {0}", socket.RemoteEndPoint.ToString());
-
+            Socket socket = FSSocket.Connect(Config.serverPort);
+            
             string response = null;
             byte[] bytes = null;
 

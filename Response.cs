@@ -69,50 +69,39 @@ namespace FileSync
             IPEndPoint remoteDataEndPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.dataPort);
             switch (_action)
             {
-                case ActionType.DELETE:
-                    break;
+                //case ActionType.DELETE:
+                //    break;
 
                 case ActionType.SENDFILE:
-
                     if (endPoint != null)
                     {
-                        FileHandler.SendFile(endPoint, _fileName);
+                        FileHandler.SendFile(remoteDataEndPoint, _fileName);
                     }
                     break;
 
                 case ActionType.GETFILE:
-                    //todo uncomment/comment if not working
                     if (localEndPoint != null)
                     {
                         FileHandler.GetFile(remoteDataEndPoint, _fileName, _fileSize, _modDate);
                     }
 
-                    //if (endPoint != null)
-                    //{
-                    //    FileHandler.GetFile(endPoint, _fileName, _fileSize, _modDate);
-                    //}
                     break;
 
                 case ActionType.GETFILES:
                     if (localEndPoint != null)
                     {
                         FileHandler.GetFiles(remoteEndPoint, dirList);
-                        //FileHandler.GetFiles(localEndPoint, dirList);
                     }
-                    //if (endPoint != null)
-                    //{
-                    //    FileHandler.GetFiles(endPoint, dirList);
-                    //}
+
                     break;
 
-                case ActionType.SENDMESSAGE:
-
-                    if (endPoint != null)
-                    {
-                        Connection con = new Connection(endPoint);
-                        con.sendCommand(_message);
-                    }
-                    break;
+                //case ActionType.SENDMESSAGE:
+                //    if (endPoint != null)
+                //    {
+                //        Connection con = new Connection(endPoint);
+                //        con.sendCommand(_message);
+                //    }
+                //    break;
 
                 case ActionType.NONE:
                     break;
