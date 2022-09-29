@@ -62,7 +62,7 @@ namespace FileSync
                         File.Delete(filePath);
                         Console.WriteLine("File transfer failed");
                     }
-                    Console.WriteLine(ex.ToString());                   
+                    Console.WriteLine(ex.ToString());
                 }
             }
             catch (Exception e)
@@ -102,7 +102,7 @@ namespace FileSync
                     socket.Shutdown(SocketShutdown.Both);
                     socket.Close();
                 }
-                
+
                 Console.WriteLine("File Transfer failed");
                 Console.WriteLine(e.ToString());
             }
@@ -148,7 +148,9 @@ namespace FileSync
 
             foreach (KeyValuePair<string, string> entry in list)
             {
-                string resp = conn.sendCommand("send " + entry.Key + entry.Value);
+                string filePath = Global.rootDir + entry.Key;
+                long fileSize = new FileInfo(filePath).Length;
+                string resp = conn.sendCommand("send " + " " + entry.Key + " " + fileSize + " " + entry.Value);
                 //Response response = cmd.getResponse(resp);
                 FileHandler.SendFile(dataEndPoint, entry.Key);
             }
