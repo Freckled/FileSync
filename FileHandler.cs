@@ -101,6 +101,7 @@ namespace FileSync
             }
         }
 
+
         /// <summary>
         /// Receives a predetermined amount of files from the remote Host.
         /// </summary>
