@@ -84,7 +84,7 @@ namespace FileSync
         /// <returns></returns>
         public static void SendFile(IPEndPoint endPoint, string fileName)
         {
-            Socket socket = FSSocket.Connect(Config.dataPort);
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);    
 
             if (Global.client)
             {
