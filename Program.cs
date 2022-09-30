@@ -13,6 +13,7 @@ namespace FileSync
         public static string rootDir { get; set; }
         public static string remoteIP { get; set; }
         public static string localIP { get; set; }
+        public static bool client { get; set; }
     }
     class Program
     {
@@ -56,14 +57,26 @@ namespace FileSync
                     break;
 
 
-                case "test":                                                      
-                    var _localIP = Dns.GetHostEntry(Dns.GetHostName())
-                        .AddressList
-                        .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-                    Console.WriteLine(_localIP);
+                case "test":
+                    Global.remoteIP = "192.168.1.120";
+                    Global.client = true;
+                    Test test = new Test();
+                    test.Connection();
                     break;
 
-               default:
+                case "get":
+                    Global.remoteIP = "192.168.1.120";
+                    Global.client = true;
+                    Test test2 = new Test();
+                    test2.SynchFiles();
+
+                    break;
+
+
+
+
+
+                default:
                     goto start;
                     break;
 
