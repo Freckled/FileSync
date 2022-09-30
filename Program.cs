@@ -13,6 +13,7 @@ namespace FileSync
         public static string rootDir { get; set; }
         public static string remoteIP { get; set; }
         public static string localIP { get; set; }
+        public static bool client { get; set; } 
     }
     class Program
     {
@@ -42,6 +43,7 @@ namespace FileSync
 
                 case "2":
                     Global.rootDir = Config.clientDir;
+                    Global.client = true;
                     Console.WriteLine("input server IP");
                     Global.remoteIP = Console.ReadLine();
                     SyncFiles(Global.remoteIP);

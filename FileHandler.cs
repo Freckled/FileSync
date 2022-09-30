@@ -28,7 +28,17 @@ namespace FileSync
             try
             {
                 Console.WriteLine("Waiting for filetransfer...");
-                Socket _dataSocket = FSSocket.Listen(Config.dataPort);
+                Socket _dataSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);  
+                
+                if (Global.client)
+                {
+                    _dataSocket = FSSocket.Connect(Config.dataPort);
+                }
+                else
+                {
+                    _dataSocket = FSSocket.Listen(Config.dataPort);
+                }
+                
 
                 try
                 {
@@ -75,6 +85,16 @@ namespace FileSync
         public static void SendFile(IPEndPoint endPoint, string fileName)
         {
             Socket socket = FSSocket.Connect(Config.dataPort);
+
+            if (Global.client)
+            {
+                socket = FSSocket.Connect(Config.dataPort);
+            }
+            else
+            {
+                socket = FSSocket.Listen(Config.dataPort);
+            }
+
             string fileLoc = Global.rootDir + fileName;
 
             try
