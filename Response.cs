@@ -64,9 +64,9 @@ namespace FileSync
         /// <returns></returns>
         public void runAction(IPEndPoint endPoint)
         {
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(Global.localIP), Config.serverPort);
-            IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.serverPort);
-            IPEndPoint remoteDataEndPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.dataPort);
+            IPEndPoint localEndPoint = new IPEndPoint(Global.localIP, Config.serverPort);
+            IPEndPoint remoteEndPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
+            IPEndPoint remoteDataEndPoint = new IPEndPoint(Global.remoteIP, Config.dataPort);
             switch (_action)
             {
                 //case ActionType.DELETE:

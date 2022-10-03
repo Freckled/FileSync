@@ -14,7 +14,7 @@ namespace FileSync
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            IPEndPoint IP = new IPEndPoint(IPAddress.Parse(Global.localIP), port);
+            IPEndPoint IP = new IPEndPoint(Global.localIP, port);
             socket.Bind(IP);
             socket.Listen(10);
             Console.WriteLine("Socket started, waiting for a connection...");
@@ -29,7 +29,7 @@ namespace FileSync
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            IPEndPoint IP = new IPEndPoint(IPAddress.Parse(Global.remoteIP), port);
+            IPEndPoint IP = new IPEndPoint(Global.remoteIP, port);
             socket.Connect(IP);
             Console.WriteLine("Socket connected to {0}", socket.RemoteEndPoint.ToString());
             return socket;

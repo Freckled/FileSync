@@ -53,7 +53,7 @@ namespace FileSync
         private static void OnDeleted(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.serverPort);
+            IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
             Connection con = new Connection(endPoint);
             con.sendCommand("delete " + e.Name);
         }
@@ -64,7 +64,7 @@ namespace FileSync
             Console.WriteLine($"    Old: {e.OldFullPath}");
             Console.WriteLine($"    New: {e.FullPath}");
 
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(Global.remoteIP), Config.serverPort);
+            IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
             Connection con = new Connection(endPoint);
             con.sendCommand("rename " + e.OldName + " " + e.Name);
 

@@ -15,9 +15,8 @@ namespace FileSync
         private IPEndPoint dataEndpoint;
         private IPEndPoint localEndPoint;
 
-        public Connection(string remoteIP, int remotePort)
+        public Connection(IPAddress ipAddress, int remotePort)
         {
-            ipAddress = IPAddress.Parse(remoteIP);
             remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
             dataEndpoint = new IPEndPoint(ipAddress, Config.dataPort);
             //localEndPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort); 

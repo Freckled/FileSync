@@ -11,8 +11,8 @@ namespace FileSync
     public class Global
     {
         public static string rootDir { get; set; }
-        public static string remoteIP { get; set; }
-        public static string localIP { get; set; }
+        public static IPAddress remoteIP { get; set; }
+        public static IPAddress localIP { get; set; }
         public static bool client { get; set; } 
     }
     class Program
@@ -26,8 +26,8 @@ namespace FileSync
         start:
             Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 3-Exit");
             //get local IPv4
-            string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
-                       
+            //string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
+            IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
             string message = Console.ReadLine();
 
             Global.remoteIP = IP;
@@ -45,7 +45,7 @@ namespace FileSync
                     Global.rootDir = Config.clientDir;
                     Global.client = true;
                     Console.WriteLine("input server IP");
-                    Global.remoteIP = Console.ReadLine();
+                    Global.remoteIP = IPAddress.Parse(Console.ReadLine());
                     SyncFiles(Global.remoteIP);
                     Console.WriteLine("Files synchronized");
                     //Monitor changes
@@ -82,7 +82,7 @@ namespace FileSync
         /// <param name="_serverIP">the string containing the Server Ipv4 IPAddress</param>
         /// <param name="fileName">name of the file to receive</param>
         /// <returns></returns>
-        public static void SyncFiles(string _serverIP)
+        public static void SyncFiles(IPAddress _serverIP)
         {
 
             Connection client = new Connection(_serverIP, Config.serverPort);
@@ -92,7 +92,7 @@ namespace FileSync
             CommandHandler cmd = new CommandHandler();
             Response response = cmd.getResponse(resp);
 
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(_serverIP), Config.serverPort);
+            IPEndPoint endPoint = new IPEndPoint(_serverIP, Config.serverPort);
             response.runAction(endPoint);
 
             //compose list from response
