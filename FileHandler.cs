@@ -37,8 +37,7 @@ namespace FileSync
                 else
                 {
                     _dataSocket = FSSocket.Listen(Config.dataPort);
-                }
-                
+                }                
 
                 try
                 {
