@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -76,22 +77,32 @@ namespace FileSync
 
             //compare DIR list to own
             //--?
+            string[] dirList = (Encoding.ASCII.GetString(data)).Split("/n");
+            foreach(string item in dirList) { 
+                Console.WriteLine(item.Trim());
+            }
 
-            //TODO issue, port 0 doesnt select a random port but sets it to 0.
-            //open data socket
+            //Assign data socket
             Socket _dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
             _dataSocket.Bind(ep);
-
-            //let the client know where to connect to and be ready to accept connection
-            msg = Encoding.ASCII.GetBytes("PORT " + ep.Port);
+            
+            //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
+            msg = Encoding.ASCII.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
             socket.Send(msg);
-            _dataSocket.Listen(ep.Port);
+
+            _dataSocket.Listen();
             Socket dataSocket = _dataSocket.Accept();
 
             //get new file(s)
             //put new file(s)
+            FileHandler fh = new FileHandler();
             Thread t = ActionThread(() => {
+                int filesize = (int)new FileInfo("D:/Filesync/Server/5678.txt").Length;
+                msg = Encoding.ASCII.GetBytes("PUT 5678.txt " + filesize);
+                socket.Send(msg);
+                Console.WriteLine("Sending file");
+                dataSocket.SendFile("D:/Filesync/Server/5678.txt");
                 //for each loop through dir files
                     //socket.send("get/put " + filename)
                     //
@@ -100,7 +111,7 @@ namespace FileSync
                 //datasocket.close
                 //socket.close
             });
-            t.Start();
+            
                      
         }
 

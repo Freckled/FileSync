@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -62,6 +63,8 @@ namespace FileSync
             {
                 byte[] data = ReceiveAll(socket);
                 command = Encoding.ASCII.GetString(data, 0, data.Length);
+                Socket dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                IPEndPoint dataEndpoint = null;
 
                 if (command.Equals("DIR"))
                 {
@@ -75,11 +78,31 @@ namespace FileSync
                     string[] arguments = command.Split(" ");
                     int port = int.Parse(arguments[1]);
                   
-                    Socket dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-                    IPEndPoint dataEndpoint = new IPEndPoint(_ipAdress, port);
+                    dataEndpoint = new IPEndPoint(_ipAdress, port);
                     Thread t = ActionThread(() => {
                         dataSocket.Connect(dataEndpoint);
                         Console.WriteLine("Connected to " + dataEndpoint.ToString());
+                    });
+                    //t.Start();                  
+
+                }
+
+                if (command.Contains("PUT"))
+                {
+                    string[] arguments = command.Split(" ");
+                    string fileName = arguments[1];
+                    int filesize = int.Parse(arguments[2]);
+                                                            
+                    Thread t = ActionThread(() => {
+                        if (!dataSocket.Connected)
+                        {
+                            dataSocket.Connect(dataEndpoint);
+                        }
+                        
+                        string fileLoc = ("D:/Filesync/Client/" + fileName);
+                        byte[] data = ReceiveLargeFile(dataSocket, filesize);
+                        SaveByteArrayToFileWithFileStream(data ,fileLoc);                        
+
                     });
                     //t.Start();                  
 
@@ -121,6 +144,43 @@ namespace FileSync
 
             return buffer.ToArray();
         }
+
+
+        private static byte[] ReceiveLargeFile(Socket socket, int lenght)
+        {
+            // send first the length of total bytes of the data to server
+            // create byte array with the length that you've send to the server.
+            byte[] data = new byte[lenght];
+
+
+            int size = lenght; // lenght to reveive
+            var total = 0; // total bytes to received
+            var dataleft = size; // bytes that havend been received 
+
+            // 1. check if the total bytes that are received < than the size you've send before to the server.
+            // 2. if true read the bytes that have not been receive jet
+            while (total < size)
+            {
+                // receive bytes in byte array data[]
+                // from position of total received and if the case data that havend been received.
+                var recv = socket.Receive(data, total, dataleft, SocketFlags.None);
+                if (recv == 0) // if received data = 0 than stop reseaving
+                {
+                    data = null;
+                    break;
+                }
+                total += recv;  // total bytes read + bytes that are received
+                dataleft -= recv; // bytes that havend been received
+            }
+            return data; // return byte array and do what you have to do whith the bytes.
+        }
+
+        public static void SaveByteArrayToFileWithFileStream(byte[] data, string filePath)
+        {
+            using var stream = File.Create(filePath);
+            stream.Write(data, 0, data.Length);
+        }
+
 
     }
 }
