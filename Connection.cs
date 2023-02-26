@@ -33,7 +33,7 @@ namespace FileSync
         {
             //Start new command handler to handle incoming commands
             CommandHandler cmdHandler = new CommandHandler();
-
+            
         reboot:
             try
             {
@@ -41,39 +41,58 @@ namespace FileSync
                 //create a loop so it keeps listening
                 while (true)
                 {
+                    Thread mainThread = Thread.CurrentThread;
+                                        
                     Socket clientSocket = FSSocket.Listen(Config.serverPort);
-                    //note the client IP
-                    string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
 
-                    Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
+                    Thread t = ClientConnection(() => {
+                       
+                        //-----------------------------------------------------------------------------------------
+                        //note the client IP
+                        string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
 
-                    // Incoming data from the client.
-                    string data = null;
-                    byte[] bytes = null;
+                        Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
 
-                    bytes = new byte[1024];
-                    int bytesRec = clientSocket.Receive(bytes);
-                    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                        // Incoming data from the client.
+                        string data = null;
+                        byte[] bytes = null;
 
-                    Console.WriteLine("Command received: {0}", data);
-                    Response response = cmdHandler.getResponse(data);
+                        bytes = new byte[1024];
+                        int bytesRec = clientSocket.Receive(bytes);
+                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-                    byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
-                    clientSocket.Send(msg);
+                        Console.WriteLine("Command received: {0}", data);
+                        Response response = cmdHandler.getResponse(data);
 
-                    Console.WriteLine("Reply sent : {0}", response.getResponseString());
-                    
-                    response.runAction(dataEndpoint);
+                        byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
+                        clientSocket.Send(msg);
 
+                        Console.WriteLine("Reply sent : {0}", response.getResponseString());
+                        
+                        response.runAction(dataEndpoint);
+                            //-----------------------------------------------------------------------------------------
+
+                        });
+
+                    t.Start();
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 Console.WriteLine("restarting server...");
+                Thread.Sleep(1000);
                 goto reboot;
             }
         }
+
+        public static Thread ClientConnection(Action action)
+        {
+            Thread thread = new Thread(() => { action(); });
+            thread.Start();
+            return thread;
+        }
+
 
         public string sendCommand(string command)
         {

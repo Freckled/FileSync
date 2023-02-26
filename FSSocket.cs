@@ -16,11 +16,11 @@ namespace FileSync
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             IPEndPoint IP = new IPEndPoint(Global.localIP, port);
             socket.Bind(IP);
-            socket.Listen(10);
+            socket.Listen(10); //TODO adjust later
             Console.WriteLine("Socket started, waiting for a connection...");
             Console.WriteLine("Listening on : {0}", IP.ToString());
             Socket returnSocket = socket.Accept();
-            socket.Close();
+            socket.Close(); //TODO no need to close with multiple threads?
             return returnSocket;
 
         }

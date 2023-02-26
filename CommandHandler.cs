@@ -71,9 +71,20 @@ namespace FileSync
                         _response = new Response(message, ActionType.NONE);
                         break;
 
+                        //DIRLIST arguments. Server gives this back. Arguments is a string of filesnames and properties. Filename and properties are split by a space " ". Files are split by a |.
                     case "DIRLIST":
                         message = "Listing"; //if lists are equal change to nothing
                         var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
+                        
+                        //if server dir is empty
+                        /* TODO Fix
+                        if (arguments == null) {
+                            _response = new Response(message, ActionType.NONE);
+                            break; 
+                        }
+                        */
+                        
+                        //if there are files on the server dir
                         var argSplitFiles = arguments.Split(' ');
 
                         Dictionary<string, string> remoteFileList = new Dictionary<string, string>();

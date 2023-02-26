@@ -24,7 +24,7 @@ namespace FileSync
         static async Task Main(string[] args)
         {
         start:
-            Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 3-Exit");
+            Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 4-Exit");
             //get local IPv4
             //string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
             IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
@@ -36,21 +36,26 @@ namespace FileSync
             switch (message)
             {
                 case "1":
-                    Global.rootDir = Config.serverDir;
-                    Connection server = new Connection(Global.remoteIP, Config.serverPort);
-                    server.ServerStart();
+                    //Global.rootDir = Config.serverDir;
+                    //Connection server = new Connection(Global.remoteIP, Config.serverPort);
+                    //server.ServerStart();
+                    Server server = new Server();
+                    server.start();
                     break;
 
                 case "2":
-                    Global.rootDir = Config.clientDir;
-                    Global.client = true;
-                    Console.WriteLine("input server IP");
-                    Global.remoteIP = IPAddress.Parse(Console.ReadLine());
-                    SyncFiles(Global.remoteIP);
-                    Console.WriteLine("Files synchronized");
-                    //Monitor changes
-                    FileWatcher.Watch(); 
-                    //MonitorChanges();
+                    //Global.rootDir = Config.clientDir;
+                    //Global.client = true;
+                    //Console.WriteLine("input server IP");
+                    //string IPString = Console.ReadLine();
+                    //if (IPString == null || IPString.Equals("")) { Global.remoteIP = IP; } else { Global.remoteIP = IPAddress.Parse(IPString); }
+                    //SyncFiles(Global.remoteIP);
+                    //Console.WriteLine("Files synchronized");
+                    ////Monitor changes
+                    //FileWatcher.Watch(); 
+                    ////MonitorChanges();
+                    Client client = new Client();
+                    client.start();
                     break;
 
                 case "3":
