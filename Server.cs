@@ -63,7 +63,7 @@ namespace FileSync
 
         private void clientConnection(Socket socket)
         {
-            Console.WriteLine("Connected to " + socket.RemoteEndPoint.ToString());
+            Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote" + socket.RemoteEndPoint.ToString());
             byte[] msg = null;
             //send code connection established
             //--?
@@ -89,26 +89,32 @@ namespace FileSync
             
             //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
             msg = Encoding.ASCII.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
+            Console.WriteLine("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
             socket.Send(msg);
 
-            _dataSocket.Listen();
-            Socket dataSocket = _dataSocket.Accept();
-
+       
             //get new file(s)
             //put new file(s)
             FileHandler fh = new FileHandler();
             Thread t = ActionThread(() => {
-                int filesize = (int)new FileInfo("D:/Filesync/Server/5678.txt").Length;
-                msg = Encoding.ASCII.GetBytes("PUT 5678.txt " + filesize);
+
+                string filepath = "D:/Filesync/Server/Vesper.mkv";
+                long filesize = (long)new FileInfo(filepath).Length;
+                msg = Encoding.ASCII.GetBytes("PUT Vesper.mkv " + filesize);
                 socket.Send(msg);
                 Console.WriteLine("Sending file");
-                dataSocket.SendFile("D:/Filesync/Server/5678.txt");
+                //dataSocket.SendFile(filepath);
+                _dataSocket.Listen();
+                Socket dataSocket = _dataSocket.Accept();
+                SendFile(dataSocket, filepath);
+
+
                 //for each loop through dir files
-                    //socket.send("get/put " + filename)
-                    //
+                //socket.send("get/put " + filename)
+                //
                 //end
 
-                //datasocket.close
+                dataSocket.Close();
                 //socket.close
             });
             
@@ -138,6 +144,52 @@ namespace FileSync
             }
             return buffer.ToArray();
         }
+
+
+
+
+        public bool SendFile(Socket socket, string filePath)
+        {
+            int lastStatus = 0;
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            long totalBytes = file.Length, bytesSoFar = 0;
+            socket.SendTimeout = 1000000; //timeout in milliseconds
+            try
+            {
+                byte[] filechunk = new byte[4096];
+                int numBytes;
+                while ((numBytes = file.Read(filechunk, 0, 4096)) > 0)
+                {
+                    if (socket.Send(filechunk, numBytes, SocketFlags.None) != numBytes)
+                    {
+                        throw new Exception("Error in sending the file");
+                    }
+                    bytesSoFar += numBytes;
+                    Byte progress = (byte)(bytesSoFar * 100 / totalBytes);
+                    if (progress > lastStatus && progress != 100)
+                    {
+                        Console.WriteLine(".");
+                        lastStatus = progress;
+                    }
+                }
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File send complete");
+                socket.Close();
+                file.Close();
+            }
+            return true;
+        }
+
+
+
 
 
 

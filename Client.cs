@@ -52,9 +52,10 @@ namespace FileSync
 
         private void serverConnection(Socket socket)
         {
-            Console.WriteLine("Connected to " + socket.RemoteEndPoint.ToString());
+            Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote " + socket.RemoteEndPoint.ToString());
             byte[] msg = null;
             string command = null;
+            IPEndPoint dataEndpoint = null;
             //receive code connection established
             //--?
 
@@ -64,7 +65,8 @@ namespace FileSync
                 byte[] data = ReceiveAll(socket);
                 command = Encoding.ASCII.GetString(data, 0, data.Length);
                 Socket dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-                IPEndPoint dataEndpoint = null;
+
+                Console.WriteLine(command);
 
                 if (command.Equals("DIR"))
                 {
@@ -79,10 +81,10 @@ namespace FileSync
                     int port = int.Parse(arguments[1]);
                   
                     dataEndpoint = new IPEndPoint(_ipAdress, port);
-                    Thread t = ActionThread(() => {
-                        dataSocket.Connect(dataEndpoint);
-                        Console.WriteLine("Connected to " + dataEndpoint.ToString());
-                    });
+                    //Thread t = ActionThread(() => {
+                    //    dataSocket.Connect(dataEndpoint);
+                    //    Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
+                    //});
                     //t.Start();                  
 
                 }
@@ -91,18 +93,18 @@ namespace FileSync
                 {
                     string[] arguments = command.Split(" ");
                     string fileName = arguments[1];
-                    int filesize = int.Parse(arguments[2]);
+                    long filesize = long.Parse(arguments[2]);
                                                             
                     Thread t = ActionThread(() => {
-                        if (!dataSocket.Connected)
-                        {
-                            dataSocket.Connect(dataEndpoint);
-                        }
-                        
-                        string fileLoc = ("D:/Filesync/Client/" + fileName);
-                        byte[] data = ReceiveLargeFile(dataSocket, filesize);
-                        SaveByteArrayToFileWithFileStream(data ,fileLoc);                        
+                        dataSocket.Connect(dataEndpoint);
+                        Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
 
+                        string fileLoc = ("D:/Filesync/Client/" + fileName);
+                        //byte[] data = ReceiveLargeFile(dataSocket, filesize);
+                        //SaveByteArrayToFileWithFileStream(data, fileLoc);
+                        receiveFile(dataSocket, fileLoc, filesize);
+                        
+                        dataSocket.Close();
                     });
                     //t.Start();                  
 
@@ -174,6 +176,47 @@ namespace FileSync
             }
             return data; // return byte array and do what you have to do whith the bytes.
         }
+
+
+
+
+        private void receiveFile(Socket socket, string filePath, long size)
+        {
+            using (socket)
+            {
+                
+                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                {
+                    byte[] buffer = new byte[8192];
+                    int read;
+                    int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
+
+                    do
+                    {
+                        read = socket.Receive(buffer);
+                        fs.Write(buffer, 0, read);
+                        bytesSoFar += read;
+
+                    } while (bytesSoFar < size);
+                }
+            }
+        }
+
+        private void saveFileAsync(MemoryStream inputStream, string filepath)
+        {
+            using (inputStream)
+            {
+                using Stream streamToWriteTo = File.Open(filepath, FileMode.Create);
+
+                inputStream.Position = 0;
+                inputStream.CopyToAsync(streamToWriteTo);
+            }
+        }
+
+
+
+
+
 
         public static void SaveByteArrayToFileWithFileStream(byte[] data, string filePath)
         {
