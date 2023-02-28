@@ -60,6 +60,7 @@ namespace FileSync
             //--?
 
             //receive request for DIR List
+            //TODO replace with commandHandler
             while (socket.Connected)
             {
                 byte[] data = ReceiveAll(socket);
@@ -102,15 +103,16 @@ namespace FileSync
                         string fileLoc = ("D:/Filesync/Client/" + fileName);
                         //byte[] data = ReceiveLargeFile(dataSocket, filesize);
                         //SaveByteArrayToFileWithFileStream(data, fileLoc);
-                        receiveFile(dataSocket, fileLoc, filesize);
+                        FileHandler.receiveFile(dataSocket, fileLoc, filesize);
+
+                        //receiveFile(dataSocket, fileLoc, filesize);
                         
                         dataSocket.Close();
                     });
-                    //t.Start();                  
+                    
+                    //send confirmation or request file again??
 
                 }
-
-
             }
 
                        
@@ -146,84 +148,6 @@ namespace FileSync
 
             return buffer.ToArray();
         }
-
-
-        private static byte[] ReceiveLargeFile(Socket socket, int lenght)
-        {
-            // send first the length of total bytes of the data to server
-            // create byte array with the length that you've send to the server.
-            byte[] data = new byte[lenght];
-
-
-            int size = lenght; // lenght to reveive
-            var total = 0; // total bytes to received
-            var dataleft = size; // bytes that havend been received 
-
-            // 1. check if the total bytes that are received < than the size you've send before to the server.
-            // 2. if true read the bytes that have not been receive jet
-            while (total < size)
-            {
-                // receive bytes in byte array data[]
-                // from position of total received and if the case data that havend been received.
-                var recv = socket.Receive(data, total, dataleft, SocketFlags.None);
-                if (recv == 0) // if received data = 0 than stop reseaving
-                {
-                    data = null;
-                    break;
-                }
-                total += recv;  // total bytes read + bytes that are received
-                dataleft -= recv; // bytes that havend been received
-            }
-            return data; // return byte array and do what you have to do whith the bytes.
-        }
-
-
-
-
-        private void receiveFile(Socket socket, string filePath, long size)
-        {
-            using (socket)
-            {
-                
-                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
-                {
-                    byte[] buffer = new byte[8192];
-                    int read;
-                    int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
-
-                    do
-                    {
-                        read = socket.Receive(buffer);
-                        fs.Write(buffer, 0, read);
-                        bytesSoFar += read;
-
-                    } while (bytesSoFar < size);
-                }
-            }
-        }
-
-        private void saveFileAsync(MemoryStream inputStream, string filepath)
-        {
-            using (inputStream)
-            {
-                using Stream streamToWriteTo = File.Open(filepath, FileMode.Create);
-
-                inputStream.Position = 0;
-                inputStream.CopyToAsync(streamToWriteTo);
-            }
-        }
-
-
-
-
-
-
-        public static void SaveByteArrayToFileWithFileStream(byte[] data, string filePath)
-        {
-            using var stream = File.Create(filePath);
-            stream.Write(data, 0, data.Length);
-        }
-
 
     }
 }

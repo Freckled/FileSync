@@ -106,7 +106,7 @@ namespace FileSync
                 //dataSocket.SendFile(filepath);
                 _dataSocket.Listen();
                 Socket dataSocket = _dataSocket.Accept();
-                SendFile(dataSocket, filepath);
+                FileHandler.SendFile(dataSocket, filepath);
 
 
                 //for each loop through dir files
@@ -144,54 +144,6 @@ namespace FileSync
             }
             return buffer.ToArray();
         }
-
-
-
-
-        public bool SendFile(Socket socket, string filePath)
-        {
-            int lastStatus = 0;
-            FileStream file = new FileStream(filePath, FileMode.Open); ;
-            long totalBytes = file.Length, bytesSoFar = 0;
-            socket.SendTimeout = 1000000; //timeout in milliseconds
-            try
-            {
-                byte[] filechunk = new byte[4096];
-                int numBytes;
-                while ((numBytes = file.Read(filechunk, 0, 4096)) > 0)
-                {
-                    if (socket.Send(filechunk, numBytes, SocketFlags.None) != numBytes)
-                    {
-                        throw new Exception("Error in sending the file");
-                    }
-                    bytesSoFar += numBytes;
-                    Byte progress = (byte)(bytesSoFar * 100 / totalBytes);
-                    if (progress > lastStatus && progress != 100)
-                    {
-                        Console.WriteLine(".");
-                        lastStatus = progress;
-                    }
-                }
-                socket.Shutdown(SocketShutdown.Both);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
-                return false;
-            }
-            finally
-            {
-                Console.WriteLine("File send complete");
-                socket.Close();
-                file.Close();
-            }
-            return true;
-        }
-
-
-
-
-
 
     }
 }
