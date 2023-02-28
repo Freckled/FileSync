@@ -25,6 +25,7 @@ namespace FileSync
             _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
         }
 
+        //start the client
         public void start()
         {
         try
@@ -49,7 +50,7 @@ namespace FileSync
             return thread;
         }
 
-
+        //Handle server connection
         private void serverConnection(Socket socket)
         {
             Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote " + socket.RemoteEndPoint.ToString());
@@ -129,6 +130,7 @@ namespace FileSync
 
         }
 
+        //used for comms channel, might replace later
         private byte[] ReceiveAll(Socket socket)
         {
             var buffer = new List<byte>();

@@ -23,6 +23,7 @@ namespace FileSync
             _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
         }
 
+        //start server
         public void start()
         {
             reboot:
@@ -53,6 +54,7 @@ namespace FileSync
             }
         }
 
+        //creates a new thread, puts the action in there and starts it.
         private Thread ActionThread(Action action)
         {
             Thread thread = new Thread(() => { action(); });
@@ -60,7 +62,7 @@ namespace FileSync
             return thread;
         }
 
-
+        //handles connection with the client (todo, replace commandHandler part of communications)
         private void clientConnection(Socket socket)
         {
             Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote" + socket.RemoteEndPoint.ToString());
