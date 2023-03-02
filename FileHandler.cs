@@ -170,6 +170,7 @@ namespace FileSync
 
         }
 
+        //--------------------------------------------------------------------------------
         //TODO Error handling
         public static void receiveFile(Socket socket, string filePath, long size)
         {

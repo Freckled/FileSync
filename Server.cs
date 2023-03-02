@@ -91,7 +91,7 @@ namespace FileSync
             
             //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
             msg = Encoding.ASCII.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
-            Console.WriteLine("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
+            Console.WriteLine(socket.RemoteEndPoint.ToString() + ":PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
             socket.Send(msg);
 
        
