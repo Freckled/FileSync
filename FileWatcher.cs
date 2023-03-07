@@ -56,6 +56,9 @@ namespace FileSync
             IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
             Connection con = new Connection(endPoint);
             con.sendCommand("delete " + e.Name);
+
+            //Check of socket nog open is
+
         }
 
         private static void OnRenamed(object sender, RenamedEventArgs e)

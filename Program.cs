@@ -36,7 +36,7 @@ namespace FileSync
             switch (message)
             {
                 case "1":
-                    //Global.rootDir = Config.serverDir;
+                    Global.rootDir = Config.serverDir;
                     //Connection server = new Connection(Global.remoteIP, Config.serverPort);
                     //server.ServerStart();
                     Server server = new Server();
@@ -44,7 +44,7 @@ namespace FileSync
                     break;
 
                 case "2":
-                    //Global.rootDir = Config.clientDir;
+                    Global.rootDir = Config.clientDir;
                     //Global.client = true;
                     //Console.WriteLine("input server IP");
                     //string IPString = Console.ReadLine();
@@ -52,7 +52,7 @@ namespace FileSync
                     //SyncFiles(Global.remoteIP);
                     //Console.WriteLine("Files synchronized");
                     ////Monitor changes
-                    //FileWatcher.Watch(); 
+                    FileWatcher.Watch(); 
                     ////MonitorChanges();
                     Client client = new Client();
                     client.start();
