@@ -116,6 +116,7 @@ namespace FileSync
         //    var dirListSend = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
         //    FileHandler.SendFiles(endPoint, dirListSend);
         //}
+        //-----------------------------------KEEP FOR NOW, TODO REWRITE with new command handler and send command etc----------------------------------------
 
         /// <summary>
         /// Calls the Filewatcher to monitor the folder for any changes to files(local)
