@@ -27,52 +27,64 @@ namespace FileSync
             StartupActions();
                
         start:
-            Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 4-Exit");
-            Console.WriteLine(Config.rootDir);
-            //get local IPv4
-            //string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
-            IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-            string message = Console.ReadLine();
+            try {
+                Console.WriteLine("Welcome to FileSync");
+                Console.WriteLine("Mode; 1-Server, 2-client, 3-client [input server IP], 4-Exit");
+                //Console.WriteLine(Config.rootDir);
+                //get local IPv4
+                //string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
+                IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                string message = Console.ReadLine();
 
-            Global.remoteIP = IP;
-            Global.localIP = IP;
+                Global.remoteIP = IP;
+                Global.localIP = IP;
 
-            switch (message)
-            {
-                case "1":
-                    Server server = new Server();
-                    server.start();
-                    break;
+                switch (message)
+                {
+                    case "1":
+                        Server server = new Server();
+                        server.start();
+                        break;
 
-                case "2":
-                    string input = Console.ReadLine();
-
-
-
-                    Client client = new Client();
-                    client.start();
+                    case "2":
+                        Client client = new Client();
+                        client.start();
                     
-                    //TODO integrate into client (&server?)
-                    //FileWatcher.Watch(); 
-                    ////MonitorChanges();
-                    break;
+                        //TODO integrate into client (&server?)
+                        //FileWatcher.Watch(); 
+                        ////MonitorChanges();
+                        break;
 
-                case "3":
-                    Environment.Exit(0);
-                    break;
+                    case "3":
+                        string input = Console.ReadLine();
+                        Client clientIP = new Client(input);
+                        clientIP.start();
+                        break;
+
+                    case "4":
+                        Environment.Exit(0);
+                        break;
 
 
-                case "test":                                                      
+                    case "test":                                                      
 
-                    break;
+                        break;
 
-               default:
-                    goto start;
-                    break;
+                   default:
+                        Console.Write("invalid input, try again");
+                        goto start;
+                        break;
 
             }
             Console.WriteLine("--------------------------------------");
-            goto start;
+            
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                goto start;
+            }
+            
         }
 
 
@@ -131,9 +143,14 @@ namespace FileSync
         {
             //startup actions
             // If File directory does not exist, create it
-            if (!Directory.Exists(Config.rootDir))
-            {
-                Directory.CreateDirectory(Config.rootDir);
+            try { 
+                if (!Directory.Exists(Config.rootDir))
+                {
+                    Directory.CreateDirectory(Config.rootDir);
+                }
+            }
+            catch(Exception e) {
+                Console.WriteLine(e.ToString());
             }
 
             //TODO test, remove later
