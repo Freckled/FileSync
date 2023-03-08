@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 
 namespace FileSync
 {
@@ -11,129 +13,131 @@ namespace FileSync
 
         private string _root;
         private string _currentDirectory;
-        IPEndPoint _dataEndpoint;
-        Response _response;
+        IPEndPoint dataEndpoint;
+        Socket socket;
+        Socket dataSocket;
+        IPAddress iPAddress;
 
-        public CommandHandler()
+        public enum Device
         {
-            _root = Config.clientDir;
+            CLIENT,
+            SERVER
         }
 
-        public Response getResponse(string command)
+        public CommandHandler(Socket _socket, Socket _dataSocket)
         {
-            string message = null;
-            string fileName;
+            _root = Config.rootDir;
+            socket = _socket;
+            dataSocket = _dataSocket;
+        }
 
-            string[] commandCode = command.Split(' ');
+        public void processCommand(string _command, Device _device)
+        {
+            //Return Response code. 
+            if (_command == "")
+            {
+                return;
+            }
 
+            Console.WriteLine(_command);
+
+            string[] commandCode = _command.Split(' ');
+
+            //Makes sure String is CAPS
             string cmd = commandCode[0].ToUpperInvariant();
-            string arguments = command.Length > 1 ? command.Substring(commandCode[0].Length) : null;
+            string arguments = _command.Length > 1 ? _command.Substring(commandCode[0].Length) : null;
             arguments = arguments.Trim();
 
             if (string.IsNullOrWhiteSpace(arguments))
+            { 
                 arguments = null;
-
-            if (message == null)
-            {
-                switch (cmd)
-                {
-                    case "GET":
-                        fileName = arguments;
-                        string filePath = Global.rootDir + fileName;
-                        long fileSize = new FileInfo(filePath).Length;
-                        string fileModDate = FileHelper.GetModifiedDateTime(filePath).ToString(Config.cultureInfo);
-                        message = "SEND " + fileName + " " + fileSize + " " + fileModDate;
-                        _response = new Response(message, ActionType.SENDFILE, fileName);
-                        break;
-
-                    case "PORT":
-                        message = Port(arguments);
-                        _response = new Response(message, ActionType.NONE);
-                        break;
-
-
-                    case "SEND":
-                        var argSplit = arguments.Split(' ');
-                        fileName = argSplit[0];
-                        fileSize = (long)Convert.ToDouble(argSplit[1]);
-                        var ModDate = DateTime.Parse(argSplit[2] + " " + argSplit[3], Config.cultureInfo);
-                        message = "reveiving file";
-                        _response = new Response(message, ActionType.GETFILE, fileName, fileSize, ModDate);
-                        break;
-
-                    case "LIST":
-                        message = "DIRLIST";
-                        var files = FileHelper.listFilesWithDateTime(Global.rootDir);
-                        foreach(var file in files)
-                        {
-                            message += " " + file.Key + "|" + file.Value.Replace(" ","|");
-                        }                        
-                        _response = new Response(message, ActionType.NONE);
-                        break;
-
-                    case "DIRLIST":
-                        message = "Listing"; //if lists are equal change to nothing
-                        var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
-                        var argSplitFiles = arguments.Split(' ');
-
-                        Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
-
-                        foreach (string file in argSplitFiles)
-                        {
-                            var fileSplit = file.Split("|");
-                            remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
-                        }
-
-                        var files2Get = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
-                        _response = new Response(message, ActionType.GETFILES, files2Get);
-                        break;
-
-                    case "ASKLIST":
-                        message = "LIST";
-                        _response = new Response(message, ActionType.NONE);
-                        break;
-
-                    case "TEST":
-                        message = "Test check";
-                        _response = new Response(message, ActionType.NONE);
-                        break;
-
-                    case "DELETE":
-                        message = "deleting file";
-                        fileName = arguments;
-                        FileInfo fiDel = new FileInfo(Global.rootDir + fileName);
-                        if (fiDel.Exists)
-                        {
-                            // Move file with a new name. Hence renamed.  
-                            File.Delete(Global.rootDir + fileName);
-                        }                        
-                        _response = new Response(message, ActionType.NONE);
-                        break;
-
-                    case "RENAME":
-                        string [] argsplit = arguments.Split(' ');
-                        string oldFileName = argsplit[0];
-                        string newFileName = argsplit[1];
-                        message = "renaming file "+ oldFileName + " to "+ newFileName;
-                        FileInfo fi = new FileInfo(Global.rootDir + oldFileName);
-                        if (fi.Exists)
-                        {
-                            // Move file with a new name. Hence renamed.  
-                            fi.MoveTo(Global.rootDir + newFileName);
-                        }
-                        _response = new Response(message, ActionType.NONE);
-                        break;
-
-                    default:
-                        message = "502 Command not implemented"; ;
-                        _response = new Response(message, ActionType.NONE);
-                        break;
-                }
             }
 
-            return _response;
+            switch (cmd)
+            {
+                case "GET":
+                    break;
+
+                case "PUT":
+                    this.executePut(_command);
+                    break;
+
+                case "DELETE":
+                    break;
+
+                case "SIZE":
+                    break;
+
+                case "PORT":
+                    this.executePort(_command);
+                    //Misschien dataEndPoint zetten tijdens PORT command. Komt van Server. 
+                    break;
+
+                case "CLOSE":
+                    break;
+
+                case "DIR":
+                    this.executeDir(_command);
+                    break;
+
+                default:
+                    throw new Exception("Command " + _command + " is not supported.");
+            }
+
+            //return response code. Like 200, 205 etc...
         }
 
+        private void executeDir(string _command)
+        {
+            string dirlist = "filenumber1.txt 2/19/2023 3456kb /n filenumber2.pdf 2/17/2023 365kb /n filenumber3.mp4 2/14/2023 2975kb";
+            byte[] msg = Encoding.UTF8.GetBytes(dirlist);
+            socket.Send(msg);
+        }
+
+        private void executePort(string _command)
+        {
+            string[] arguments = _command.Split(" ");
+            int port = int.Parse(arguments[1]);
+
+            dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, port);                 
+        }
+
+        private void executePut(string _command)
+        {
+            string[] arguments = _command.Split(" ");
+            string fileName = arguments[1];
+            long filesize = long.Parse(arguments[2]);
+
+            //Check if datasocket is connected
+            if (dataSocket.Connected)
+            {
+                string fileLoc = ("C:/Filesync/Client/" + fileName);
+                FileHandler.receiveFile(dataSocket, fileLoc, filesize);
+            }
+
+            if (dataEndpoint == null)
+            {
+                throw new Exception("Method executePut threw an error. No data end point is set.");
+            }
+
+            Thread t = ActionThread(() => {
+                dataSocket.Connect(dataEndpoint);
+                Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
+
+                string fileLoc = ("C:/Filesync/Client/" + fileName);
+                FileHandler.receiveFile(dataSocket, fileLoc, filesize);
+                dataSocket.Close();
+            });
+
+            //send confirmation or request file again??             
+        }
+
+        private Thread ActionThread(Action action)
+        {
+            Thread thread = new Thread(() => { action(); });
+            thread.Start();
+            return thread;
+        }
 
         private string Port(string hostPort)
         {         
@@ -155,7 +159,7 @@ namespace FileSync
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(port);
 
-            _dataEndpoint = new IPEndPoint(new IPAddress(ipAddress), BitConverter.ToInt16(port, 0));
+            dataEndpoint = new IPEndPoint(new IPAddress(ipAddress), BitConverter.ToInt16(port, 0));
             Console.WriteLine("200 Data Connection Established");
             return "200 Data Connection Established";
         }
