@@ -52,7 +52,7 @@ namespace FileSync
                     //SyncFiles(Global.remoteIP);
                     //Console.WriteLine("Files synchronized");
                     ////Monitor changes
-                    FileWatcher.Watch(); 
+                    //FileWatcher.Watch(); 
                     ////MonitorChanges();
                     Client client = new Client();
                     client.start();
@@ -87,38 +87,38 @@ namespace FileSync
         /// <param name="_serverIP">the string containing the Server Ipv4 IPAddress</param>
         /// <param name="fileName">name of the file to receive</param>
         /// <returns></returns>
-        public static void SyncFiles(IPAddress _serverIP)
-        {
+        //public static void SyncFiles(IPAddress _serverIP)
+        //{
 
-            Connection client = new Connection(_serverIP, Config.serverPort);
-            //ask for a fileList
-            string resp = client.sendCommand("List");
+        //    Connection client = new Connection(_serverIP, Config.serverPort);
+        //    //ask for a fileList
+        //    string resp = client.sendCommand("List");
 
-            CommandHandler cmd = new CommandHandler();
-            Response response = cmd.getResponse(resp);
+        //    CommandHandler cmd = new CommandHandler();
+        //    Response response = cmd.getResponse(resp);
 
-            IPEndPoint endPoint = new IPEndPoint(_serverIP, Config.serverPort);
-            response.runAction(endPoint);
+        //    IPEndPoint endPoint = new IPEndPoint(_serverIP, Config.serverPort);
+        //    response.runAction(endPoint);
 
-            //compose list from response
-            string[] commandCode = resp.Split(' ');
-            string arguments = resp.Length > 1 ? resp.Substring(commandCode[0].Length) : null;
-            arguments = arguments.Trim();
+        //    //compose list from response
+        //    string[] commandCode = resp.Split(' ');
+        //    string arguments = resp.Length > 1 ? resp.Substring(commandCode[0].Length) : null;
+        //    arguments = arguments.Trim();
 
-            var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
-            var argSplitFiles = arguments.Split(' ');
+        //    var LocalfileList = FileHelper.DictFilesWithDateTime(Global.rootDir);
+        //    var argSplitFiles = arguments.Split(' ');
 
-            Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
+        //    Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
 
-            foreach (string file in argSplitFiles)
-            {
-                var fileSplit = file.Split("|");
-                remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
-            }
+        //    foreach (string file in argSplitFiles)
+        //    {
+        //        var fileSplit = file.Split("|");
+        //        remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+        //    }
 
-            var dirListSend = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
-            FileHandler.SendFiles(endPoint, dirListSend);
-        }
+        //    var dirListSend = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
+        //    FileHandler.SendFiles(endPoint, dirListSend);
+        //}
 
         /// <summary>
         /// Calls the Filewatcher to monitor the folder for any changes to files (local)

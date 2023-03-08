@@ -29,62 +29,62 @@ namespace FileSync
             ipAddress = endPoint.Address;
         }
 
-        public void ServerStart()
-        {
-            //Start new command handler to handle incoming commands
-            CommandHandler cmdHandler = new CommandHandler();
+        //public void ServerStart()
+        //{
+        //    //Start new command handler to handle incoming commands
+        //    CommandHandler cmdHandler = new CommandHandler();
             
-        reboot:
-            try
-            {
+        //reboot:
+        //    try
+        //    {
                                
-                //create a loop so it keeps listening
-                while (true)
-                {
-                    Thread mainThread = Thread.CurrentThread;
+        //        //create a loop so it keeps listening
+        //        while (true)
+        //        {
+        //            Thread mainThread = Thread.CurrentThread;
                                         
-                    Socket clientSocket = FSSocket.Listen(Config.serverPort);
+        //            Socket clientSocket = FSSocket.Listen(Config.serverPort);
 
-                    Thread t = ClientConnection(() => {
+        //            Thread t = ClientConnection(() => {
                        
-                        //-----------------------------------------------------------------------------------------
-                        //note the client IP
-                        string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
+        //                //-----------------------------------------------------------------------------------------
+        //                //note the client IP
+        //                string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
 
-                        Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
+        //                Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
 
-                        // Incoming data from the client.
-                        string data = null;
-                        byte[] bytes = null;
+        //                // Incoming data from the client.
+        //                string data = null;
+        //                byte[] bytes = null;
 
-                        bytes = new byte[1024];
-                        int bytesRec = clientSocket.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+        //                bytes = new byte[1024];
+        //                int bytesRec = clientSocket.Receive(bytes);
+        //                data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
 
-                        Console.WriteLine("Command received: {0}", data);
-                        Response response = cmdHandler.getResponse(data);
+        //                Console.WriteLine("Command received: {0}", data);
+        //                Response response = cmdHandler.getResponse(data);
 
-                        byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
-                        clientSocket.Send(msg);
+        //                byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
+        //                clientSocket.Send(msg);
 
-                        Console.WriteLine("Reply sent : {0}", response.getResponseString());
+        //                Console.WriteLine("Reply sent : {0}", response.getResponseString());
                         
-                        response.runAction(dataEndpoint);
-                            //-----------------------------------------------------------------------------------------
+        //                response.runAction(dataEndpoint);
+        //                    //-----------------------------------------------------------------------------------------
 
-                        });
+        //                });
 
-                    t.Start();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                Console.WriteLine("restarting server...");
-                Thread.Sleep(1000);
-                goto reboot;
-            }
-        }
+        //            t.Start();
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.ToString());
+        //        Console.WriteLine("restarting server...");
+        //        Thread.Sleep(1000);
+        //        goto reboot;
+        //    }
+        //}
 
         public static Thread ClientConnection(Action action)
         {

@@ -127,22 +127,22 @@ namespace FileSync
         /// <param name="remoteEndPoint">the remote IPEndPoint</param>
         /// <param name="list">A Dictionary <filename, filesize> of files to receive</param>
         /// <returns></returns>
-        public static void GetFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
-        {
-            Connection conn = new Connection(remoteEndPoint);
-            IPAddress remoteIP = remoteEndPoint.Address;
+        //public static void GetFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
+        //{
+        //    Connection conn = new Connection(remoteEndPoint);
+        //    IPAddress remoteIP = remoteEndPoint.Address;
 
-            CommandHandler cmd = new CommandHandler();
-            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
+        //    CommandHandler cmd = new CommandHandler();
+        //    IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
 
-            foreach (KeyValuePair<string, string> entry in list)
-            {
-                string resp = conn.sendCommand("get " + entry.Key);
-                Response response = cmd.getResponse(resp);
-                response.runAction(dataEndPoint);
-            }
+        //    foreach (KeyValuePair<string, string> entry in list)
+        //    {
+        //        string resp = conn.sendCommand("get " + entry.Key);
+        //        Response response = cmd.getResponse(resp);
+        //        response.runAction(dataEndPoint);
+        //    }
 
-        }
+        //}
 
         /// <summary>
         /// Receives a predetermined amount of files from the remote Host.
@@ -150,25 +150,25 @@ namespace FileSync
         /// <param name="remoteEndPoint">the remote IPEndPoint</param>
         /// <param name="list">A Dictionary <filename, filesize> of files to send</param>
         /// <returns></returns>
-        public static void SendFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
-        {
+        //public static void SendFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
+        //{
 
-            Connection conn = new Connection(remoteEndPoint);
-            IPAddress remoteIP = remoteEndPoint.Address;
+        //    Connection conn = new Connection(remoteEndPoint);
+        //    IPAddress remoteIP = remoteEndPoint.Address;
 
-            CommandHandler cmd = new CommandHandler();
-            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
+        //    CommandHandler cmd = new CommandHandler();
+        //    IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
 
-            foreach (KeyValuePair<string, string> entry in list)
-            {
-                string filePath = Global.rootDir + entry.Key;
-                long fileSize = new FileInfo(filePath).Length;
-                string resp = conn.sendCommand("send " + " " + entry.Key + " " + fileSize + " " + entry.Value);
-                //Response response = cmd.getResponse(resp);
-                FileHandler.SendFile(dataEndPoint, entry.Key);
-            }
+        //    foreach (KeyValuePair<string, string> entry in list)
+        //    {
+        //        string filePath = Global.rootDir + entry.Key;
+        //        long fileSize = new FileInfo(filePath).Length;
+        //        string resp = conn.sendCommand("send " + " " + entry.Key + " " + fileSize + " " + entry.Value);
+        //        //Response response = cmd.getResponse(resp);
+        //        FileHandler.SendFile(dataEndPoint, entry.Key);
+        //    }
 
-        }
+        //}
 
         //TODO Error handling
         public static void receiveFile(Socket socket, string filePath, long size)

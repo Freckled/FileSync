@@ -90,7 +90,7 @@ namespace FileSync
                 case ActionType.GETFILES:
                     if (localEndPoint != null)
                     {
-                        FileHandler.GetFiles(remoteEndPoint, dirList);
+                        //FileHandler.GetFiles(remoteEndPoint, dirList);
                     }
 
                     break;

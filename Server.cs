@@ -100,9 +100,9 @@ namespace FileSync
             FileHandler fh = new FileHandler();
             Thread t = ActionThread(() => {
 
-                string filepath = "D:/Filesync/Server/Vesper.mkv";
+                string filepath = "C:/Filesync/Server/TestServer.txt";
                 long filesize = (long)new FileInfo(filepath).Length;
-                msg = Encoding.ASCII.GetBytes("PUT Vesper.mkv " + filesize);
+                msg = Encoding.ASCII.GetBytes("PUT TestServer.txt " + filesize);
                 socket.Send(msg);
                 Console.WriteLine("Sending file");
                 //dataSocket.SendFile(filepath);

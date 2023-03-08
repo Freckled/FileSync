@@ -38,7 +38,7 @@ namespace FileSync
         {
             if (e.ChangeType != WatcherChangeTypes.Changed)
             {
-                Program.SyncFiles(Global.remoteIP);
+               // Program.SyncFiles(Global.remoteIP);
                 return;
             }
             Console.WriteLine($"Changed: {e.FullPath}");

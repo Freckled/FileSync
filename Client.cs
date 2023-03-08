@@ -49,13 +49,20 @@ namespace FileSync
             Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote " + socket.RemoteEndPoint.ToString());
             string command = null;
 
+
+            CommandHandler commandHandler = null;
+
             while (socket.Connected)
             {
                 byte[] data = ReceiveAll(socket);
                 command = Encoding.ASCII.GetString(data, 0, data.Length);
                 Socket dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 
-                CommandHandler commandHandler = new CommandHandler(socket, dataSocket);
+                if (commandHandler == null)
+                {
+                    commandHandler = new CommandHandler(socket, dataSocket);
+                }
+
                 commandHandler.processCommand(command, CommandHandler.Device.CLIENT);
 
                 Console.WriteLine(command);
