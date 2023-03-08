@@ -5,124 +5,96 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Net;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace FileSync
 {
-    public class Connection
+    public static class Connection
     {
-        private IPAddress ipAddress;
-        private IPEndPoint remoteEndPoint;
-        private IPEndPoint dataEndpoint;
-        private IPEndPoint localEndPoint;
 
-        public Connection(string remoteIP, int remotePort)
+        public static string sendCommand(Socket socket, string command)
         {
-            ipAddress = IPAddress.Parse(remoteIP);
-            remoteEndPoint = new IPEndPoint(ipAddress, remotePort);
-            dataEndpoint = new IPEndPoint(ipAddress, Config.dataPort);
-            //localEndPoint = new IPEndPoint(IPAddress.Parse(Config.serverIp), Config.serverPort); 
-            localEndPoint = new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), Config.serverPort);
-        }
-
-        public Connection(IPEndPoint endPoint)
-        {
-            remoteEndPoint = endPoint;
-            ipAddress = endPoint.Address;
-        }
-
-        public void ServerStart()
-        {
-            //Start new command handler to handle incoming commands
-            CommandHandler cmdHandler = new CommandHandler();
-
-        reboot:
-            try
-            {
-                // Create a Socket that will use Tcp protocol
-                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                listener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
-                if (listener.LocalEndPoint == null)
-                {
-                    listener.Bind(localEndPoint);
-                }
-                //create a loop so it keeps listening
-                while (true)
-                {                             
-                    listener.Listen(100);
-                    //Console.Clear();
-                    Console.WriteLine("Server starterd, waiting for a connection...");
-                    Console.WriteLine("Listening on : {0}", remoteEndPoint.ToString());
-                    Socket clientSocket = listener.Accept();
-
-                    //note the client IP
-                    string clientIP = ((IPEndPoint)clientSocket.RemoteEndPoint).Address.ToString();
-
-                    Console.WriteLine("Connected to " + clientSocket.RemoteEndPoint.ToString());
-
-                    // Incoming data from the client.
-                    string data = null;
-                    byte[] bytes = null;
-
-                    bytes = new byte[1024];
-                    int bytesRec = clientSocket.Receive(bytes);
-                    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-
-                    Console.WriteLine("Command received: {0}", data);
-                    Response response = cmdHandler.getResponse(data);
-
-                    byte[] msg = Encoding.ASCII.GetBytes(response.getResponseString());
-                    clientSocket.Send(msg);
-
-                    Console.WriteLine("Reply sent : {0}", response.getResponseString());
-                    
-                    response.runAction(dataEndpoint);
-
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                Console.WriteLine("restarting server...");
-                goto reboot;
-            }
-        }
-
-        public string sendCommand(string command)
-        {
-            Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
-            //change to actual remote not IP
-            socket.Connect(remoteEndPoint);
-            Console.WriteLine("Socket connected to {0}", socket.RemoteEndPoint.ToString());
-
             string response = null;
             byte[] bytes = null;
-
+                
             bytes = new byte[1024];
-            byte[] msg = Encoding.ASCII.GetBytes(command);
+            byte[] msg = Encoding.UTF8.GetBytes(command);
 
             // Send the data through the socket.
             socket.Send(msg);
 
             // Receive the response from the remote device.
             int bytesRec = socket.Receive(bytes);
-            response += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+            response += Encoding.UTF8.GetString(bytes, 0, bytesRec);
             Console.WriteLine("Text received : {0}", response);
             return response;
         }
 
-        public static string GetLocalIPAddress()
+        public static byte[] ReceiveAll(Socket socket)
         {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            var buffer = new List<byte>();
+
+            //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
+            try
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                do
                 {
-                    return ip.ToString();
+                    var currByte = new Byte[1];
+                    var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
+
+                    if (byteCounter.Equals(1))
+                    {
+                        buffer.Add(currByte[0]);
+                    }
                 }
+                while (socket.Available > 0);
             }
-            throw new Exception("No network adapters with an IPv4 address in the system!");
+            catch (SocketException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return buffer.ToArray();
         }
+
+
+        public static byte[] ReceiveAll2(Socket socket)
+        {
+            string currentChar = null;
+            string previousChar = null;
+
+            var buffer = new List<byte>();
+
+            //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
+            try
+            {
+                do
+                {
+                    var currByte = new Byte[1];
+                    var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
+
+                    if (byteCounter.Equals(1))
+                    {
+                        buffer.Add(currByte[0]);
+                    }
+
+                    previousChar = currentChar;
+                    currentChar = Encoding.UTF8.GetString(buffer.ToArray(), 0, buffer.ToArray().Length);
+
+                    if (previousChar.Equals(Config.linebreak) && currentChar.Equals(Config.linebreak)){
+                        return buffer.ToArray();
+                    }
+
+                }
+                while (socket.Available > 0);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return buffer.ToArray();
+        }
+
+
 
     }
 }

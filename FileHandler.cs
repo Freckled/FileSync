@@ -11,151 +11,73 @@ namespace FileSync
 {
     public class FileHandler
     {
-
-        /// <summary>
-        /// Listens on local endpoint for connection to receive pre-determined file.
-        /// </summary>
-        /// <param name="endPoint">the local IPEndPoint</param>
-        /// <param name="fileLength">length of the file to recveive in bytes</param>
-        /// <param name="fileName">name of the file to receive</param>
-        /// <param name="modDate">date last modified of file on remote host</param>
-        /// <returns></returns>
-        public static void GetFile(IPEndPoint endPoint, string fileName, long fileLength, DateTime? modDate)
+        
+        //TODO Error handling
+        //receive files based on pre-determined size
+        public static void receiveFile(Socket socket, string filePath, long size)
         {
-            string filePath = Global.rootDir + fileName;
-            DateTime fileModDate = modDate ?? DateTime.Now;
-
-            try
+            using (socket)
             {
-                // Create a Socket that will use Tcp protocol
-                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, (int)1);
-                socket.Bind(endPoint);
-                socket.Listen(10);
 
-                Console.WriteLine("Waiting for filetransfer...");
-                Socket _dataSocket = socket.Accept();
-
-                try
+                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
                 {
-                    //Receive file
-                    using (NetworkStream networkStream = new NetworkStream(_dataSocket))
-                    using (FileStream fileStream = File.Open(filePath, FileMode.OpenOrCreate))
-                    {
+                    byte[] buffer = new byte[8192];
+                    int read;
+                    int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
 
-                        while (fileStream.Length < fileLength)
-                        {
-                            networkStream.CopyTo(fileStream);
-                        }
-                    }
-                    _dataSocket.Close();
-                    socket.Close();
-                    File.SetLastWriteTime(filePath, fileModDate);
-                    Console.WriteLine("filetransfer complete : " + fileName + " " + fileLength);
-                }
-                catch (Exception ex)
-                {
-                    //If filetransfer aborted before complete, delete incomplete file. 
-                    long fileSizeLocal = new FileInfo(filePath).Length;
-                    if (fileSizeLocal != fileLength)
+                    do
                     {
-                        File.Delete(filePath);
-                        Console.WriteLine("File transfer failed");
-                    }
-                    Console.WriteLine(ex.ToString());
+                        read = socket.Receive(buffer);
+                        fs.Write(buffer, 0, read);
+                        bytesSoFar += read;
+
+                    } while (bytesSoFar < size);
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("File transfer failed, connection could not be established");
-                Console.WriteLine(e.ToString());
             }
         }
 
-        /// <summary>
-        /// Sends a file to the remote IPEndPoint.
-        /// </summary>
-        /// <param name="endPoint">the local IPEndPoint</param>
-        /// <param name="fileName">name of the file to receive</param>
-        /// <returns></returns>
-        public static void SendFile(IPEndPoint endPoint, string fileName)
+        //Send the specified file over the specified socket
+        public static bool SendFile(Socket socket, string filePath)
         {
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(endPoint);
-            string fileLoc = Global.rootDir + fileName;
-
+            int lastStatus = 0;
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            long totalBytes = file.Length, bytesSoFar = 0;
+            socket.SendTimeout = 1000000; //timeout in milliseconds
             try
             {
-                //Send file fileName to the remote device.
-                Console.WriteLine("Sending file : {0} {1}", fileLoc, Environment.NewLine);
-                socket.SendFile(fileLoc);
-                Console.WriteLine("File Transfer started");
-
-                // Release the socket.
+                byte[] filechunk = new byte[4096];
+                int numBytes;
+                while ((numBytes = file.Read(filechunk, 0, 4096)) > 0)
+                {
+                    if (socket.Send(filechunk, numBytes, SocketFlags.None) != numBytes)
+                    {
+                        throw new Exception("Error in sending the file");
+                    }
+                    bytesSoFar += numBytes;
+                    Byte progress = (byte)(bytesSoFar * 100 / totalBytes);
+                    if (progress > lastStatus && progress != 100)
+                    {
+                        Console.WriteLine(".");
+                        lastStatus = progress;
+                    }
+                }
                 socket.Shutdown(SocketShutdown.Both);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File send complete");
                 socket.Close();
+                file.Close();
             }
-            catch (Exception e)
-            {
-                if (socket.Connected)
-                {
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Close();
-                }
-
-                Console.WriteLine("File Transfer failed");
-                Console.WriteLine(e.ToString());
-            }
+            return true;
         }
 
-        /// <summary>
-        /// Receives a predetermined amount of files from the remote Host.
-        /// </summary>
-        /// <param name="remoteEndPoint">the remote IPEndPoint</param>
-        /// <param name="list">A Dictionary <filename, filesize> of files to receive</param>
-        /// <returns></returns>
-        public static void GetFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
-        {
-            Connection conn = new Connection(remoteEndPoint);
-            IPAddress remoteIP = remoteEndPoint.Address;
 
-            CommandHandler cmd = new CommandHandler();
-            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
-
-            foreach (KeyValuePair<string, string> entry in list)
-            {
-                string resp = conn.sendCommand("get " + entry.Key);
-                Response response = cmd.getResponse(resp);
-                response.runAction(dataEndPoint);
-            }
-
-        }
-
-        /// <summary>
-        /// Receives a predetermined amount of files from the remote Host.
-        /// </summary>
-        /// <param name="remoteEndPoint">the remote IPEndPoint</param>
-        /// <param name="list">A Dictionary <filename, filesize> of files to send</param>
-        /// <returns></returns>
-        public static void SendFiles(IPEndPoint remoteEndPoint, Dictionary<string, string> list)
-        {
-
-            Connection conn = new Connection(remoteEndPoint);
-            IPAddress remoteIP = remoteEndPoint.Address;
-
-            CommandHandler cmd = new CommandHandler();
-            IPEndPoint dataEndPoint = new IPEndPoint(remoteIP, Config.dataPort);
-
-            foreach (KeyValuePair<string, string> entry in list)
-            {
-                string filePath = Global.rootDir + entry.Key;
-                long fileSize = new FileInfo(filePath).Length;
-                string resp = conn.sendCommand("send " + " " + entry.Key + " " + fileSize + " " + entry.Value);
-                //Response response = cmd.getResponse(resp);
-                FileHandler.SendFile(dataEndPoint, entry.Key);
-            }
-
-        }
 
     }
 }

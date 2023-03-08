@@ -15,12 +15,14 @@ namespace FileSync
     }
     public static class FileHelper
     {
+        //Returns string Array with files in the designated path
         public static string[] GetFilesFromDir(string dir)
         {
             string[] filePaths = Directory.GetFiles(dir, "*", SearchOption.AllDirectories);
             return filePaths;
         }
 
+        //Get the latest write times of files (to see when thety changed last)
         public static DateTime GetModifiedDateTime(string file)
         {
             return System.IO.File.GetLastWriteTime(file);
