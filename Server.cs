@@ -71,7 +71,7 @@ namespace FileSync
             //--?
 
             //ask for DIR List
-            msg = Encoding.UTF8.GetBytes("\nDIR");
+            msg = Encoding.UTF8.GetBytes("DIR");
             socket.Send(msg);
             byte[] data = Connection.ReceiveAll2(socket);
             //check response code 

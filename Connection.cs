@@ -81,7 +81,7 @@ namespace FileSync
                     currentChar = Encoding.UTF8.GetString(buffer.ToArray(), 0, buffer.ToArray().Length);
 
                     if (previousChar.Equals(Config.linebreak) && currentChar.Equals(Config.linebreak)){
-                        //exit loop;
+                        return buffer.ToArray();
                     }
 
                 }

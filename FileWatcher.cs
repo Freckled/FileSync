@@ -62,7 +62,7 @@ namespace FileSync
 
             //Old command, leaving it here for now TODO delete later
             //Connection con = new Connection(endPoint);
-           // con.sendCommand("delete " + e.Name);
+            //con.sendCommand("delete " + e.Name);
 
             //Check of socket nog open is
 
