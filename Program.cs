@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -23,8 +24,17 @@ namespace FileSync
         /// <returns></returns>
         static async Task Main(string[] args)
         {
+            //startup
+            // If File directory does not exist, create it
+            if (!Directory.Exists(Config.rootDir))
+            {
+                Directory.CreateDirectory(Config.rootDir);
+            }
+
+
         start:
             Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 4-Exit");
+            Console.WriteLine(Config.rootDir);
             //get local IPv4
             //string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
             IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
@@ -36,26 +46,17 @@ namespace FileSync
             switch (message)
             {
                 case "1":
-                    Global.rootDir = Config.serverDir;
-                    //Connection server = new Connection(Global.remoteIP, Config.serverPort);
-                    //server.ServerStart();
                     Server server = new Server();
                     server.start();
                     break;
 
                 case "2":
-                    Global.rootDir = Config.clientDir;
-                    //Global.client = true;
-                    //Console.WriteLine("input server IP");
-                    //string IPString = Console.ReadLine();
-                    //if (IPString == null || IPString.Equals("")) { Global.remoteIP = IP; } else { Global.remoteIP = IPAddress.Parse(IPString); }
-                    //SyncFiles(Global.remoteIP);
-                    //Console.WriteLine("Files synchronized");
-                    ////Monitor changes
-                    //FileWatcher.Watch(); 
-                    ////MonitorChanges();
                     Client client = new Client();
                     client.start();
+                    
+                    //TODO integrate into client (&server?)
+                    //FileWatcher.Watch(); 
+                    ////MonitorChanges();
                     break;
 
                 case "3":
@@ -80,6 +81,7 @@ namespace FileSync
         }
 
 
+        //-----------------------------------KEEP FOR NOW, TODO REWRITE with new command handler and send command etc----------------------------------------
         /// <summary>
         /// Synchronize the files with those on the remote host. Will request any newer files it doesnt have and send
         /// files it has that are newer than those on the remote host. 
@@ -121,13 +123,13 @@ namespace FileSync
         //}
 
         /// <summary>
-        /// Calls the Filewatcher to monitor the folder for any changes to files (local)
+        /// Calls the Filewatcher to monitor the folder for any changes to files(local)
         /// </summary>
         /// <returns></returns>
-        //public static void MonitorChanges()
-        //{
-        //    FileWatcher.Watch();
-        //}
+        public static void MonitorChanges()
+        {
+            FileWatcher.Watch();
+        }
 
     }
 }

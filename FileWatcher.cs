@@ -50,17 +50,21 @@ namespace FileSync
             Console.WriteLine(value);
         }
 
+        //TODO Send/initiate command to delete file on remote from here
         private static void OnDeleted(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
             IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
-            Connection con = new Connection(endPoint);
-            con.sendCommand("delete " + e.Name);
+
+            //Old command, leaving it here for now TODO delete later
+            //Connection con = new Connection(endPoint);
+           // con.sendCommand("delete " + e.Name);
 
             //Check of socket nog open is
 
         }
 
+        //TODO Send/initiate command to rename file on remote from here
         private static void OnRenamed(object sender, RenamedEventArgs e)
         {
             Console.WriteLine($"Renamed:");
@@ -68,8 +72,10 @@ namespace FileSync
             Console.WriteLine($"    New: {e.FullPath}");
 
             IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
-            Connection con = new Connection(endPoint);
-            con.sendCommand("rename " + e.OldName + " " + e.Name);
+
+            //Old command, leaving it here for now TODO delete later
+            //Connection con = new Connection(endPoint);
+            //con.sendCommand("rename " + e.OldName + " " + e.Name);
 
         }
 

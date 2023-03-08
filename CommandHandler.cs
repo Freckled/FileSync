@@ -14,7 +14,6 @@ namespace FileSync
         private string _root;
         private string _currentDirectory;
         IPEndPoint dataEndpoint;
-        Response _response;
         Socket socket;
         Socket dataSocket;
         IPAddress iPAddress;
@@ -27,7 +26,7 @@ namespace FileSync
 
         public CommandHandler(Socket _socket, Socket _dataSocket)
         {
-            _root = Config.clientDir;
+            _root = Config.rootDir;
             socket = _socket;
             dataSocket = _dataSocket;
         }
@@ -91,7 +90,7 @@ namespace FileSync
         private void executeDir(string _command)
         {
             string dirlist = "filenumber1.txt 2/19/2023 3456kb /n filenumber2.pdf 2/17/2023 365kb /n filenumber3.mp4 2/14/2023 2975kb";
-            byte[] msg = Encoding.ASCII.GetBytes(dirlist);
+            byte[] msg = Encoding.UTF8.GetBytes(dirlist);
             socket.Send(msg);
         }
 

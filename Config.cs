@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FileSync
 {
     public class Config
     {
-        public static readonly string clientDirectory = @"D:\Test";
-        public static readonly string serverDirectory = @"D:\Test\drop";
-        public static readonly string clientIp = "127.0.0.1";
-        public static readonly int clientPort = 2503;
+        public static readonly string rootDir = Directory.GetCurrentDirectory() + "\\FileSync\\";
         //public static readonly string serverIp = "192.168.1.120";
-        public static readonly int serverPort = 2503;
-        public static readonly string host = "ftp://127.0.0.1:2503/C:/FileWatcherTo";
-        public static string clientDir = @"C:\Filesync\Client\";
-        public static string serverDir = "C:/Filesync/Server/";
-        public static readonly int dataPort = 11305;
+        public static readonly int serverPort = 42069;
         public static readonly CultureInfo cultureInfo = new CultureInfo("en-GB");
+        public static readonly string linebreak = "\n\n";
     }
 }

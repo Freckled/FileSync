@@ -71,15 +71,15 @@ namespace FileSync
             //--?
 
             //ask for DIR List
-            msg = Encoding.ASCII.GetBytes("DIR");
+            msg = Encoding.UTF8.GetBytes("\nDIR");
             socket.Send(msg);
-            byte[] data = ReceiveAll(socket);
+            byte[] data = Connection.ReceiveAll2(socket);
             //check response code 
             //--?
 
             //compare DIR list to own
             //--?
-            string[] dirList = (Encoding.ASCII.GetString(data)).Split("/n");
+            string[] dirList = (Encoding.UTF8.GetString(data)).Split("/n");
             foreach(string item in dirList) { 
                 Console.WriteLine(item.Trim());
             }
@@ -90,7 +90,7 @@ namespace FileSync
             _dataSocket.Bind(ep);
             
             //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
-            msg = Encoding.ASCII.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
+            msg = Encoding.UTF8.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
             Console.WriteLine("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
             socket.Send(msg);
 
@@ -102,7 +102,7 @@ namespace FileSync
 
                 string filepath = "C:/Filesync/Server/TestServer.txt";
                 long filesize = (long)new FileInfo(filepath).Length;
-                msg = Encoding.ASCII.GetBytes("PUT TestServer.txt " + filesize);
+                msg = Encoding.UTF8.GetBytes("PUT TestServer.txt " + filesize);
                 socket.Send(msg);
                 Console.WriteLine("Sending file");
                 //dataSocket.SendFile(filepath);
@@ -121,30 +121,6 @@ namespace FileSync
             });
             
                      
-        }
-
-        private byte[] ReceiveAll(Socket socket)
-        {
-            var buffer = new List<byte>();
-
-            //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
-            try { 
-                do
-                {
-                    var currByte = new Byte[1];
-                    var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
-
-                    if (byteCounter.Equals(1))
-                    {
-                        buffer.Add(currByte[0]);
-                    }
-                }
-                while (socket.Available > 0);
-            }catch(SocketException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return buffer.ToArray();
         }
 
     }

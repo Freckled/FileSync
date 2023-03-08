@@ -54,8 +54,8 @@ namespace FileSync
 
             while (socket.Connected)
             {
-                byte[] data = ReceiveAll(socket);
-                command = Encoding.ASCII.GetString(data, 0, data.Length);
+                byte[] data = Connection.ReceiveAll2(socket);
+                command = Encoding.UTF8.GetString(data, 0, data.Length);
                 Socket dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 
                 if (commandHandler == null)
@@ -73,27 +73,6 @@ namespace FileSync
             _dataSocket.Bind(ep);
 
             //let the client know where to connect to and be ready to accept connection
-        }
-
-        //used for comms channel, might replace later
-        private byte[] ReceiveAll(Socket socket)
-        {
-            var buffer = new List<byte>();
-
-            //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
-            do
-            {
-                var currByte = new Byte[1];
-                var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
-
-                if (byteCounter.Equals(1))
-                {
-                    buffer.Add(currByte[0]);
-                }
-            }
-            while (socket.Available > 0);
-
-            return buffer.ToArray();
         }
 
     }
