@@ -11,8 +11,9 @@ namespace FileSync
 {
     public class FileHandler
     {
-
+        
         //TODO Error handling
+        //receive files based on pre-determined size
         public static void receiveFile(Socket socket, string filePath, long size)
         {
             using (socket)
@@ -35,7 +36,7 @@ namespace FileSync
             }
         }
 
-
+        //Send the specified file over the specified socket
         public static bool SendFile(Socket socket, string filePath)
         {
             int lastStatus = 0;

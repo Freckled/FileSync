@@ -24,14 +24,8 @@ namespace FileSync
         /// <returns></returns>
         static async Task Main(string[] args)
         {
-            //startup
-            // If File directory does not exist, create it
-            if (!Directory.Exists(Config.rootDir))
-            {
-                Directory.CreateDirectory(Config.rootDir);
-            }
-
-
+            StartupActions();
+               
         start:
             Console.WriteLine("Mode; 1-Server, 2-client [input server IP], 4-Exit");
             Console.WriteLine(Config.rootDir);
@@ -51,6 +45,10 @@ namespace FileSync
                     break;
 
                 case "2":
+                    string input = Console.ReadLine();
+
+
+
                     Client client = new Client();
                     client.start();
                     
@@ -60,15 +58,12 @@ namespace FileSync
                     break;
 
                 case "3":
-                    System.Environment.Exit(0);
+                    Environment.Exit(0);
                     break;
 
 
                 case "test":                                                      
-                    var _localIP = Dns.GetHostEntry(Dns.GetHostName())
-                        .AddressList
-                        .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-                    Console.WriteLine(_localIP);
+
                     break;
 
                default:
@@ -130,6 +125,23 @@ namespace FileSync
         {
             FileWatcher.Watch();
         }
+
+        private static void StartupActions()
+        {
+            //startup actions
+            // If File directory does not exist, create it
+            if (!Directory.Exists(Config.rootDir))
+            {
+                Directory.CreateDirectory(Config.rootDir);
+            }
+
+            //TODO test, remove later
+            if (!Directory.Exists(Config.testDir))
+            {
+                Directory.CreateDirectory(Config.testDir);
+            }
+        }
+
 
     }
 }

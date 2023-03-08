@@ -18,9 +18,16 @@ namespace FileSync
         private IPEndPoint _rep;
 
         public Client()
+        {            
+            _ipAdress = Config.serverIP;// TODO change to "server IP"
+            _rep = new IPEndPoint(_ipAdress, Config.serverPort);
+            _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+        }
+
+        //constructor with the option to give an IP adress as string to connect to.
+        public Client(string ip)
         {
-            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-            _ipAdress = host.AddressList[0];// TODO change to "server IP"
+            _ipAdress = IPAddress.Parse(ip);
             _rep = new IPEndPoint(_ipAdress, Config.serverPort);
             _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
         }
@@ -42,6 +49,7 @@ namespace FileSync
                
             }
         }
+
 
         //Handle server connection
         private void serverConnection(Socket socket)
