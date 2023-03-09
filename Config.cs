@@ -19,5 +19,7 @@ namespace FileSync
         public static readonly IPAddress serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0]; //TODO change to serverIP if known
         public static readonly CultureInfo cultureInfo = new CultureInfo("en-GB");
         public static readonly string linebreak = "\n";
+        public static readonly string endTransmissionChar = "\u0004";
+        public static readonly string endTextChar = "\u0003";
     }
 }

@@ -59,33 +59,28 @@ namespace FileSync
 
         public static byte[] ReceiveAll2(Socket socket)
         {
-            string currentChar = null;
-            string previousChar = null;
 
-            var buffer = new List<byte>();
+            var buffer = new List<byte>();           
+            byte[] endTextChar = Encoding.UTF8.GetBytes(Config.endTextChar);
+            
 
             //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
             try
             {
-                do
+                var currByte = new Byte[1];
+                while (currByte[0] != endTextChar[0])
                 {
-                    var currByte = new Byte[1];
+                    currByte = new Byte[1];
                     var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
 
-                    if (byteCounter.Equals(1))
+
+                    if (byteCounter.Equals(1) && (currByte[0] != endTextChar[0]))
                     {
                         buffer.Add(currByte[0]);
-                    }
-
-                    previousChar = currentChar;
-                    currentChar = Encoding.UTF8.GetString(buffer.ToArray(), 0, buffer.ToArray().Length);
-
-                    if (previousChar.Equals(Config.linebreak) && currentChar.Equals(Config.linebreak)){
-                        return buffer.ToArray();
-                    }
+                    }                 
 
                 }
-                while (socket.Available > 0);
+                
             }
             catch (SocketException e)
             {
