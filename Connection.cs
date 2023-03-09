@@ -68,13 +68,17 @@ namespace FileSync
             try
             {
                 var currByte = new Byte[1];
-                while (currByte[0] != endTextChar[0])
+                while (socket.Connected)
                 {
                     currByte = new Byte[1];
                     var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
 
+                    if (currByte[0] == endTextChar[0])
+                    {
+                        return buffer.ToArray();
+                    }
 
-                    if (byteCounter.Equals(1) && (currByte[0] != endTextChar[0]))
+                    if (byteCounter.Equals(1))
                     {
                         buffer.Add(currByte[0]);
                     }                 
@@ -86,6 +90,8 @@ namespace FileSync
             {
                 Console.WriteLine(e.Message);
             }
+
+            Console.WriteLine("Socket closed before <EOT>");
             return buffer.ToArray();
         }
 
