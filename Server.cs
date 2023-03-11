@@ -71,9 +71,9 @@ namespace FileSync
             //--?
 
             //ask for DIR List
-            msg = Encoding.UTF8.GetBytes("DIR" + Config.endTextChar);
+            msg = Encoding.UTF8.GetBytes("DIR");// + Config.endTextChar);
             socket.Send(msg);
-            byte[] data = Connection.ReceiveAll2(socket);
+            byte[] data = Connection.ReceiveAll(socket);
             //check response code 
             //--?
 
@@ -100,9 +100,9 @@ namespace FileSync
             FileHandler fh = new FileHandler();
             Thread t = ActionThread(() => {
 
-                string filepath = "C:/Filesync/Server/TestServer.txt";
+                string filepath = "D:/Filesync/Server/Vesper.mkv";
                 long filesize = (long)new FileInfo(filepath).Length;
-                msg = Encoding.UTF8.GetBytes("PUT TestServer.txt " + filesize);
+                msg = Encoding.UTF8.GetBytes("PUT Vesper.mkv " + filesize);
                 socket.Send(msg);
                 Console.WriteLine("Sending file");
                 //dataSocket.SendFile(filepath);

@@ -62,7 +62,7 @@ namespace FileSync
 
             while (socket.Connected)
             {
-                byte[] data = Connection.ReceiveAll2(socket);
+                byte[] data = Connection.ReceiveAll(socket);
                 command = Encoding.UTF8.GetString(data, 0, data.Length);
                 Socket dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 

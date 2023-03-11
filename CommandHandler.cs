@@ -111,7 +111,7 @@ namespace FileSync
             //Check if datasocket is connected
             if (dataSocket.Connected)
             {
-                string fileLoc = ("C:/Filesync/Client/" + fileName);
+                string fileLoc = (Config.rootDir + fileName);
                 FileHandler.receiveFile(dataSocket, fileLoc, filesize);
             }
 
@@ -124,7 +124,7 @@ namespace FileSync
                 dataSocket.Connect(dataEndpoint);
                 Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
 
-                string fileLoc = ("C:/Filesync/Client/" + fileName);
+                string fileLoc = (Config.rootDir + fileName);
                 FileHandler.receiveFile(dataSocket, fileLoc, filesize);
                 dataSocket.Close();
             });
