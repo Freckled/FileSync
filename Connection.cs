@@ -59,42 +59,14 @@ namespace FileSync
 
         public static byte[] ReceiveAll2(Socket socket)
         {
-<<<<<<< HEAD
-            string currentChar = null;
-            string previousChar = null;
-
-            var buffer = new List<byte>();
-=======
 
             var buffer = new List<byte>();           
             byte[] endTextChar = Encoding.UTF8.GetBytes(Config.endTextChar);
             
->>>>>>> noel_1
 
             //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
             try
             {
-<<<<<<< HEAD
-                do
-                {
-                    var currByte = new Byte[1];
-                    var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
-
-                    if (byteCounter.Equals(1))
-                    {
-                        buffer.Add(currByte[0]);
-                    }
-
-                    previousChar = currentChar;
-                    currentChar = Encoding.UTF8.GetString(buffer.ToArray(), 0, buffer.ToArray().Length);
-
-                    if (previousChar.Equals(Config.linebreak) && currentChar.Equals(Config.linebreak)){
-                        return buffer.ToArray();
-                    }
-
-                }
-                while (socket.Available > 0);
-=======
                 var currByte = new Byte[1];
                 while (socket.Connected)
                 {
@@ -113,17 +85,11 @@ namespace FileSync
 
                 }
                 
->>>>>>> noel_1
             }
             catch (SocketException e)
             {
                 Console.WriteLine(e.Message);
             }
-<<<<<<< HEAD
-            return buffer.ToArray();
-        }
-
-=======
 
             Console.WriteLine("Socket closed before <EOT>");
             return buffer.ToArray();
@@ -136,7 +102,6 @@ namespace FileSync
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             return _socket;
         }
->>>>>>> noel_1
 
 
     }
