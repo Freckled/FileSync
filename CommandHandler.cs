@@ -99,7 +99,13 @@ namespace FileSync
             string[] arguments = _command.Split(" ");
             int port = int.Parse(arguments[1]);
 
+<<<<<<< HEAD
             dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, port);                 
+=======
+            //TOD change adres. IPV6Any
+            dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, port);                 
+            //dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, Config.dataPort);           
+>>>>>>> noel_1
         }
 
         private void executePut(string _command)
@@ -111,7 +117,11 @@ namespace FileSync
             //Check if datasocket is connected
             if (dataSocket.Connected)
             {
+<<<<<<< HEAD
                 string fileLoc = ("C:/Filesync/Client/" + fileName);
+=======
+                string fileLoc = (Config.rootDir + fileName);
+>>>>>>> noel_1
                 FileHandler.receiveFile(dataSocket, fileLoc, filesize);
             }
 
@@ -124,7 +134,11 @@ namespace FileSync
                 dataSocket.Connect(dataEndpoint);
                 Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
 
+<<<<<<< HEAD
                 string fileLoc = ("C:/Filesync/Client/" + fileName);
+=======
+                string fileLoc = (Config.rootDir + fileName);
+>>>>>>> noel_1
                 FileHandler.receiveFile(dataSocket, fileLoc, filesize);
                 dataSocket.Close();
             });

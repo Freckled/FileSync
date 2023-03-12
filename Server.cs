@@ -18,9 +18,16 @@ namespace FileSync
         public Server()
         {
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+<<<<<<< HEAD
             _ipAdress = host.AddressList[0];
             _ep = new IPEndPoint(_ipAdress, Config.serverPort);
             _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+=======
+            _ipAdress = IPAddress.IPv6Any; //host.AddressList[0];
+            _ep = new IPEndPoint(_ipAdress, Config.serverPort);
+            _socket = Connection.createSocket();
+
+>>>>>>> noel_1
         }
 
         //start server
@@ -71,9 +78,15 @@ namespace FileSync
             //--?
 
             //ask for DIR List
+<<<<<<< HEAD
             msg = Encoding.UTF8.GetBytes("DIR");
             socket.Send(msg);
             byte[] data = Connection.ReceiveAll2(socket);
+=======
+            msg = Encoding.UTF8.GetBytes("DIR");// + Config.endTextChar);
+            socket.Send(msg);
+            byte[] data = Connection.ReceiveAll(socket);
+>>>>>>> noel_1
             //check response code 
             //--?
 
@@ -85,8 +98,14 @@ namespace FileSync
             }
 
             //Assign data socket
+<<<<<<< HEAD
             Socket _dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
+=======
+            Socket _dataSocket = Connection.createSocket();
+            IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
+            //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
+>>>>>>> noel_1
             _dataSocket.Bind(ep);
             
             //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
@@ -100,9 +119,15 @@ namespace FileSync
             FileHandler fh = new FileHandler();
             Thread t = ActionThread(() => {
 
+<<<<<<< HEAD
                 string filepath = "C:/Filesync/Server/TestServer.txt";
                 long filesize = (long)new FileInfo(filepath).Length;
                 msg = Encoding.UTF8.GetBytes("PUT TestServer.txt " + filesize);
+=======
+                string filepath = "D:/Filesync/Server/Vesper.mkv";
+                long filesize = (long)new FileInfo(filepath).Length;
+                msg = Encoding.UTF8.GetBytes("PUT Vesper.mkv " + filesize);
+>>>>>>> noel_1
                 socket.Send(msg);
                 Console.WriteLine("Sending file");
                 //dataSocket.SendFile(filepath);
