@@ -56,6 +56,7 @@ namespace FileSync
             switch (cmd)
             {
                 case "GET":
+                    this.executeGet(_command);
                     break;
 
                 case "PUT":
@@ -63,6 +64,7 @@ namespace FileSync
                     break;
 
                 case "DELETE":
+                    this.executeDelete(_command);    
                     break;
 
                 case "PORT":
@@ -71,6 +73,7 @@ namespace FileSync
                     break;
 
                 case "CLOSE":
+                    this.executeClose(_command);
                     break;
 
                 case "DIR":
@@ -78,7 +81,7 @@ namespace FileSync
                     break;
 
                 case "RENAME":
-                    this.executeDir(_command);
+                    this.executeRename(_command);
                     break;
 
                 default:
@@ -93,6 +96,26 @@ namespace FileSync
             string dirlist = "filenumber1.txt 2/19/2023 3456kb /n filenumber2.pdf 2/17/2023 365kb /n filenumber3.mp4 2/14/2023 2975kb";
             byte[] msg = Encoding.UTF8.GetBytes(dirlist);
             socket.Send(msg);
+        }
+
+        private void executeClose(string _command)
+        {
+
+        }
+
+        private void executeDelete(string _command)
+        {
+            
+        }
+
+        private void executeRename(string _command)
+        {
+
+        }
+
+        private void executeGet(string _command)
+        {
+
         }
 
         private void executePort(string _command)
