@@ -89,7 +89,7 @@ namespace FileSync
 
         private void executeDir(string _command)
         {
-            string dirlist = "filenumber1.txt 2/19/2023 3456kb /n filenumber2.pdf 2/17/2023 365kb /n filenumber3.mp4 2/14/2023 2975kb";
+            string dirlist = "filenumber1.txt 2/19/2023 3456kb"+Config.linebreak+ "filenumber2.pdf 2/17/2023 365kb"+Config.linebreak+"filenumber3.mp4 2/14/2023 2975kb"+Config.endTextChar;
             byte[] msg = Encoding.UTF8.GetBytes(dirlist);
             socket.Send(msg);
         }
