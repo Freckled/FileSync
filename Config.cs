@@ -16,6 +16,7 @@ namespace FileSync
         public static readonly string testDir = Directory.GetCurrentDirectory() + "\\TestDirectory\\";
         //public static readonly string serverIp = "192.168.1.120";
         public static readonly int serverPort = 42069;
+        public static readonly int dataPort = 42068;
         public static readonly IPAddress serverIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0]; //TODO change to serverIP if known
         public static readonly CultureInfo cultureInfo = new CultureInfo("en-GB");
         public static readonly string linebreak = "\n";

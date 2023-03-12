@@ -87,7 +87,8 @@ namespace FileSync
 
             //Assign data socket
             Socket _dataSocket = Connection.createSocket();
-            IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
+            //IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
+            IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
             
             //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.

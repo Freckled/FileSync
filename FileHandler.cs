@@ -40,7 +40,7 @@ namespace FileSync
         public static bool SendFile(Socket socket, string filePath)
         {
             int lastStatus = 0;
-            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read); ;
             long totalBytes = file.Length, bytesSoFar = 0;
             socket.SendTimeout = 1000000; //timeout in milliseconds
             try
