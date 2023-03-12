@@ -65,9 +65,6 @@ namespace FileSync
                 case "DELETE":
                     break;
 
-                case "SIZE":
-                    break;
-
                 case "PORT":
                     this.executePort(_command);
                     //Misschien dataEndPoint zetten tijdens PORT command. Komt van Server. 
@@ -77,6 +74,10 @@ namespace FileSync
                     break;
 
                 case "DIR":
+                    this.executeDir(_command);
+                    break;
+
+                case "RENAME":
                     this.executeDir(_command);
                     break;
 
