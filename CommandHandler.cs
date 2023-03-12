@@ -99,6 +99,7 @@ namespace FileSync
             string[] arguments = _command.Split(" ");
             int port = int.Parse(arguments[1]);
 
+            //TOD change adres. IPV6Any
             dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, port);                 
         }
 

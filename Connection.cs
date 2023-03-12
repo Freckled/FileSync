@@ -95,6 +95,13 @@ namespace FileSync
             return buffer.ToArray();
         }
 
+        public static Socket createSocket()
+        {
+            Socket _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+            _socket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
+            _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            return _socket;
+        }
 
 
     }
