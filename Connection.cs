@@ -30,7 +30,7 @@ namespace FileSync
             return response;
         }
 
-        public static byte[] ReceiveAll(Socket socket)
+        public static byte[] ReceiveAll2(Socket socket)
         {
             var buffer = new List<byte>();
 
@@ -57,7 +57,7 @@ namespace FileSync
         }
 
 
-        public static byte[] ReceiveAll2(Socket socket)
+        public static byte[] ReceiveAll(Socket socket)
         {
 
             var buffer = new List<byte>();           

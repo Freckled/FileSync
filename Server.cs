@@ -86,7 +86,8 @@ namespace FileSync
             //--?
 
             //ask for DIR List
-            msg = Encoding.UTF8.GetBytes("DIR");// + Config.endTextChar);
+            //msg = Encoding.UTF8.GetBytes("DIR");// + Config.endTextChar);
+            msg = Encoding.UTF8.GetBytes("DIR" + Config.endTextChar);
             controlSocket.Send(msg);
             byte[] data = Connection.ReceiveAll(controlSocket);
             //check response code 
@@ -145,7 +146,7 @@ namespace FileSync
             var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
 
             //get remote DIR
-            string response =  Connection.sendCommand(controlSocket, "DIR");
+            string response =  Connection.sendCommand(controlSocket, "DIR" + Config.endTextChar);
 
 
             string[] files = response.Split(Config.linebreak);
@@ -153,15 +154,14 @@ namespace FileSync
 
             foreach (string file in files)
                 {
-                    var fileSplit = file.Split(" ");
+                    var fileSplit = file.Trim().Split(" ");
                     remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
                 }
 
             //compare dir list and find out what to get and what to put
 
-
-            string[] getFiles = { "", "" }; //TODO change placeholder
-            string[] putFiles = { "", "" }; //TODO change placeholder
+            Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
+            Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
 
 
             //setup data endpoint
@@ -181,7 +181,9 @@ namespace FileSync
                 FileHeader fh = new FileHeader();
 
                 dataSocket.Listen();
-                foreach (string file in getFiles)
+                
+                //TODO fix based on keyvaluepairs
+                foreach (KeyValuePair<string, string> file in getFiles)
                 {
                     //openDataStream;
                     
@@ -197,7 +199,8 @@ namespace FileSync
 
                 }
 
-                foreach (string file in putFiles)
+                //TODO fix based on keyvaluepairs
+                foreach (KeyValuePair<string, string> file in putFiles)
                 {                    
                     string filePath = Config.rootDir + file;
                     //create fileheader
