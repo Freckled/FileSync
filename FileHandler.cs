@@ -77,7 +77,73 @@ namespace FileSync
             return true;
         }
 
+        public static bool DeleteFile(Socket socket, string filePath)
+        {
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(Global.rootDir + file.Name);
+                if (fileInfo.Exists)
+                {
+                    File.Delete(Global.rootDir + file.Name);
+                }
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File deletetion complete");
+                socket.Close();
+                file.Close();
+            }
+            return true;
+        }
 
+        public static bool RenameFile(Socket socket, string filePath)
+        {
+            string newName;
+            string oldName;
+            int lastStatus = 0;
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            long totalBytes = file.Length, bytesSoFar = 0;
+            socket.SendTimeout = 1000000; //timeout in milliseconds
+            try
+            {
+                byte[] filechunk = new byte[4096];
+                int numBytes;
+                while ((numBytes = file.Read(filechunk, 0, 4096)) > 0)
+                {
+                    if (socket.Send(filechunk, numBytes, SocketFlags.None) != numBytes)
+                    {
+                        throw new Exception("Error in sending the file");
+                    }
+                    bytesSoFar += numBytes;
+                    Byte progress = (byte)(bytesSoFar * 100 / totalBytes);
+                    if (progress > lastStatus && progress != 100)
+                    {
+                        Console.WriteLine(".");
+                        lastStatus = progress;
+                    }
+                }
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File send complete");
+                socket.Close();
+                file.Close();
+            }
+            return true;
+        }
 
     }
 }
