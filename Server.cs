@@ -144,9 +144,10 @@ namespace FileSync
             //get local DIR
             var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
 
-
-            //get dir list from client
+            //get remote DIR
             string response =  Connection.sendCommand(controlSocket, "DIR");
+
+
             string[] files = response.Split(Config.linebreak);
             Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
 
@@ -177,6 +178,7 @@ namespace FileSync
             //TODO check if we want to connect on PORT command or on GET command.
             Thread t = ActionThread(() =>
             {
+                FileHeader fh = new FileHeader();
 
                 dataSocket.Listen();
                 foreach (string file in getFiles)
@@ -186,28 +188,31 @@ namespace FileSync
                     //get fileheader
                     string fileHeader = Connection.sendCommand(controlSocket, "GET" + " " + file);
                     //parse fileheader
-                    string filePath = fileHeader; //TODO change placeholder
-                    int size = fileHeader.Length; //TODO change placeholder
+                    fh.setFileHeader(fileHeader);
+
+                    string filePath = Config.rootDir + file; //TODO change placeholder
+                    long size = fh.getSize(); //TODO change placeholder
                     FileHandler.receiveFile(dataSocket, filePath, size);
 
 
                 }
-                
+
                 foreach (string file in putFiles)
-                {
+                {                    
+                    string filePath = Config.rootDir + file;
                     //create fileheader
-                    string fileHeader = "";//Filehandlder.filehead(filepath)
-                    string filePath = "";
+                    string fileHeader = fh.getFileHeader(filePath); ;//Filehandlder.filehead(filepath)
+                    
                     //send fileheader over socket.
                     Connection.sendCommand(controlSocket, fileHeader);
-                    Connection.sendCommand(controlSocket, "PUT" + " " + file);
+                    Connection.sendCommand(controlSocket, "PUT" + " " + filePath);
                     FileHandler.SendFile(dataSocket, filePath);
                 }
 
                 dataSocket.Close();
             });
 
-            //---synch--
+            
 
 
         }

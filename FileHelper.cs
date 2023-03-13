@@ -1,8 +1,10 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -104,6 +106,29 @@ namespace FileSync
             }
 
             return serverList;
+        }
+
+
+        public static string CalculateCheckSum(string filePath)
+        {
+
+            switch (Config.checkSumAlgo)
+            {
+
+                case "MD5":
+                    using (var md5 = MD5.Create())
+                    {
+                        using (var stream = File.OpenRead(filePath))
+                        {
+                            var hash = md5.ComputeHash(stream);
+                            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                        }
+                    }
+                    break;
+
+
+            }
+            return null;
         }
     }
 }
