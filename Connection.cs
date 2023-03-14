@@ -119,6 +119,5 @@ namespace FileSync
             return _socket;
         }
 
-
     }
 }
