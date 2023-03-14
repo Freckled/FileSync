@@ -79,6 +79,7 @@ namespace FileSync
 
         public static bool DeleteFile(Socket socket, string filePath)
         {
+            //TODO Check if we want socket...
             FileStream file = new FileStream(filePath, FileMode.Open); ;
             try
             {
@@ -105,31 +106,19 @@ namespace FileSync
 
         public static bool RenameFile(Socket socket, string filePath)
         {
-            string newName;
-            string oldName;
-            int lastStatus = 0;
+            string newName = "";
+            string oldName = "";
+            
+            //TODO Check if we want socket...
             FileStream file = new FileStream(filePath, FileMode.Open); ;
-            long totalBytes = file.Length, bytesSoFar = 0;
-            socket.SendTimeout = 1000000; //timeout in milliseconds
             try
             {
-                byte[] filechunk = new byte[4096];
-                int numBytes;
-                while ((numBytes = file.Read(filechunk, 0, 4096)) > 0)
+                FileInfo fileInfo = new FileInfo(Global.rootDir + oldName);
+                if (fileInfo.Exists)
                 {
-                    if (socket.Send(filechunk, numBytes, SocketFlags.None) != numBytes)
-                    {
-                        throw new Exception("Error in sending the file");
-                    }
-                    bytesSoFar += numBytes;
-                    Byte progress = (byte)(bytesSoFar * 100 / totalBytes);
-                    if (progress > lastStatus && progress != 100)
-                    {
-                        Console.WriteLine(".");
-                        lastStatus = progress;
-                    }
+                    // Move file with a new name. Hence renamed.  
+                    fileInfo.MoveTo(Global.rootDir + newName);
                 }
-                socket.Shutdown(SocketShutdown.Both);
             }
             catch (SocketException e)
             {
@@ -138,10 +127,11 @@ namespace FileSync
             }
             finally
             {
-                Console.WriteLine("File send complete");
+                Console.WriteLine("File deletetion complete");
                 socket.Close();
                 file.Close();
             }
+
             return true;
         }
 
