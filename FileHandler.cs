@@ -83,10 +83,10 @@ namespace FileSync
             FileStream file = new FileStream(filePath, FileMode.Open); ;
             try
             {
-                FileInfo fileInfo = new FileInfo(Global.rootDir + file.Name);
+                FileInfo fileInfo = new FileInfo(Config.rootDir + file.Name);
                 if (fileInfo.Exists)
                 {
-                    File.Delete(Global.rootDir + file.Name);
+                    File.Delete(Config.rootDir + file.Name);
                 }
                 socket.Shutdown(SocketShutdown.Both);
             }
@@ -113,11 +113,11 @@ namespace FileSync
             FileStream file = new FileStream(filePath, FileMode.Open); ;
             try
             {
-                FileInfo fileInfo = new FileInfo(Global.rootDir + oldName);
+                FileInfo fileInfo = new FileInfo(Config.rootDir + oldName);
                 if (fileInfo.Exists)
                 {
                     // Move file with a new name. Hence renamed.  
-                    fileInfo.MoveTo(Global.rootDir + newName);
+                    fileInfo.MoveTo(Config.rootDir + newName);
                 }
             }
             catch (SocketException e)

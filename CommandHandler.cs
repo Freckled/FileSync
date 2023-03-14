@@ -114,7 +114,11 @@ namespace FileSync
 
         private void executeRename(string _command)
         {
+            string[] arguments = _command.Split(" ");
+            string fileName = arguments[1];
+            long filesize = long.Parse(arguments[2]);
 
+            //FileHandler.RenameFile(dataSocket, fileName);//Add new and old file name
         }
 
         private void executeGet(string _command)
