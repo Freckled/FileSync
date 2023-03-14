@@ -154,10 +154,10 @@ namespace FileSync
             }
 
             //TODO test, remove later
-            //if (!Directory.Exists(Config.testDir))
-            //{
-            //    Directory.CreateDirectory(Config.testDir);
-            //}
+            if (!Directory.Exists(Config.testDir))
+            {
+                Directory.CreateDirectory(Config.testDir);
+            }
         }
 
 

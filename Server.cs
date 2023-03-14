@@ -80,59 +80,59 @@ namespace FileSync
             synchFiles(controlSocket, _dataSocket);
 
 
-            Console.WriteLine(controlSocket.LocalEndPoint.ToString() + " is Connected to remote" + controlSocket.RemoteEndPoint.ToString());
-            byte[] msg = null;
-            //send code connection established
-            //--?
+            //Console.WriteLine(controlSocket.LocalEndPoint.ToString() + " is Connected to remote" + controlSocket.RemoteEndPoint.ToString());
+            //byte[] msg = null;
+            ////send code connection established
+            ////--?
 
-            //ask for DIR List
-            //msg = Encoding.UTF8.GetBytes("DIR");// + Config.endTextChar);
-            msg = Encoding.UTF8.GetBytes("DIR" + Config.endTextChar);
-            controlSocket.Send(msg);
-            byte[] data = Connection.ReceiveAll(controlSocket);
-            //check response code 
-            //--?
+            ////ask for DIR List
+            ////msg = Encoding.UTF8.GetBytes("DIR");// + Config.endTextChar);
+            //msg = Encoding.UTF8.GetBytes("DIR" + Config.endTextChar);
+            //controlSocket.Send(msg);
+            //byte[] data = Connection.ReceiveAll(controlSocket);
+            ////check response code 
+            ////--?
 
-            //compare DIR list to own
-            //--?
-            string[] dirList = (Encoding.UTF8.GetString(data)).Split("/n");
-            foreach(string item in dirList) { 
-                Console.WriteLine(item.Trim());
-            }
+            ////compare DIR list to own
+            ////--?
+            //string[] dirList = (Encoding.UTF8.GetString(data)).Split("/n");
+            //foreach(string item in dirList) { 
+            //    Console.WriteLine(item.Trim());
+            //}
 
 
             
-            //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
-            msg = Encoding.UTF8.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
-            Console.WriteLine("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
-            controlSocket.Send(msg);
+            ////let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
+            //msg = Encoding.UTF8.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
+            //Console.WriteLine("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
+            //controlSocket.Send(msg);
 
        
-            //get new file(s)
-            //put new file(s)
-            FileHandler fh = new FileHandler();
+            ////get new file(s)
+            ////put new file(s)
+            //FileHandler fh = new FileHandler();
             
-            Thread t = ActionThread(() => {
+            //Thread t = ActionThread(() => {
 
-                string filepath = "D:/Filesync/Server/Vesper.mkv";
-                long filesize = (long)new FileInfo(filepath).Length;
-                msg = Encoding.UTF8.GetBytes("PUT Vesper.mkv " + filesize);
-                controlSocket.Send(msg);
-                Console.WriteLine("Sending file");
-                //dataSocket.SendFile(filepath);
-                _dataSocket.Listen();
-                Socket dataSocket = _dataSocket.Accept();
-                FileHandler.SendFile(dataSocket, filepath);
+            //    string filepath = "D:/Filesync/Server/Vesper.mkv";
+            //    long filesize = (long)new FileInfo(filepath).Length;
+            //    msg = Encoding.UTF8.GetBytes("PUT Vesper.mkv " + filesize);
+            //    controlSocket.Send(msg);
+            //    Console.WriteLine("Sending file");
+            //    //dataSocket.SendFile(filepath);
+            //    _dataSocket.Listen();
+            //    Socket dataSocket = _dataSocket.Accept();
+            //    FileHandler.SendFile(dataSocket, filepath);
 
 
-                //for each loop through dir files
-                //socket.send("get/put " + filename)
-                //
-                //end
+            //    //for each loop through dir files
+            //    //socket.send("get/put " + filename)
+            //    //
+            //    //end
 
-                dataSocket.Close();
-                //socket.close
-            });
+            //    dataSocket.Close();
+            //    //socket.close
+            //});
             
                      
         }
@@ -140,10 +140,11 @@ namespace FileSync
 
         private void synchFiles(Socket controlSocket, Socket dataSocket)
         {
-
             //---synch--
             //get local DIR
             var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
+
+
 
             //get remote DIR
             string response =  Connection.sendCommand(controlSocket, "DIR" + Config.endTextChar);
@@ -154,11 +155,18 @@ namespace FileSync
 
             foreach (string file in files)
                 {
-                    var fileSplit = file.Trim().Split(" ");
-                    remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+                    if (!file.Equals(""))
+                    {
+                        var fileSplit = file.Trim().Split(" ");
+                        remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+                    }
                 }
 
             //compare dir list and find out what to get and what to put
+
+            //--------TODO turn off after testing
+            remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
+            //--------TODO turn off after testing
 
             Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
             Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
@@ -169,11 +177,9 @@ namespace FileSync
 
             //get files
             //put files
-
-            Socket _dataSocket = Connection.createSocket();
-            IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
-            dataSocket.Bind(ep);
-            Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
+          
+            //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+            Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
 
             //TODO check if we want to connect on PORT command or on GET command.
             Thread t = ActionThread(() =>
@@ -192,7 +198,7 @@ namespace FileSync
                     //parse fileheader
                     fh.setFileHeader(fileHeader);
 
-                    string filePath = Config.rootDir + file; //TODO change placeholder
+                    string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
                     long size = fh.getSize(); //TODO change placeholder
                     FileHandler.receiveFile(dataSocket, filePath, size);
 
@@ -202,14 +208,20 @@ namespace FileSync
                 //TODO fix based on keyvaluepairs
                 foreach (KeyValuePair<string, string> file in putFiles)
                 {                    
-                    string filePath = Config.rootDir + file;
+                    string filePath = Config.rootDir + file.Key;
                     //create fileheader
                     string fileHeader = fh.getFileHeader(filePath); ;//Filehandlder.filehead(filepath)
                     
                     //send fileheader over socket.
-                    Connection.sendCommand(controlSocket, fileHeader);
-                    Connection.sendCommand(controlSocket, "PUT" + " " + filePath);
-                    FileHandler.SendFile(dataSocket, filePath);
+                    Connection.sendCommandNoReply(controlSocket, fileHeader);
+                    //TODO change to wait for response (Connection.sendCommandReply) before sending file (needs change in PUT commandhandler item to send response code)
+                    string responsecode = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize());
+                    if (responsecode.Equals("200")) 
+                    {
+                        FileHandler.SendFile(dataSocket, filePath);
+                    }
+
+                    
                 }
 
                 dataSocket.Close();

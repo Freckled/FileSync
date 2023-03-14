@@ -30,6 +30,22 @@ namespace FileSync
             return response;
         }
 
+
+        public static void sendCommandNoReply(Socket socket, string command)
+        {
+            string response = null;
+            byte[] bytes = null;
+
+            bytes = new byte[1024];
+            byte[] msg = Encoding.UTF8.GetBytes(command);
+
+            // Send the data through the socket.
+            socket.Send(msg);
+
+        }
+
+
+
         public static byte[] ReceiveAll2(Socket socket)
         {
             var buffer = new List<byte>();

@@ -34,7 +34,7 @@ namespace FileSync
         public string getFileHeader(string filePath)
         {
             _name = new FileInfo(filePath).Name;
-            _extension = Path.GetExtension(filePath);
+            _extension = Path.GetExtension(filePath).Replace(".", "");
             _size = new FileInfo(filePath).Length;
             _checksumAlgorithm = Config.checkSumAlgo;
             _checksum = FileHelper.CalculateCheckSum(filePath);
