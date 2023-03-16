@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Enumeration;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -39,7 +40,7 @@ namespace FileSync
                 return;
             }
 
-            Console.WriteLine(_command);
+            Console.WriteLine("Command received: {0}",_command);
 
             string[] commandCode = _command.Split(' ');
 
@@ -117,8 +118,15 @@ namespace FileSync
         private void executePut(string _command)
         {
             string[] arguments = _command.Split(" ");
-            string fileName = arguments[1];
-            long filesize = long.Parse(arguments[2]);
+            //string fileName = arguments[1];
+            //long filesize = long.Parse(arguments[2]);
+            string fileHeader = arguments[1];
+
+            FileHeader fh = new FileHeader();
+            fh.setFileHeader(fileHeader);
+            string fileName = fh.getName();
+            long filesize = fh.getSize();
+
 
             //Check if datasocket is connected
             if (dataSocket.Connected)
@@ -133,6 +141,7 @@ namespace FileSync
             }
 
             Thread t = ActionThread(() => {
+                Connection.sendCommandNoReply(socket, "200 Ready_to_receive");
                 dataSocket.Connect(dataEndpoint);
                 Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
 

@@ -88,12 +88,20 @@ namespace FileSync
                 string fileHeader = fh.getFileHeader(filePath); ;//Filehandlder.filehead(filepath)
 
                 //send fileheader over socket.
-                Connection.sendCommandNoReply(controlSocket, fileHeader);
+                //string[] response = Connection.sendCommand(controlSocket, fileHeader).Split(" ");
+                //int responseCode = int.Parse(response[0]);
+
                 //TODO change to wait for response (Connection.sendCommandReply) before sending file (needs change in PUT commandhandler item to send response code)
-                string responsecode = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize());
-                if (responsecode.Equals("200"))
-                {
-                    FileHandler.SendFile(dataSocket, filePath);
+                //response = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize()).Split(" ");
+                string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
+                if (response != null) { 
+                    string[] responseArr = response.Split(" ");
+                    int responseCode = int.Parse(responseArr[0]);
+
+                    if (ResponseCode.isValid(responseCode))
+                    {
+                        FileHandler.SendFile(dataSocket, filePath);
+                    }
                 }
             }
         }

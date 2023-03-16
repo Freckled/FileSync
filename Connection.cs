@@ -16,18 +16,34 @@ namespace FileSync
         {
             string response = null;
             byte[] bytes = null;
-                
-            bytes = new byte[1024];
-            byte[] msg = Encoding.UTF8.GetBytes(command);
 
-            // Send the data through the socket.
-            socket.Send(msg);
+            if (socket.Connected)
+            {
+                bytes = new byte[1024];
+                byte[] msg = Encoding.UTF8.GetBytes(command);
 
-            // Receive the response from the remote device.
-            int bytesRec = socket.Receive(bytes);
-            response += Encoding.UTF8.GetString(bytes, 0, bytesRec);
-            Console.WriteLine("Text received : {0}", response);
+                // Send the data through the socket.
+                socket.Send(msg);
+
+                // Receive the response from the remote device.
+                try
+                {
+                    int bytesRec = socket.Receive(bytes);
+                    response += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Socket {0} forcefully closed", socket.RemoteEndPoint.ToString());
+                }
+
+                Console.WriteLine("Text received : {0}", response);
+            }
+            else
+            {
+                Console.WriteLine("Socket {0} is not connected", socket.RemoteEndPoint.ToString());
+            }
             return response;
+
         }
 
 
@@ -73,6 +89,7 @@ namespace FileSync
         }
 
 
+
         public static byte[] ReceiveAll(Socket socket)
         {
 
@@ -109,6 +126,11 @@ namespace FileSync
 
             Console.WriteLine("Socket closed before <EOT>");
             return buffer.ToArray();
+        }
+
+        public static string ParseString(byte[] bytes)
+        {
+            return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
         }
 
         public static Socket createSocket()

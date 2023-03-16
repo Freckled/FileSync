@@ -75,9 +75,24 @@ namespace FileSync
             //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
 
+            try
+            {
+                //TESTING synch files
+                synchFiles(controlSocket, _dataSocket);
+            }   catch (Exception e) { 
+                Console.WriteLine(e.ToString()); 
+                
+                if(controlSocket.Connected)
+                {
+                    controlSocket.Close();
+                }
+                if (_dataSocket.Connected)
+                {
+                    _dataSocket.Close();
+                }
+                
+            }
 
-            //TESTING synch files
-            synchFiles(controlSocket, _dataSocket);
                      
         }
 
