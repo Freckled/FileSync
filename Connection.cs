@@ -20,7 +20,7 @@ namespace FileSync
             if (socket.Connected)
             {
                 bytes = new byte[1024];
-                byte[] msg = Encoding.UTF8.GetBytes(command);
+                byte[] msg = Encoding.UTF8.GetBytes(command + Config.endTextChar);
 
                 // Send the data through the socket.
                 socket.Send(msg);
@@ -28,9 +28,14 @@ namespace FileSync
                 // Receive the response from the remote device.
                 try
                 {
-                    int bytesRec = socket.Receive(bytes);
-                    response += Encoding.UTF8.GetString(bytes, 0, bytesRec);
-                    Console.WriteLine("Response received: {0}", response);
+
+                    response = Transformer.ParseByteArrString(Connection.ReceiveAll(socket));
+                    //int bytesRec = socket.Receive(bytes);
+                    //response += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+
+
+                    Console.WriteLine("Response received: {0}", response);                                
+
                 }
                 catch (Exception e)
                 {
@@ -53,7 +58,7 @@ namespace FileSync
             byte[] bytes = null;
 
             bytes = new byte[1024];
-            byte[] msg = Encoding.UTF8.GetBytes(command);
+            byte[] msg = Encoding.UTF8.GetBytes(command + Config.endTextChar);
 
             // Send the data through the socket.
             socket.Send(msg);
@@ -63,31 +68,31 @@ namespace FileSync
 
 
 
-        public static byte[] ReceiveAll2(Socket socket)
-        {
-            var buffer = new List<byte>();
+        //public static byte[] ReceiveAll2(Socket socket)
+        //{
+        //    var buffer = new List<byte>();
 
-            //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
-            try
-            {
-                do
-                {
-                    var currByte = new Byte[1];
-                    var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
+        //    //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
+        //    try
+        //    {
+        //        do
+        //        {
+        //            var currByte = new Byte[1];
+        //            var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
 
-                    if (byteCounter.Equals(1))
-                    {
-                        buffer.Add(currByte[0]);
-                    }
-                }
-                while (socket.Available > 0);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            return buffer.ToArray();
-        }
+        //            if (byteCounter.Equals(1))
+        //            {
+        //                buffer.Add(currByte[0]);
+        //            }
+        //        }
+        //        while (socket.Available > 0);
+        //    }
+        //    catch (SocketException e)
+        //    {
+        //        Console.WriteLine(e.Message);
+        //    }
+        //    return buffer.ToArray();
+        //}
 
 
 
@@ -129,10 +134,7 @@ namespace FileSync
             return buffer.ToArray();
         }
 
-        public static string ParseString(byte[] bytes)
-        {
-            return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
-        }
+
 
         public static Socket createSocket()
         {

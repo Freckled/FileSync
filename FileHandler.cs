@@ -37,6 +37,7 @@ namespace FileSync
         }
 
         //Send the specified file over the specified socket
+        //TODO Error handling (The process cannor acces the file because it is being used by another process)
         public static bool SendFile(Socket socket, string filePath)
         {
             int lastStatus = 0;
@@ -115,8 +116,9 @@ namespace FileSync
                 //openDataStream;
 
                 //get fileheader
-                string fileHeader = Connection.sendCommand(controlSocket, "GET" + " " + file);
+                string response = Connection.sendCommand(controlSocket, "GET" + " " + file);
                 //parse fileheader
+                string fileHeader = Transformer.RemoveResponseCode(response);
                 fh.setFileHeader(fileHeader);
 
                 string filePath = Config.rootDir + fh.getName(); //TODO change placeholder

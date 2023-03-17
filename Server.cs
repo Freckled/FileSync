@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
@@ -105,44 +106,49 @@ namespace FileSync
             var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
 
             //get remote DIR
-            string response =  Connection.sendCommand(controlSocket, "DIR" + Config.endTextChar);
+            string response =  Connection.sendCommand(controlSocket, "DIR");
+            int responseCode = Transformer.GetResponseCode(response);
+            
+            
+            if (ResponseCode.isValid(responseCode)) {             
+            
+                string[] files = Transformer.RemoveResponseCode(response).Split(Config.linebreak);
 
 
-            string[] files = response.Split(Config.linebreak);
-            Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
+                Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
 
-            foreach (string file in files)
-                {
-                    if (!file.Equals(""))
+                foreach (string file in files)
                     {
-                        var fileSplit = file.Trim().Split(" ");
-                        remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+                        if (!file.Equals(""))
+                        {
+                            var fileSplit = file.Trim().Split(" ");
+                            remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+                        }
                     }
-                }
 
             
-            //--------TODO turn off after testing
-            remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
-            //--------TODO turn off after testing
+                //--------TODO turn off after testing
+                //remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
+                //--------TODO turn off after testing
 
-            Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
-            Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
+                Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
+                Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
 
-            //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
-            Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
 
-            //TODO check if we want to connect on PORT command or on GET command.
-            Thread t = ActionThread(() =>
-            {                
-                dataSocket.Listen();
+                //TODO check if we want to connect on PORT command or on GET command.
+                Thread t = ActionThread(() =>
+                {                
+                    dataSocket.Listen();
 
-                FileHandler.getFiles(controlSocket, dataSocket, getFiles);               
-                FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
+                    FileHandler.getFiles(controlSocket, dataSocket, getFiles);               
+                    FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
 
-                dataSocket.Close();
-            });
+                    dataSocket.Close();
+                });
+            }
 
-            
 
 
         }

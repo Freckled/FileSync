@@ -106,7 +106,6 @@ namespace FileSync
 
             Connection.sendCommandNoReply(socket, dirList);
 
-
         }
 
         private void executePort(string _command)
