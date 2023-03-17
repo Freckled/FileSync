@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,7 @@ namespace FileSync
                 //create a loop so it keeps listening
                 while (true)
                 {
+                    
                     Thread mainThread = Thread.CurrentThread;
                     
                     _socket.Listen(Config.serverPort);
@@ -64,65 +66,85 @@ namespace FileSync
         }
 
         //handles connection with the client (todo, replace commandHandler part of communications)
-        private void clientConnection(Socket socket)
+        private void clientConnection(Socket controlSocket)
         {
-            Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote" + socket.RemoteEndPoint.ToString());
-            byte[] msg = null;
-            //send code connection established
-            //--?
-
-            //ask for DIR List
-            msg = Encoding.UTF8.GetBytes("DIR");// + Config.endTextChar);
-            socket.Send(msg);
-            byte[] data = Connection.ReceiveAll(socket);
-            //check response code 
-            //--?
-
-            //compare DIR list to own
-            //--?
-            string[] dirList = (Encoding.UTF8.GetString(data)).Split("/n");
-            foreach(string item in dirList) { 
-                Console.WriteLine(item.Trim());
-            }
+            Console.WriteLine("Client {0}. connected to {1}", controlSocket.RemoteEndPoint.ToString(), controlSocket.LocalEndPoint.ToString());
 
             //Assign data socket
             Socket _dataSocket = Connection.createSocket();
             IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
             //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
+
+            try
+            {
+                //TESTING synch files
+                synchFiles(controlSocket, _dataSocket);
+            }   catch (Exception e) { 
+                Console.WriteLine(e.ToString()); 
+                
+                if(controlSocket.Connected)
+                {
+                    controlSocket.Close();
+                }
+                if (_dataSocket.Connected)
+                {
+                    _dataSocket.Close();
+                }
+                
+            }
+
+                     
+        }
+
+
+        private void synchFiles(Socket controlSocket, Socket dataSocket)
+        {
+            //---synch--
+            //get local DIR
+            var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
+
+            //get remote DIR
+            string response =  Connection.sendCommand(controlSocket, "DIR" + Config.endTextChar);
+
+
+            string[] files = response.Split(Config.linebreak);
+            Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
+
+            foreach (string file in files)
+                {
+                    if (!file.Equals(""))
+                    {
+                        var fileSplit = file.Trim().Split(" ");
+                        remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+                    }
+                }
+
             
-            //let the client know where to connect to and be ready to accept connection. Cast localEndpoint to IPEndpoint to get port.
-            msg = Encoding.UTF8.GetBytes("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
-            Console.WriteLine("PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
-            socket.Send(msg);
+            //--------TODO turn off after testing
+            remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
+            //--------TODO turn off after testing
 
-       
-            //get new file(s)
-            //put new file(s)
-            FileHandler fh = new FileHandler();
-            Thread t = ActionThread(() => {
+            Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
+            Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
 
-                string filepath = "D:/Filesync/Server/Vesper.mkv";
-                long filesize = (long)new FileInfo(filepath).Length;
-                msg = Encoding.UTF8.GetBytes("PUT Vesper.mkv " + filesize);
-                socket.Send(msg);
-                Console.WriteLine("Sending file");
-                //dataSocket.SendFile(filepath);
-                _dataSocket.Listen();
-                Socket dataSocket = _dataSocket.Accept();
-                FileHandler.SendFile(dataSocket, filepath);
+            //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+            Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
 
+            //TODO check if we want to connect on PORT command or on GET command.
+            Thread t = ActionThread(() =>
+            {                
+                dataSocket.Listen();
 
-                //for each loop through dir files
-                //socket.send("get/put " + filename)
-                //
-                //end
+                FileHandler.getFiles(controlSocket, dataSocket, getFiles);               
+                FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
 
                 dataSocket.Close();
-                //socket.close
             });
+
             
-                     
+
+
         }
 
     }

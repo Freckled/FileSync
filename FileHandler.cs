@@ -57,7 +57,8 @@ namespace FileSync
                     Byte progress = (byte)(bytesSoFar * 100 / totalBytes);
                     if (progress > lastStatus && progress != 100)
                     {
-                        Console.WriteLine(".");
+                        //Console.WriteLine(".");
+                        Console.Write(".");
                         lastStatus = progress;
                     }
                 }
@@ -77,6 +78,54 @@ namespace FileSync
             return true;
         }
 
+
+        public static void sendFiles(Socket controlSocket, Socket dataSocket, Dictionary<string, string> fileList)
+        {
+            FileHeader fh = new FileHeader();
+            foreach (KeyValuePair<string, string> file in fileList)
+            {
+                string filePath = Config.rootDir + file.Key;
+                //create fileheader
+                string fileHeader = fh.getFileHeader(filePath); ;//Filehandlder.filehead(filepath)
+
+                //send fileheader over socket.
+                //string[] response = Connection.sendCommand(controlSocket, fileHeader).Split(" ");
+                //int responseCode = int.Parse(response[0]);
+
+                //TODO change to wait for response (Connection.sendCommandReply) before sending file (needs change in PUT commandhandler item to send response code)
+                //response = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize()).Split(" ");
+                string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
+                if (response != null) { 
+                    string[] responseArr = response.Split(" ");
+                    int responseCode = int.Parse(responseArr[0]);
+
+                    if (ResponseCode.isValid(responseCode))
+                    {
+                        FileHandler.SendFile(dataSocket, filePath);
+                    }
+                }
+            }
+        }
+
+        public static void getFiles(Socket controlSocket, Socket dataSocket, Dictionary<string, string> fileList)
+        {
+            FileHeader fh = new FileHeader();
+            foreach (KeyValuePair<string, string> file in fileList)
+            {
+                //openDataStream;
+
+                //get fileheader
+                string fileHeader = Connection.sendCommand(controlSocket, "GET" + " " + file);
+                //parse fileheader
+                fh.setFileHeader(fileHeader);
+
+                string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
+                long size = fh.getSize(); //TODO change placeholder
+                FileHandler.receiveFile(dataSocket, filePath, size);
+
+            }
+
+        }
 
 
     }

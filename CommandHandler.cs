@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Enumeration;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -39,7 +40,7 @@ namespace FileSync
                 return;
             }
 
-            Console.WriteLine(_command);
+            Console.WriteLine("Command received: {0}",_command);
 
             string[] commandCode = _command.Split(' ');
 
@@ -89,9 +90,23 @@ namespace FileSync
 
         private void executeDir(string _command)
         {
-            string dirlist = "filenumber1.txt 2/19/2023 3456kb /n filenumber2.pdf 2/17/2023 365kb /n filenumber3.mp4 2/14/2023 2975kb";
-            byte[] msg = Encoding.UTF8.GetBytes(dirlist);
-            socket.Send(msg);
+
+            List<KeyValuePair<string, string>> localfiles = FileHelper.listFilesWithDateTime(Config.rootDir);
+            string dirList = "";
+            //generate string from list
+            foreach (KeyValuePair<string, string> file in localfiles)
+            {
+                dirList = dirList + file.Key + " " + file.Value + Config.linebreak;
+
+            }
+            dirList = "200" + " " + dirList;
+            //string dirList = "filenumber1.txt 2/19/2023 3456kb"+Config.linebreak+ "filenumber2.pdf 2/17/2023 365kb"+Config.linebreak+"filenumber3.mp4 2/14/2023 2975kb"+Config.endTextChar;
+            //byte[] msg = Encoding.UTF8.GetBytes(dirList);
+            //socket.Send(msg);
+
+            Connection.sendCommandNoReply(socket, dirList);
+
+
         }
 
         private void executePort(string _command)
@@ -107,8 +122,15 @@ namespace FileSync
         private void executePut(string _command)
         {
             string[] arguments = _command.Split(" ");
-            string fileName = arguments[1];
-            long filesize = long.Parse(arguments[2]);
+            //string fileName = arguments[1];
+            //long filesize = long.Parse(arguments[2]);
+            string fileHeader = arguments[1];
+
+            FileHeader fh = new FileHeader();
+            fh.setFileHeader(fileHeader);
+            string fileName = fh.getName();
+            long filesize = fh.getSize();
+
 
             //Check if datasocket is connected
             if (dataSocket.Connected)
@@ -123,6 +145,7 @@ namespace FileSync
             }
 
             Thread t = ActionThread(() => {
+                Connection.sendCommandNoReply(socket, "200 Ready_to_receive");
                 dataSocket.Connect(dataEndpoint);
                 Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
 

@@ -63,9 +63,10 @@ namespace FileSync
             CommandHandler commandHandler = null;
 
             while (socket.Connected)
-            {
-                byte[] data = Connection.ReceiveAll(socket);
-                command = Encoding.UTF8.GetString(data, 0, data.Length);
+            {                
+                command = Connection.ParseString(Connection.ReceiveAll(socket));
+                string[] responsecode = command.Split(" ");
+                
                 Socket dataSocket = Connection.createSocket();// new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
 
 
@@ -76,7 +77,6 @@ namespace FileSync
 
                 commandHandler.processCommand(command, CommandHandler.Device.CLIENT);
 
-                Console.WriteLine(command);
             }
 
             //Socket _dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
