@@ -24,19 +24,19 @@ namespace FileSync
 
                 // Send the data through the socket.
                 socket.Send(msg);
-
+                Console.WriteLine("Message to client: {0}", command);
                 // Receive the response from the remote device.
                 try
                 {
                     int bytesRec = socket.Receive(bytes);
                     response += Encoding.UTF8.GetString(bytes, 0, bytesRec);
+                    Console.WriteLine("Response received: {0}", response);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Socket {0} forcefully closed", socket.RemoteEndPoint.ToString());
                 }
-
-                Console.WriteLine("Text received : {0}", response);
+               
             }
             else
             {
@@ -57,6 +57,7 @@ namespace FileSync
 
             // Send the data through the socket.
             socket.Send(msg);
+            Console.WriteLine("Message to client: {0}", command);
 
         }
 

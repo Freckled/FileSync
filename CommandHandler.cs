@@ -99,10 +99,14 @@ namespace FileSync
                 dirList = dirList + file.Key + " " + file.Value + Config.linebreak;
 
             }
-
+            dirList = "200" + " " + dirList;
             //string dirList = "filenumber1.txt 2/19/2023 3456kb"+Config.linebreak+ "filenumber2.pdf 2/17/2023 365kb"+Config.linebreak+"filenumber3.mp4 2/14/2023 2975kb"+Config.endTextChar;
-            byte[] msg = Encoding.UTF8.GetBytes(dirList);
-            socket.Send(msg);
+            //byte[] msg = Encoding.UTF8.GetBytes(dirList);
+            //socket.Send(msg);
+
+            Connection.sendCommandNoReply(socket, dirList);
+
+
         }
 
         private void executePort(string _command)

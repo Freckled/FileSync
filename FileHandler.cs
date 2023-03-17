@@ -57,7 +57,8 @@ namespace FileSync
                     Byte progress = (byte)(bytesSoFar * 100 / totalBytes);
                     if (progress > lastStatus && progress != 100)
                     {
-                        Console.WriteLine(".");
+                        //Console.WriteLine(".");
+                        Console.Write(".");
                         lastStatus = progress;
                     }
                 }

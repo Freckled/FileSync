@@ -68,6 +68,7 @@ namespace FileSync
         //handles connection with the client (todo, replace commandHandler part of communications)
         private void clientConnection(Socket controlSocket)
         {
+            Console.WriteLine("Client {0}. connected to {1}", controlSocket.RemoteEndPoint.ToString(), controlSocket.LocalEndPoint.ToString());
 
             //Assign data socket
             Socket _dataSocket = Connection.createSocket();
