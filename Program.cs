@@ -25,10 +25,32 @@ namespace FileSync
         static async Task Main(string[] args)
         {
             StartupActions();
-               
+            Console.WriteLine("Welcome to FileSync");
+
+            
+            //If commandline is used choose commandline           
+            if (args.Length > 0) { 
+                switch (args[0])
+                {
+                    case "server":
+                        Server server = new Server();
+                        server.start();
+                        break;
+                    case "client":
+                        string input = args[1];
+                        Client clientIP = new Client(input);
+                        clientIP.start();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+
         start:
             try {
-                Console.WriteLine("Welcome to FileSync");
+                
                 Console.WriteLine("Mode; 1-Server, 2-client, 3-client [input server IP], 4-Exit");
                 //Console.WriteLine(Config.rootDir);
                 //get local IPv4
