@@ -116,7 +116,7 @@ namespace FileSync
                 //openDataStream;
 
                 //get fileheader
-                string response = Connection.sendCommand(controlSocket, "GET" + " " + file);
+                string response = Connection.sendCommand(controlSocket, "GET" + " " + file.Key);
                 //parse fileheader
                 string fileHeader = Transformer.RemoveResponseCode(response);
                 fh.setFileHeader(fileHeader);
