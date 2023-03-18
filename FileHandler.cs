@@ -17,9 +17,7 @@ namespace FileSync
         public static void receiveFile(Socket socket, string filePath, long size)
         {
             using (socket)
-            {
-                socket.Listen();
-                socket.Accept();
+            {                
                 using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
                 {
                     byte[] buffer = new byte[8192];
@@ -45,11 +43,6 @@ namespace FileSync
             FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read); ;
             long totalBytes = file.Length, bytesSoFar = 0;
             socket.SendTimeout = 1000000; //timeout in milliseconds
-
-            if (!socket.Connected)
-            {
-                socket.Connect(socket.RemoteEndPoint);
-            }
 
             try
             {
@@ -109,7 +102,6 @@ namespace FileSync
 
                     if (ResponseCode.isValid(responseCode))
                     {
-                        dataSocket.Connect(dataSocket.RemoteEndPoint);
                         FileHandler.SendFile(dataSocket, filePath);
                     }
                 }

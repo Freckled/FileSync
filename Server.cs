@@ -77,12 +77,14 @@ namespace FileSync
             //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
 
-            Thread t = ActionThread(() => {
+            Thread t = ActionThread(() =>
+            {
                 while (controlSocket.Connected)
                 {
+                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
                     _dataSocket.Listen();
                     _dataSocket.Accept();
-                }                
+                }
             });
 
             try
@@ -144,7 +146,7 @@ namespace FileSync
 
                 //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
                 if (putFiles.Count > 0 | getFiles.Count > 0) { 
-                        Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                        //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
 
                     //TODO check if we want to connect on PORT command or on GET command.
                     
