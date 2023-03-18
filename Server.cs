@@ -77,16 +77,6 @@ namespace FileSync
             //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
 
-            Thread t = ActionThread(() =>
-            {
-                while (controlSocket.Connected)
-                {
-                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)_dataSocket.LocalEndPoint).Port);
-                    _dataSocket.Listen();
-                    _dataSocket.Accept();
-                }
-            });
-
             try
             {
                 //TESTING synch files
@@ -145,17 +135,23 @@ namespace FileSync
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
 
                 //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
-                if (putFiles.Count > 0 | getFiles.Count > 0) { 
-                        //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                if (putFiles.Count > 0 | getFiles.Count > 0) {
+                    //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
 
                     //TODO check if we want to connect on PORT command or on GET command.
-                    
-                    //dataSocket.Listen();
-                    Thread t = ActionThread(() =>
-                    {                
 
-                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, dataSocket, getFiles); }
-                        if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, dataSocket, putFiles); }
+                    
+                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+         
+                    dataSocket.Listen();
+                    Socket _dataSocket = dataSocket.Accept();
+                    
+
+                    Thread t = ActionThread(() =>
+                    {
+                        Console.WriteLine(_dataSocket.Connected);
+                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
+                        if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, _dataSocket, putFiles); }
 
                         dataSocket.Close();
                     });

@@ -17,7 +17,7 @@ namespace FileSync
         public static void receiveFile(Socket socket, string filePath, long size)
         {
             using (socket)
-            {                
+            {
                 using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
                 {
                     byte[] buffer = new byte[8192];

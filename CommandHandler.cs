@@ -119,7 +119,10 @@ namespace FileSync
             //TOD change adres. IPV6Any
             dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, port);
             //dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, Config.dataPort);
-            dataSocket.Connect(dataEndpoint);
+            if (!dataSocket.Connected)
+            {
+                dataSocket.Connect(dataEndpoint);
+            }
         }
 
         private void executePut(string _command)

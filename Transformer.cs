@@ -11,8 +11,10 @@ namespace FileSync
 
         public static int GetResponseCode(string str)
         {
-            return int.Parse(str.Substring(0, 3));
-
+            if (!str.Equals("")){ 
+                return int.Parse(str.Substring(0, 3));
+            }
+            return 0;
         }
 
         public static string RemoveResponseCode(string str)
