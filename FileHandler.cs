@@ -16,22 +16,25 @@ namespace FileSync
         //receive files based on pre-determined size
         public static void receiveFile(Socket socket, string filePath, long size)
         {
-            using (socket)
+            try
             {
-                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
-                {
-                    byte[] buffer = new byte[8192];
-                    int read;
-                    int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
-
-                    do
+                    using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
                     {
-                        read = socket.Receive(buffer);
-                        fs.Write(buffer, 0, read);
-                        bytesSoFar += read;
+                        byte[] buffer = new byte[8192];
+                        int read;
+                        int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
 
-                    } while (bytesSoFar < size);
-                }
+                        do
+                        {
+                            read = socket.Receive(buffer);
+                            fs.Write(buffer, 0, read);
+                            bytesSoFar += read;
+
+                        } while (bytesSoFar < size);
+                    }
+                
+            }catch(Exception e) { 
+            Console.WriteLine(e.ToString());
             }
         }
 

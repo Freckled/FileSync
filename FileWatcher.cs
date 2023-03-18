@@ -10,7 +10,7 @@ namespace FileSync
         //Monitors the dir for any changes in files (Change, Delete, Create, Rename)
         public static void Watch()
         {
-            using var watcher = new FileSystemWatcher(Global.rootDir);
+            using var watcher = new FileSystemWatcher(Config.rootDir);
 
             watcher.NotifyFilter = NotifyFilters.Attributes
                                  | NotifyFilters.CreationTime

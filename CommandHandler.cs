@@ -77,6 +77,7 @@ namespace FileSync
                     break;
 
                 case "CLOSE":
+                    this.executeClose(_command);
                     break;
 
                 case "DIR":
@@ -89,6 +90,14 @@ namespace FileSync
 
             //return response code. Like 200, 205 etc...
         }
+
+        private void executeClose(string _command)
+        {
+            Console.WriteLine("Server orders close. Shutting down connections.");
+            FileWatcher.Watch();
+
+        }
+
 
         private void executeDir(string _command)
         {
@@ -138,12 +147,12 @@ namespace FileSync
             long filesize = fh.getSize();
 
 
-            //Check if datasocket is connected
-            if (dataSocket.Connected)
-            {
-                string fileLoc = (Config.rootDir + fileName);
-                FileHandler.receiveFile(dataSocket, fileLoc, filesize);
-            }
+            ////Check if datasocket is connected
+            //if (dataSocket.Connected)
+            //{
+            //    string fileLoc = (Config.rootDir + fileName);
+            //    FileHandler.receiveFile(dataSocket, fileLoc, filesize);
+            //}
 
             if (dataEndpoint == null)
             {
@@ -152,12 +161,14 @@ namespace FileSync
 
             Thread t = ActionThread(() => {
                 Connection.sendCommandNoReply(socket, "200 Ready_to_receive");
-                dataSocket.Connect(dataEndpoint);
-                Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
+                if (!dataSocket.Connected) { 
+                    dataSocket.Connect(dataEndpoint); 
+                    Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
+                }
 
                 string fileLoc = (Config.rootDir + fileName);
                 FileHandler.receiveFile(dataSocket, fileLoc, filesize);
-                dataSocket.Close();
+                //dataSocket.Close();
             });
 
             //send confirmation or request file again??             
@@ -191,17 +202,17 @@ namespace FileSync
                     throw new Exception("Method executePut threw an error. No data end point is set.");
                 }
 
-                ////Check if datasocket is connected
-                //if (!dataSocket.Connected)
-                //{
-                //    dataSocket.Connect(dataEndpoint);
-                //    Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
-                //}
+                //Check if datasocket is connected
+                if (!dataSocket.Connected)
+                {
+                    dataSocket.Connect(dataEndpoint);
+                    Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
+                }
 
                 string fileLoc = (filePath);
                 FileHandler.SendFile(dataSocket, fileLoc);
 
-                dataSocket.Close();
+                //dataSocket.Close();
             });
 
             //send confirmation or request file again??             

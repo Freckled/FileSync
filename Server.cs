@@ -154,6 +154,8 @@ namespace FileSync
                         if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, _dataSocket, putFiles); }
 
                         dataSocket.Close();
+                        Connection.sendCommandNoReply(controlSocket, "CLOSE");
+                        controlSocket.Close();
                     });
                 }
             }

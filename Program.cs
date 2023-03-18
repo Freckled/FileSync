@@ -70,6 +70,7 @@ namespace FileSync
 
                     case "2":
                         Client client = new Client();
+                        Config.setClientTestDir(); //TODO remove for production
                         client.start();
                     
                         //TODO integrate into client (&server?)
@@ -80,6 +81,7 @@ namespace FileSync
                     case "3":
                         string input = Console.ReadLine();
                         Client clientIP = new Client(input);
+                        Config.setClientTestDir(); //TODO remove for production
                         clientIP.start();
                         break;
 
