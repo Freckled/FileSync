@@ -137,11 +137,12 @@ namespace FileSync
                 //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
                 if (putFiles.Count > 0 | getFiles.Count > 0) { 
                         Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
-                
+
                     //TODO check if we want to connect on PORT command or on GET command.
+                    
+                    //dataSocket.Listen();
                     Thread t = ActionThread(() =>
                     {                
-                        dataSocket.Listen();
 
                         if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, dataSocket, getFiles); }
                         if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, dataSocket, putFiles); }

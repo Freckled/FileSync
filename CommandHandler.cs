@@ -187,12 +187,12 @@ namespace FileSync
                     throw new Exception("Method executePut threw an error. No data end point is set.");
                 }
 
-                //Check if datasocket is connected
-                if (!dataSocket.Connected)
-                {
-                    dataSocket.Connect(dataEndpoint);
-                    Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
-                }
+                ////Check if datasocket is connected
+                //if (!dataSocket.Connected)
+                //{
+                //    dataSocket.Connect(dataEndpoint);
+                //    Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
+                //}
 
                 string fileLoc = (filePath);
                 FileHandler.SendFile(dataSocket, fileLoc);

@@ -18,7 +18,7 @@ namespace FileSync
         {
             using (socket)
             {
-
+                socket.Listen();
                 using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
                 {
                     byte[] buffer = new byte[8192];
@@ -63,7 +63,7 @@ namespace FileSync
                         lastStatus = progress;
                     }
                 }
-                socket.Shutdown(SocketShutdown.Both);
+                //socket.Shutdown(SocketShutdown.Both);
             }
             catch (SocketException e)
             {
@@ -73,7 +73,7 @@ namespace FileSync
             finally
             {
                 Console.WriteLine("File send complete");
-                socket.Close();
+                //socket.Close();
                 file.Close();
             }
             return true;
@@ -102,6 +102,7 @@ namespace FileSync
 
                     if (ResponseCode.isValid(responseCode))
                     {
+                        dataSocket.Connect(dataSocket.RemoteEndPoint);
                         FileHandler.SendFile(dataSocket, filePath);
                     }
                 }
@@ -114,7 +115,7 @@ namespace FileSync
             foreach (KeyValuePair<string, string> file in fileList)
             {
                 //openDataStream;
-
+                
                 //get fileheader
                 string response = Connection.sendCommand(controlSocket, "GET" + " " + file.Key);
                 //parse fileheader
@@ -126,6 +127,8 @@ namespace FileSync
 
                     string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
                     long size = fh.getSize(); //TODO change placeholder
+                    dataSocket.Listen();
+                    dataSocket.Accept();
                     FileHandler.receiveFile(dataSocket, filePath, size);
                 }
                 else
