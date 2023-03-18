@@ -46,7 +46,13 @@ namespace FileSync
                         clientConnection(client);
                     });
 
-                    //t.Start();
+                    while (t.IsAlive){
+                    }
+                    if (client.Connected)
+                    {
+                        client.Shutdown(SocketShutdown.Both);
+                        client.Close();
+                    }
                 }
             }
             catch (Exception e)
@@ -81,15 +87,19 @@ namespace FileSync
             {
                 //TESTING synch files
                 synchFiles(controlSocket, _dataSocket);
+                
+
             }   catch (Exception e) { 
                 Console.WriteLine(e.ToString()); 
                 
                 if(controlSocket.Connected)
                 {
+                   controlSocket.Shutdown(SocketShutdown.Both);
                     controlSocket.Close();
                 }
                 if (_dataSocket.Connected)
                 {
+                    _dataSocket.Shutdown(SocketShutdown.Both);
                     _dataSocket.Close();
                 }
                 
@@ -152,10 +162,10 @@ namespace FileSync
                         Console.WriteLine(_dataSocket.Connected);
                         if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
                         if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, _dataSocket, putFiles); }
-
-                        dataSocket.Close();
                         Connection.sendCommandNoReply(controlSocket, "CLOSE");
-                        controlSocket.Close();
+                        dataSocket.Shutdown(SocketShutdown.Both);
+                        dataSocket.Close();
+
                     });
                 }
             }
