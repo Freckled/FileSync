@@ -98,7 +98,7 @@ namespace FileSync
                      
         }
 
-
+        //TODO fix empty arrays (empty dirs)
         private void synchFiles(Socket controlSocket, Socket dataSocket)
         {
             //---synch--

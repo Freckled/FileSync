@@ -1,0 +1,16 @@
+F:\Github\FileSync\bin\Release\net5.0\FileSync.exe
+F:\Github\FileSync\bin\Release\net5.0\FileSync.deps.json
+F:\Github\FileSync\bin\Release\net5.0\FileSync.runtimeconfig.json
+F:\Github\FileSync\bin\Release\net5.0\FileSync.runtimeconfig.dev.json
+F:\Github\FileSync\bin\Release\net5.0\FileSync.dll
+F:\Github\FileSync\bin\Release\net5.0\FileSync.pdb
+F:\Github\FileSync\obj\Release\net5.0\FileSync.csproj.AssemblyReference.cache
+F:\Github\FileSync\obj\Release\net5.0\FileSync.GeneratedMSBuildEditorConfig.editorconfig
+F:\Github\FileSync\obj\Release\net5.0\FileSync.AssemblyInfoInputs.cache
+F:\Github\FileSync\obj\Release\net5.0\FileSync.AssemblyInfo.cs
+F:\Github\FileSync\obj\Release\net5.0\FileSync.csproj.CoreCompileInputs.cache
+F:\Github\FileSync\obj\Release\net5.0\FileSync.dll
+F:\Github\FileSync\obj\Release\net5.0\refint\FileSync.dll
+F:\Github\FileSync\obj\Release\net5.0\FileSync.pdb
+F:\Github\FileSync\obj\Release\net5.0\FileSync.genruntimeconfig.cache
+F:\Github\FileSync\obj\Release\net5.0\ref\FileSync.dll

@@ -1,0 +1,5 @@
+F:\Github\FileSync\bin\Release\net5.0\publish\FileSync.exe
+F:\Github\FileSync\bin\Release\net5.0\publish\FileSync.dll
+F:\Github\FileSync\bin\Release\net5.0\publish\FileSync.deps.json
+F:\Github\FileSync\bin\Release\net5.0\publish\FileSync.runtimeconfig.json
+F:\Github\FileSync\bin\Release\net5.0\publish\FileSync.pdb
