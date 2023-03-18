@@ -112,7 +112,7 @@ namespace FileSync
             
             if (ResponseCode.isValid(responseCode)) {             
             
-                string[] files = Transformer.RemoveResponseCode(response).Split(Config.linebreak);
+                string[] files = Transformer.RemoveResponseCode(response).Trim().Split(Config.linebreak);
 
 
                 Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
@@ -128,25 +128,27 @@ namespace FileSync
 
             
                 //--------TODO turn off after testing
-                //remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
+                remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
                 //--------TODO turn off after testing
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
 
                 //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
-                Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                if (putFiles.Count > 0 | getFiles.Count > 0) { 
+                        Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                
+                    //TODO check if we want to connect on PORT command or on GET command.
+                    Thread t = ActionThread(() =>
+                    {                
+                        dataSocket.Listen();
 
-                //TODO check if we want to connect on PORT command or on GET command.
-                Thread t = ActionThread(() =>
-                {                
-                    dataSocket.Listen();
+                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, dataSocket, getFiles); }
+                        if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, dataSocket, putFiles); }
 
-                    FileHandler.getFiles(controlSocket, dataSocket, getFiles);               
-                    FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
-
-                    dataSocket.Close();
-                });
+                        dataSocket.Close();
+                    });
+                }
             }
 
 
