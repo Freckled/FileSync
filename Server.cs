@@ -128,7 +128,7 @@ namespace FileSync
 
             
                 //--------TODO turn off after testing
-                remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
+                //remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
                 //--------TODO turn off after testing
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);

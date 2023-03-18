@@ -118,12 +118,21 @@ namespace FileSync
                 //get fileheader
                 string response = Connection.sendCommand(controlSocket, "GET" + " " + file.Key);
                 //parse fileheader
-                string fileHeader = Transformer.RemoveResponseCode(response);
-                fh.setFileHeader(fileHeader);
+                
+                if(ResponseCode.isValid(Transformer.GetResponseCode(response)))
+                {
+                    string fileHeader = Transformer.RemoveResponseCode(response);
+                    fh.setFileHeader(fileHeader);
 
-                string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
-                long size = fh.getSize(); //TODO change placeholder
-                FileHandler.receiveFile(dataSocket, filePath, size);
+                    string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
+                    long size = fh.getSize(); //TODO change placeholder
+                    FileHandler.receiveFile(dataSocket, filePath, size);
+                }
+                else
+                {
+                    Console.WriteLine(response);
+                }
+
 
             }
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Enumeration;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -57,6 +58,7 @@ namespace FileSync
             switch (cmd)
             {
                 case "GET":
+                    this.executeGet(_command);
                     break;
 
                 case "PUT":
@@ -156,6 +158,60 @@ namespace FileSync
 
             //send confirmation or request file again??             
         }
+
+
+        private void executeGet(string _command)
+        {
+            string[] arguments = _command.Split(" ");
+            //string fileName = arguments[1];
+            //long filesize = long.Parse(arguments[2]);
+            string fileName = arguments[1];
+            string filePath = Config.rootDir + fileName;
+            
+            FileHeader fh = new FileHeader();
+
+            Thread t = ActionThread(() => {
+                if (!File.Exists(filePath))
+                {
+                    Connection.sendCommandNoReply(socket, "300 file_not_found");
+                    return;
+                }
+                else
+                {
+                    string fileHeader = fh.getFileHeader(filePath);
+                    Connection.sendCommandNoReply(socket, "200 " + fileHeader);
+                }
+
+                if (dataEndpoint == null)
+                {
+                    throw new Exception("Method executePut threw an error. No data end point is set.");
+                }
+
+                //Check if datasocket is connected
+                if (!dataSocket.Connected)
+                {
+                    dataSocket.Connect(dataEndpoint);
+                    Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
+                }
+
+                string fileLoc = (filePath);
+                FileHandler.SendFile(dataSocket, fileLoc);
+
+                dataSocket.Close();
+            });
+
+            //send confirmation or request file again??             
+        }
+
+
+
+
+
+
+
+
+
+
 
         private Thread ActionThread(Action action)
         {
