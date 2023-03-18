@@ -13,8 +13,7 @@ namespace FileSync
     public class Config
     {
 
-        //public static readonly string rootDir = Directory.GetCurrentDirectory() + "\\SyncDirectory\\"; //TODO uncomment for production
-        public static string rootDir = Directory.GetCurrentDirectory() + "\\SyncDirectory\\"; //TODO delete for production
+        public static readonly string rootDir = Directory.GetCurrentDirectory() + "\\SyncDirectory\\";        
         public static readonly string testDir = Directory.GetCurrentDirectory() + "\\TestDirectory\\";
         //public static readonly string serverIp = "192.168.1.120";
         public static readonly int serverPort = 42069;
@@ -26,10 +25,5 @@ namespace FileSync
         public static readonly string endTextChar = "\u0003";
         public static readonly string checkSumAlgo = "MD5";
 
-        //TODO remove for production
-        public static void setClientTestDir()
-        {
-            rootDir = testDir;
-        }
     }
 }

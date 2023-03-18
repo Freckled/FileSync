@@ -73,8 +73,8 @@ namespace FileSync
 
             //Assign data socket
             Socket _dataSocket = Connection.createSocket();
-            IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
-            //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
+            //IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
+            IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
 
             try
