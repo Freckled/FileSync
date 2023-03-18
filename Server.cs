@@ -45,13 +45,14 @@ namespace FileSync
                     Thread t = ActionThread(() => {
                         clientConnection(client);
                     });
-
+                    
+                    //TODO make sure connection are shutdown when thread is done
                     while (t.IsAlive){
                     }
                     if (client.Connected)
-                    {
-                        client.Shutdown(SocketShutdown.Both);
-                        client.Close();
+                    {                        
+                        //client.Shutdown(SocketShutdown.Both);
+                        //client.Close();
                     }
                 }
             }
@@ -152,19 +153,23 @@ namespace FileSync
 
                     
                     Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
-         
-                    dataSocket.Listen();
-                    Socket _dataSocket = dataSocket.Accept();
-                    
+                           
 
                     Thread t = ActionThread(() =>
                     {
-                        Console.WriteLine(_dataSocket.Connected);
+                        dataSocket.Listen();
+                        Socket _dataSocket = dataSocket.Accept();
+
+                        Console.WriteLine("conrol socket connected {0}", controlSocket.Connected);
+                        Console.WriteLine("data socket connected {0}", _dataSocket.Connected);
                         if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
                         if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, _dataSocket, putFiles); }
                         Connection.sendCommandNoReply(controlSocket, "CLOSE");
-                        dataSocket.Shutdown(SocketShutdown.Both);
-                        dataSocket.Close();
+                        
+                        if (dataSocket.Connected) {
+                            dataSocket.Shutdown(SocketShutdown.Both);
+                            dataSocket.Close();
+                        }
 
                     });
                 }
