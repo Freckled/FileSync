@@ -19,6 +19,7 @@ namespace FileSync
             using (socket)
             {
                 socket.Listen();
+                socket.Accept();
                 using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
                 {
                     byte[] buffer = new byte[8192];
@@ -44,6 +45,12 @@ namespace FileSync
             FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read); ;
             long totalBytes = file.Length, bytesSoFar = 0;
             socket.SendTimeout = 1000000; //timeout in milliseconds
+
+            if (!socket.Connected)
+            {
+                socket.Connect(socket.RemoteEndPoint);
+            }
+
             try
             {
                 byte[] filechunk = new byte[4096];
@@ -127,8 +134,6 @@ namespace FileSync
 
                     string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
                     long size = fh.getSize(); //TODO change placeholder
-                    dataSocket.Listen();
-                    dataSocket.Accept();
                     FileHandler.receiveFile(dataSocket, filePath, size);
                 }
                 else

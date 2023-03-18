@@ -77,6 +77,14 @@ namespace FileSync
             //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
 
+            Thread t = ActionThread(() => {
+                while (controlSocket.Connected)
+                {
+                    _dataSocket.Listen();
+                    _dataSocket.Accept();
+                }                
+            });
+
             try
             {
                 //TESTING synch files
