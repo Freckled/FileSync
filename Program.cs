@@ -51,7 +51,7 @@ namespace FileSync
         start:
             try {
                 
-                Console.WriteLine("Choose you Mode;\n1-Server\n2-client\n3-client [input server IP]\n4-client [input server IP & PORT]\n5-Exit");
+                Console.WriteLine("Choose your Mode;\n1-Server\n2-client\n3-client [input server IP]\n4-client [input server IP & PORT]\n5-Exit");
                 //Console.WriteLine(Config.rootDir);
                 //get local IPv4
                 //string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
