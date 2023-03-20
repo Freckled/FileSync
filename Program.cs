@@ -51,11 +51,12 @@ namespace FileSync
         start:
             try {
                 
-                Console.WriteLine("Mode; 1-Server, 2-client, 3-client [input server IP], 4-Exit");
+                Console.WriteLine("Choose you Mode;\n1-Server\n2-client\n3-client [input server IP]\n4-client [input server IP & PORT]\n5-Exit");
                 //Console.WriteLine(Config.rootDir);
                 //get local IPv4
                 //string IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork).ToString();
                 IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                Console.Write("Selection: ");
                 string message = Console.ReadLine();
 
                 Global.remoteIP = IP;
@@ -79,6 +80,7 @@ namespace FileSync
                         break;
 
                     case "3":
+                        Console.Write("Input IP Adress of server: ");
                         string input = Console.ReadLine();
                         Client clientIP = new Client(input);
                         //Config.setClientTestDir(); //TODO remove for production
@@ -86,6 +88,18 @@ namespace FileSync
                         break;
 
                     case "4":
+                        Console.Write("Input IP Adress of server: ");
+                        string inputIP2 = Console.ReadLine();
+                        Console.Write("Input PORT of server: ");
+                        string port = Console.ReadLine();
+                        Client clientIP2 = new Client(inputIP2, port);
+                        //Config.setClientTestDir(); //TODO remove for production
+                        clientIP2.start();
+                        break;
+
+
+
+                    case "5":
                         Environment.Exit(0);
                         break;
 

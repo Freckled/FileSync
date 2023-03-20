@@ -16,6 +16,7 @@ namespace FileSync
         private Socket _socket;
         private IPAddress _ipAdress;
         private IPEndPoint _rep;
+        private int? _port;
 
         public Client()
         {            
@@ -30,13 +31,21 @@ namespace FileSync
             //_ipAdress = _ipAdress.MapToIPv6();
         }
 
+        public Client(string ip, string port)
+        {
+            _ipAdress = IPAddress.Parse(ip);
+            _port = int.Parse(port);
+            //_ipAdress = _ipAdress.MapToIPv6();
+        }
+
         //start the client
         public void start()
         {
         try
             {
+                int port = _port ?? Config.serverPort;
                 _socket = Connection.createSocket();
-                _rep = new IPEndPoint(_ipAdress, Config.serverPort);
+                _rep = new IPEndPoint(_ipAdress, port);
                 
                 //Thread mainThread = Thread.CurrentThread;
                 _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
