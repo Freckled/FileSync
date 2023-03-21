@@ -123,7 +123,7 @@ namespace FileSync
             
             if (ResponseCode.isValid(responseCode)) {             
             
-                string[] files = Transformer.RemoveResponseCode(response).Trim().Split(Config.linebreak);
+                string[] files = Transformer.RemoveResponseCode(response).Trim().Split(Config.fileSeperator);
 
 
                 Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
@@ -132,7 +132,7 @@ namespace FileSync
                     {
                         if (!file.Equals(""))
                         {
-                            var fileSplit = file.Trim().Split(" ");
+                            var fileSplit = file.Trim().Split(Config.unitSeperator);
                             remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
                         }
                     }

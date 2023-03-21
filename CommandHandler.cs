@@ -107,7 +107,8 @@ namespace FileSync
             //generate string from list
             foreach (KeyValuePair<string, string> file in localfiles)
             {
-                dirList = dirList + file.Key + " " + file.Value + Config.linebreak;
+                //dirList = dirList + file.Key + " " + file.Value + Config.linebreak; //old remain until new tested
+                dirList = dirList + file.Key + Config.unitSeperator + file.Value + Config.fileSeperator;
 
             }
             dirList = "200" + " " + dirList;
