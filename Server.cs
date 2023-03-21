@@ -32,6 +32,7 @@ namespace FileSync
             reboot:
             try
             {
+                //TODO error handling for if socket is in use?
                 _socket.Bind(_ep);
                 //create a loop so it keeps listening
                 while (true)
@@ -40,6 +41,7 @@ namespace FileSync
                     Thread mainThread = Thread.CurrentThread;
                     
                     _socket.Listen(Config.serverPort);
+                    Console.WriteLine("Listening on {0}", _socket.LocalEndPoint.ToString());
                     Socket client = _socket.Accept();
                     
                     Thread t = ActionThread(() => {
@@ -133,7 +135,7 @@ namespace FileSync
                         if (!file.Equals(""))
                         {
                             var fileSplit = file.Trim().Split(Config.unitSeperator);
-                            remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+                            remoteFileList.Add(fileSplit[0], fileSplit[1]);
                         }
                     }
 
