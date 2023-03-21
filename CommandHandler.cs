@@ -178,10 +178,11 @@ namespace FileSync
 
         private void executeGet(string _command)
         {
-            string[] arguments = _command.Split(" ");
+            //string[] arguments = _command.Split(" ");
             //string fileName = arguments[1];
             //long filesize = long.Parse(arguments[2]);
-            string fileName = arguments[1];
+            //string fileName = arguments[1];
+            string fileName = Transformer.RemoveResponseCode(_command).Trim();
             string filePath = Config.rootDir + fileName;
             
             FileHeader fh = new FileHeader();
