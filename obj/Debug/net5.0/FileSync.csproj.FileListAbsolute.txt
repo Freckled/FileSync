@@ -30,6 +30,12 @@ F:\Github\FileSync\bin\Debug\net5.0\FileSync.dll
 F:\Github\FileSync\bin\Debug\net5.0\FileSync.pdb
 F:\Github\FileSync\obj\Debug\net5.0\FileSync.genruntimeconfig.cache
 F:\Github\FileSync\obj\Debug\net5.0\refint\FileSync.dll
+C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.exe
+C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.deps.json
+C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.json
+C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.dev.json
+C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.dll
+C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.pdb
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\FileSync.csproj.AssemblyReference.cache
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\FileSync.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\FileSync.AssemblyInfoInputs.cache
@@ -38,11 +44,5 @@ C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\FileSync.cspro
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\FileSync.dll
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\refint\FileSync.dll
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\FileSync.pdb
-C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.exe
-C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.deps.json
-C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.json
-C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.runtimeconfig.dev.json
-C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.dll
-C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\bin\Debug\net5.0\FileSync.pdb
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\FileSync.genruntimeconfig.cache
 C:\Users\wesleyvB\Source\Repos\Freckled\FileSync\obj\Debug\net5.0\ref\FileSync.dll
