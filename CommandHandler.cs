@@ -41,7 +41,7 @@ namespace FileSync
                 return;
             }
 
-            Console.WriteLine("Command received: {0}",_command);
+            Console.WriteLine("Command received: {0}", _command);
 
             string[] commandCode = _command.Split(' ');
 
@@ -51,7 +51,7 @@ namespace FileSync
             arguments = arguments.Trim();
 
             if (string.IsNullOrWhiteSpace(arguments))
-            { 
+            {
                 arguments = null;
             }
 
@@ -66,6 +66,11 @@ namespace FileSync
                     break;
 
                 case "DELETE":
+                    this.executeDelete(_command);
+                    break;
+
+                case "RENAME":
+                    this.executeRename(_command);
                     break;
 
                 case "SIZE":
@@ -98,7 +103,6 @@ namespace FileSync
 
         }
 
-
         private void executeDir(string _command)
         {
 
@@ -116,8 +120,24 @@ namespace FileSync
             //socket.Send(msg);
 
             Connection.sendCommandNoReply(socket, dirList);
+        }
 
+        private void executeDelete(string _command)
+        {
+            string[] arguments = _command.Split(" ");
+            string fileName = arguments[1];
+            long filesize = long.Parse(arguments[2]);
 
+            FileHandler.DeleteFile(dataSocket, fileName);
+        }
+
+        private void executeRename(string _command)
+        {
+            string[] arguments = _command.Split(" ");
+            string fileName = arguments[1];
+            long filesize = long.Parse(arguments[2]);
+
+            FileHandler.RenameFile(dataSocket, fileName);
         }
 
         private void executePort(string _command)
@@ -161,8 +181,9 @@ namespace FileSync
 
             Thread t = ActionThread(() => {
                 Connection.sendCommandNoReply(socket, "200 Ready_to_receive");
-                if (!dataSocket.Connected) { 
-                    dataSocket.Connect(dataEndpoint); 
+                if (!dataSocket.Connected)
+                {
+                    dataSocket.Connect(dataEndpoint);
                     Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote" + dataEndpoint.ToString());
                 }
 
@@ -174,7 +195,6 @@ namespace FileSync
             //send confirmation or request file again??             
         }
 
-
         private void executeGet(string _command)
         {
             string[] arguments = _command.Split(" ");
@@ -182,7 +202,7 @@ namespace FileSync
             //long filesize = long.Parse(arguments[2]);
             string fileName = arguments[1];
             string filePath = Config.rootDir + fileName;
-            
+
             FileHeader fh = new FileHeader();
 
             Thread t = ActionThread(() => {
@@ -218,16 +238,6 @@ namespace FileSync
             //send confirmation or request file again??             
         }
 
-
-
-
-
-
-
-
-
-
-
         private Thread ActionThread(Action action)
         {
             Thread thread = new Thread(() => { action(); });
@@ -236,7 +246,7 @@ namespace FileSync
         }
 
         private string Port(string hostPort)
-        {         
+        {
             string[] ipAndPort = hostPort.Trim().Split(',');
 
             byte[] ipAddress = new byte[4];

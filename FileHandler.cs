@@ -11,30 +11,32 @@ namespace FileSync
 {
     public class FileHandler
     {
-        
+
         //TODO Error handling
         //receive files based on pre-determined size
         public static void receiveFile(Socket socket, string filePath, long size)
         {
             try
             {
-                    using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                {
+                    byte[] buffer = new byte[8192];
+                    int read;
+                    int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
+
+                    do
                     {
-                        byte[] buffer = new byte[8192];
-                        int read;
-                        int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
+                        read = socket.Receive(buffer);
+                        fs.Write(buffer, 0, read);
+                        bytesSoFar += read;
 
-                        do
-                        {
-                            read = socket.Receive(buffer);
-                            fs.Write(buffer, 0, read);
-                            bytesSoFar += read;
+                    } while (bytesSoFar < size);
+                }
 
-                        } while (bytesSoFar < size);
-                    }
-                
-            }catch(Exception e) { 
-            Console.WriteLine(e.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -99,7 +101,8 @@ namespace FileSync
                 //TODO change to wait for response (Connection.sendCommandReply) before sending file (needs change in PUT commandhandler item to send response code)
                 //response = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize()).Split(" ");
                 string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
-                if (response != null) { 
+                if (response != null)
+                {
                     string[] responseArr = response.Split(" ");
                     int responseCode = int.Parse(responseArr[0]);
 
@@ -117,12 +120,12 @@ namespace FileSync
             foreach (KeyValuePair<string, string> file in fileList)
             {
                 //openDataStream;
-                
+
                 //get fileheader
                 string response = Connection.sendCommand(controlSocket, "GET" + " " + file.Key);
                 //parse fileheader
-                
-                if(ResponseCode.isValid(Transformer.GetResponseCode(response)))
+
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
                     string fileHeader = Transformer.RemoveResponseCode(response);
                     fh.setFileHeader(fileHeader);
@@ -139,6 +142,64 @@ namespace FileSync
 
             }
 
+        }
+
+        public static bool DeleteFile(Socket socket, string filePath)
+        {
+            //TODO Check if we want socket...
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(Config.rootDir + file.Name);
+                if (fileInfo.Exists)
+                {
+                    File.Delete(Config.rootDir + file.Name);
+                }
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File deletetion complete");
+                socket.Close();
+                file.Close();
+            }
+            return true;
+        }
+
+        public static bool RenameFile(Socket socket, string filePath)
+        {
+            string newName = "";
+            string oldName = "";
+
+            //TODO Check if we want socket...
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(Config.rootDir + oldName);
+                if (fileInfo.Exists)
+                {
+                    // Move file with a new name. Hence renamed.  
+                    fileInfo.MoveTo(Config.rootDir + newName);
+                }
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File deletetion complete");
+                socket.Close();
+                file.Close();
+            }
+
+            return true;
         }
 
 
