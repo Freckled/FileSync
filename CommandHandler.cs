@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Xml.Schema;
 
 namespace FileSync
 {
@@ -142,11 +143,14 @@ namespace FileSync
 
         private void executePut(string _command)
         {
-            string[] arguments = _command.Split(" ");
+            
+            
+            //string[] arguments = command.Split(":");
             //string fileName = arguments[1];
             //long filesize = long.Parse(arguments[2]);
-            string fileHeader = arguments[1];
-
+            //string fileHeader = arguments[1];
+            
+            string fileHeader = Transformer.RemoveCommand(_command);
             FileHeader fh = new FileHeader();
             fh.setFileHeader(fileHeader);
             string fileName = fh.getName();
