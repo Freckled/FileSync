@@ -66,6 +66,7 @@ namespace FileSync
                     break;
 
                 case "DELETE":
+                    this.executeDelete(_command);
                     break;
 
                 case "SIZE":
@@ -118,6 +119,15 @@ namespace FileSync
             Connection.sendCommandNoReply(socket, dirList);
 
 
+        }
+
+        private void executeDelete(string _command)
+        {
+            string[] arguments = _command.Split(" ");
+            string fileName = arguments[1];
+            long filesize = long.Parse(arguments[2]);
+
+            FileHandler.DeleteFile(dataSocket, fileName);
         }
 
         private void executePort(string _command)
