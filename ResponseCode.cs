@@ -11,7 +11,7 @@ namespace FileSync
     {
         private readonly static Dictionary<int, string> responseCodes = new Dictionary<int, string>()
         {
-            { 125, "Data connection already open; transfer starting. " },
+            { 125, "Data connection already open; transfer starting." },
             { 550, "Requested action not taken. File unavailable (e.g., file not found, no access)." },
             { 552, "Requested file action aborted. Exceeded storage allocation (for current directory or dataset)." },
             { 553, "Requested action not taken. File name not allowed." },
@@ -27,7 +27,26 @@ namespace FileSync
         /// <returns>Boolean indicating true when the process can continue; false when to stop.</returns>
         public static Boolean isValid(int _responseCode = 0)
         {
-            return true;
+            Boolean ret = false;
+
+            switch (_responseCode)
+            {
+                case 125:
+                case 250:
+                case 225:
+                    ret = true;
+                    break;
+                case 550:
+                case 552:
+                case 553:
+                case 502:
+                    ret = false;
+                    break;
+                default:
+                    return false;
+            }
+
+            return ret;
         }
 
         public static int getResponseCode(string _responseStr)
