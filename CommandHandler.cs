@@ -81,7 +81,7 @@ namespace FileSync
                     this.executeClose(_command);
                     break;
 
-                case "DIR":
+                case "LS":
                     this.executeDir(_command);
                     break;
 

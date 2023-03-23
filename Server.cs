@@ -122,7 +122,7 @@ namespace FileSync
             var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
 
             //get remote DIR
-            string response =  Connection.sendCommand(controlSocket, "DIR");
+            string response =  Connection.sendCommand(controlSocket, "LS");
             int responseCode = Transformer.GetResponseCode(response);
             
             

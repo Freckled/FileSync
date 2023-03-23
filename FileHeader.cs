@@ -45,7 +45,7 @@ namespace FileSync
         public override string ToString()
         {
             return "FileHeader:" + _name +
-                ":" + _extension +
+                ":" + _extension + //TODO change to date modified or add it 
                 ":" + _size +
                 ":" + _checksumAlgorithm +
                 ":" + _checksum;

@@ -14,7 +14,7 @@ namespace FileSync
         
         //TODO Error handling
         //receive files based on pre-determined size
-        public static void receiveFile(Socket socket, string filePath, long size)
+        public static void receiveFile(Socket socket, string filePath, long size)//TODO add, date last Modified --modDT
         {
             try
             {
@@ -32,7 +32,7 @@ namespace FileSync
 
                         } while (bytesSoFar < size);
                     }
-                
+                //FileHelper.SetModifiedDateTime(filePath, modDT);
             }catch(Exception e) { 
             Console.WriteLine(e.ToString());
             }
