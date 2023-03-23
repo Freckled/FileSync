@@ -231,14 +231,6 @@ namespace FileSync
 
 
 
-
-
-
-
-
-
-
-
         private Thread ActionThread(Action action)
         {
             Thread thread = new Thread(() => { action(); });
