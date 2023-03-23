@@ -99,9 +99,8 @@ namespace FileSync
                 //TODO change to wait for response (Connection.sendCommandReply) before sending file (needs change in PUT commandhandler item to send response code)
                 //response = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize()).Split(" ");
                 string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
-                if (response != null) { 
-                    string[] responseArr = response.Split(" ");
-                    int responseCode = int.Parse(responseArr[0]);
+                if (response != null && !response.Equals("")) { 
+                    int responseCode = Transformer.GetResponseCode(response);
 
                     if (ResponseCode.isValid(responseCode))
                     {
