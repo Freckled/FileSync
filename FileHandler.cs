@@ -141,6 +141,64 @@ namespace FileSync
 
         }
 
+        public static bool DeleteFile(Socket socket, string filePath)
+        {
+            //TODO Check if we want socket...
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(Config.rootDir + file.Name);
+                if (fileInfo.Exists)
+                {
+                    File.Delete(Config.rootDir + file.Name);
+                }
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File deletetion complete");
+                socket.Close();
+                file.Close();
+            }
+            return true;
+        }
+
+        public static bool RenameFile(Socket socket, string filePath)
+        {
+            string newName = "";
+            string oldName = "";
+
+            //TODO Check if we want socket...
+            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(Config.rootDir + oldName);
+                if (fileInfo.Exists)
+                {
+                    // Move file with a new name. Hence renamed.  
+                    fileInfo.MoveTo(Config.rootDir + newName);
+                }
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                return false;
+            }
+            finally
+            {
+                Console.WriteLine("File deletetion complete");
+                socket.Close();
+                file.Close();
+            }
+
+            return true;
+        }
+
 
     }
 }

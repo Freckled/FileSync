@@ -130,6 +130,15 @@ namespace FileSync
             FileHandler.DeleteFile(dataSocket, fileName);
         }
 
+        private void executeRename(string _command)
+        {
+            string[] arguments = _command.Split(" ");
+            string fileName = arguments[1];
+            long filesize = long.Parse(arguments[2]);
+
+            FileHandler.RenameFile(dataSocket, fileName);
+        }
+
         private void executePort(string _command)
         {
             string[] arguments = _command.Split(" ");
