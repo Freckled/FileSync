@@ -86,7 +86,8 @@ namespace FileSync
                     break;
 
                 default:
-                    throw new Exception("Command " + _command + " is not supported.");
+                    //throw new Exception("Command " + _command + " is not supported.");
+                    Connection.sendCommandNoReply(socket, "Command" + _command + " is not supported.");
             }
 
             //return response code. Like 200, 205 etc...
