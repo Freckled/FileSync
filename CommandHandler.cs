@@ -170,13 +170,7 @@ namespace FileSync
 
         private void executePut(string _command)
         {
-            
-            
-            //string[] arguments = command.Split(":");
-            //string fileName = arguments[1];
-            //long filesize = long.Parse(arguments[2]);
-            //string fileHeader = arguments[1];
-            
+           
             string fileHeader = Transformer.RemoveCommand(_command);
             FileHeader fh = new FileHeader();
             fh.setFileHeader(fileHeader);
@@ -184,12 +178,6 @@ namespace FileSync
             long filesize = fh.getSize();
             DateTime dateModified = fh.getDateModified();
 
-            ////Check if datasocket is connected
-            //if (dataSocket.Connected)
-            //{
-            //    string fileLoc = (Config.rootDir + fileName);
-            //    FileHandler.receiveFile(dataSocket, fileLoc, filesize);
-            //}
 
             if (dataEndpoint == null)
             {
@@ -206,18 +194,11 @@ namespace FileSync
 
                 string fileLoc = (Config.rootDir + fileName);
                 FileHandler.receiveFile(dataSocket, fileLoc, filesize, dateModified);
-                //dataSocket.Close();
-            });
-
-            //send confirmation or request file again??             
+            });        
         }
 
         private void executeGet(string _command)
         {
-            //string[] arguments = _command.Split(" ");
-            //string fileName = arguments[1];
-            //long filesize = long.Parse(arguments[2]);
-            //string fileName = arguments[1];
             string fileName = Transformer.RemoveResponseCode(_command).Trim();
             string filePath = Config.rootDir + fileName;
 
@@ -248,9 +229,7 @@ namespace FileSync
                 }
 
                 string fileLoc = (filePath);
-                FileHandler.SendFile(dataSocket, fileLoc);
-
-                //dataSocket.Close();
+                FileHandler.SendFile(dataSocket, fileLoc);             
             });
 
             //send confirmation or request file again??             
@@ -262,31 +241,5 @@ namespace FileSync
             thread.Start();
             return thread;
         }
-
-        private string Port(string hostPort)
-        {
-            string[] ipAndPort = hostPort.Trim().Split(',');
-
-            byte[] ipAddress = new byte[4];
-            byte[] port = new byte[2];
-
-            for (int i = 0; i < 4; i++)
-            {
-                ipAddress[i] = Convert.ToByte(ipAndPort[i]);
-            }
-
-            for (int i = 4; i < 6; i++)
-            {
-                port[i - 4] = Convert.ToByte(ipAndPort[i]);
-            }
-
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(port);
-
-            dataEndpoint = new IPEndPoint(new IPAddress(ipAddress), BitConverter.ToInt16(port, 0));
-            Console.WriteLine("200 Data Connection Established");
-            return "200 Data Connection Established";
-        }
-
     }
 }

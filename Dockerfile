@@ -14,5 +14,4 @@ COPY --from=build /app/out ./
 EXPOSE 42069/tcp
 EXPOSE 42068/tcp
 ENTRYPOINT ["dotnet", "FileSync.dll"]
-#CMD [ "server" ]
-CMD [ "client 192.168.1.120" ]
+CMD [ "server" ]

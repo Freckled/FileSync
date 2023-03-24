@@ -76,8 +76,7 @@ namespace FileSync
                         Console.Write(".");
                         lastStatus = progress;
                     }
-                }
-                //socket.Shutdown(SocketShutdown.Both);
+                }               
             }
             catch (SocketException e)
             {
@@ -103,12 +102,6 @@ namespace FileSync
                 //create fileheader
                 string fileHeader = fh.getFileHeader(filePath); ;//Filehandlder.filehead(filepath)
 
-                //send fileheader over socket.
-                //string[] response = Connection.sendCommand(controlSocket, fileHeader).Split(" ");
-                //int responseCode = int.Parse(response[0]);
-
-                //TODO change to wait for response (Connection.sendCommandReply) before sending file (needs change in PUT commandhandler item to send response code)
-                //response = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize()).Split(" ");
                 string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
                 if (response != null && !response.Equals("")) { 
                     int responseCode = Transformer.GetResponseCode(response);
@@ -146,10 +139,7 @@ namespace FileSync
                 {
                     Console.WriteLine(response);
                 }
-
-
-            }
-            
+            }            
         }
 
         public static bool DeleteFile(Socket socket, string filePath)
@@ -206,7 +196,6 @@ namespace FileSync
                 socket.Close();
                 file.Close();
             }
-
             return true;
         }
 

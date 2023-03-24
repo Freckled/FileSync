@@ -53,14 +53,7 @@ namespace FileSync
                     if (!t.IsAlive){
                         Console.WriteLine("Thread died");
                     }
-                    //Console.WriteLine("Thread died");
-                    //Console.WriteLine(client.Connected);
-                    //if (client.Connected)
-                    //{                        
-                    //    //client.Shutdown(SocketShutdown.Both);
-                    //    //client.Close();
-                        
-                    //}
+
                 }
             }
             catch (Exception e)
@@ -110,11 +103,8 @@ namespace FileSync
                     _dataSocket.Shutdown(SocketShutdown.Both);
                     _dataSocket.Close();
                     _dataSocket.Dispose();
-                }
-                
-            }
-
-                     
+                }                
+            }                     
         }
 
 
@@ -143,12 +133,8 @@ namespace FileSync
                             var fileSplit = file.Trim().Split(Config.unitSeperator);
                             remoteFileList.Add(fileSplit[0], fileSplit[1]);
                         }
-                    }
+                    }         
 
-            
-                //--------TODO turn off after testing
-                //remoteFileList = FileHelper.DictFilesWithDateTime(Config.testDir);
-                //--------TODO turn off after testing
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
@@ -187,10 +173,6 @@ namespace FileSync
                     Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
             }
-
-
-
         }
-
     }
 }

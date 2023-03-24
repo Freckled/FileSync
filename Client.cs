@@ -27,15 +27,13 @@ namespace FileSync
         //constructor with the option to give an IP adress as string to connect to.
         public Client(string ip)
         {
-            _ipAdress = IPAddress.Parse(ip);
-            //_ipAdress = _ipAdress.MapToIPv6();
+            _ipAdress = IPAddress.Parse(ip);            
         }
 
         public Client(string ip, string port)
         {
             _ipAdress = IPAddress.Parse(ip);
-            _port = int.Parse(port);
-            //_ipAdress = _ipAdress.MapToIPv6();
+            _port = int.Parse(port);            
         }
 
         //start the client
@@ -47,7 +45,6 @@ namespace FileSync
                 _socket = Connection.createSocket();
                 _rep = new IPEndPoint(_ipAdress, port);
                 
-                //Thread mainThread = Thread.CurrentThread;
                 _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 
                 _socket.Connect(_rep);
@@ -84,14 +81,7 @@ namespace FileSync
                 }
 
                 commandHandler.processCommand(command, CommandHandler.Device.CLIENT);
-
             }
-
-            //Socket _dataSocket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-            //IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
-            //_dataSocket.Bind(ep);
-
-            //let the client know where to connect to and be ready to accept connection
         }
 
     }

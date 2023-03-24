@@ -11,7 +11,6 @@ namespace FileSync
 {
     public static class Connection
     {
-
         public static string sendCommand(Socket socket, string command)
         {
             string response = null;
@@ -28,20 +27,13 @@ namespace FileSync
                 // Receive the response from the remote device.
                 try
                 {
-
                     response = Transformer.ParseByteArrString(Connection.ReceiveAll(socket));
-                    //int bytesRec = socket.Receive(bytes);
-                    //response += Encoding.UTF8.GetString(bytes, 0, bytesRec);
-
-
-                    Console.WriteLine("Response received: {0}", response);                                
-
+                    Console.WriteLine("Response received: {0}", response);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Socket {0} forcefully closed", socket.RemoteEndPoint.ToString());
-                }
-               
+                }               
             }
             else
             {
@@ -66,44 +58,12 @@ namespace FileSync
 
         }
 
-
-
-        //public static byte[] ReceiveAll2(Socket socket)
-        //{
-        //    var buffer = new List<byte>();
-
-        //    //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
-        //    try
-        //    {
-        //        do
-        //        {
-        //            var currByte = new Byte[1];
-        //            var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
-
-        //            if (byteCounter.Equals(1))
-        //            {
-        //                buffer.Add(currByte[0]);
-        //            }
-        //        }
-        //        while (socket.Available > 0);
-        //    }
-        //    catch (SocketException e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //    }
-        //    return buffer.ToArray();
-        //}
-
-
-
         public static byte[] ReceiveAll(Socket socket)
         {
 
             var buffer = new List<byte>();           
             byte[] endTextChar = Encoding.UTF8.GetBytes(Config.endTextChar);
-            
-
-            //Do while zodat hij niet hangt op available. Blocked nu op receive en gaat dan door. 
+                                    
             try
             {
                 var currByte = new Byte[1];
@@ -121,9 +81,7 @@ namespace FileSync
                     {
                         buffer.Add(currByte[0]);
                     }                 
-
-                }
-                
+                }                
             }
             catch (SocketException e)
             {
@@ -134,21 +92,11 @@ namespace FileSync
             return buffer.ToArray();
         }
 
-
-
         public static Socket createSocket()
         {
             Socket _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             _socket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            return _socket;
-        }
-
-        public static Socket createSocketSingleUse()
-        {
-            Socket _socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-            _socket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
-            _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, false);
             return _socket;
         }
 
