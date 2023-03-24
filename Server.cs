@@ -87,8 +87,8 @@ namespace FileSync
 
             //Assign data socket
             Socket _dataSocket = Connection.createSocket();
-            //IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
-            IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
+            IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
+            //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
 
             try
@@ -102,12 +102,14 @@ namespace FileSync
                 if(controlSocket.Connected)
                 {
                    controlSocket.Shutdown(SocketShutdown.Both);
-                    controlSocket.Close();
+                   controlSocket.Close();
+                   controlSocket.Dispose();                   
                 }
                 if (_dataSocket.Connected)
                 {
                     _dataSocket.Shutdown(SocketShutdown.Both);
-                    //_dataSocket.Close();
+                    _dataSocket.Close();
+                    _dataSocket.Dispose();
                 }
                 
             }
@@ -173,11 +175,14 @@ namespace FileSync
                         }
                         Connection.sendCommandNoReply(controlSocket, "CLOSE");
                         
+                        //Clean up after
                         if (dataSocket.Connected) {
+                           
                             dataSocket.Shutdown(SocketShutdown.Both);
                             dataSocket.Close();
                         }
-                        //Thread.CurrentThread.Abort();
+                        dataSocket.Dispose();
+
                     });
                     Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
