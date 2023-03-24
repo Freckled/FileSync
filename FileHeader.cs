@@ -15,7 +15,7 @@ namespace FileSync
         private long _size;
         private string _checksumAlgorithm;
         private string _checksum;
-        private readonly string _dateFormat = "yyyy/MM/dd HH:mm:ss"; //TODO check the different formats and which to use. D f g etc.
+        private readonly string _dateFormat = "g";//"yyyy/MM/dd HH:mm:ss"; //TODO check the different formats and which to use. D f g etc.
         public FileHeader()
         {
 
@@ -23,7 +23,8 @@ namespace FileSync
 
         public void setFileHeader(string fileHeader)
         {
-            string[] header = fileHeader.Split(":");
+            //string[] header = fileHeader.Split(":");
+            string[] header = fileHeader.Split(Config.unitSeperator);
             _name = header[1];
             _dateModified = DateTime.ParseExact(header[2], _dateFormat, Config.cultureInfo);
             _size = long.Parse(header[3]);
@@ -45,11 +46,18 @@ namespace FileSync
 
         public override string ToString()
         {
-            return "FileHeader:" + _name +
-                ":" + _dateModified + //TODO change to date modified or add it 
-                ":" + _size +
-                ":" + _checksumAlgorithm +
-                ":" + _checksum;
+            //return "FileHeader:" + _name +
+            //    ":" + _dateModified + //TODO change to date modified or add it 
+            //    ":" + _size +
+            //    ":" + _checksumAlgorithm +
+            //    ":" + _checksum;
+
+            return "FileHeader" + 
+                _name + Config.unitSeperator + 
+                _dateModified + Config.unitSeperator + //TODO change to date modified or add it 
+                _size + Config.unitSeperator +
+                _checksumAlgorithm + Config.unitSeperator +
+               _checksum;
         }
 
         public string getName()

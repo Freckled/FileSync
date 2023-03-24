@@ -32,7 +32,7 @@ namespace FileSync
 
                         } while (bytesSoFar < size);
                     }
-                FileHelper.SetModifiedDateTime(filePath, dateTimeModified);
+                //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
             }catch(Exception e) { 
                 Console.WriteLine(e.ToString());
             }
