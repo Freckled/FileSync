@@ -85,6 +85,8 @@ namespace FileSync
 
         public static void sendFiles(Socket controlSocket, Socket dataSocket, Dictionary<string, string> fileList)
         {
+            Console.WriteLine("ctrl socket connected:" + controlSocket.Connected);
+            Console.WriteLine("data socket connected:" + dataSocket.Connected);
             FileHeader fh = new FileHeader();
             foreach (KeyValuePair<string, string> file in fileList)
             {

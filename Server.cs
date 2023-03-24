@@ -49,16 +49,17 @@ namespace FileSync
                     });
                     
                     //TODO make sure connection are shutdown when thread is done
-                    while (t.IsAlive){
+                    if (!t.IsAlive){
+                        Console.WriteLine("Thread died");
                     }
-                    Console.WriteLine("Thread died");
-                    Console.WriteLine(client.Connected);
-                    if (client.Connected)
-                    {                        
-                        //client.Shutdown(SocketShutdown.Both);
-                        //client.Close();
+                    //Console.WriteLine("Thread died");
+                    //Console.WriteLine(client.Connected);
+                    //if (client.Connected)
+                    //{                        
+                    //    //client.Shutdown(SocketShutdown.Both);
+                    //    //client.Close();
                         
-                    }
+                    //}
                 }
             }
             catch (Exception e)
@@ -168,6 +169,7 @@ namespace FileSync
                         Console.WriteLine("conrol socket connected {0}", controlSocket.Connected);
                         Console.WriteLine("data socket connected {0}", _dataSocket.Connected);
                         if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
+                        Console.WriteLine("putfilelist count :" + putFiles.Count);
                         if (putFiles.Count > 0) { 
                             FileHandler.sendFiles(controlSocket, _dataSocket, putFiles); 
                         }
