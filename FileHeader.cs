@@ -26,7 +26,7 @@ namespace FileSync
             //string[] header = fileHeader.Split(":");
             string[] header = fileHeader.Split(Config.unitSeperator);
             _name = header[1];
-            _dateModified = DateTime.Parse(header[2]);// DateTime.ParseExact(header[2], _dateFormat, Config.cultureInfo);
+            //_dateModified = DateTime.Parse(header[2]);// DateTime.ParseExact(header[2], _dateFormat, Config.cultureInfo);
             _size = long.Parse(header[3]);
             _checksumAlgorithm = header[4];
             _checksum = header[5];

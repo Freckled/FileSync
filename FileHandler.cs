@@ -16,8 +16,10 @@ namespace FileSync
         //receive files based on pre-determined size
         public static void receiveFile(Socket socket, string filePath, long size, DateTime dateTimeModified)//TODO add, date last Modified --modDT
         {
-            try
+            if (size != 0)
             {
+                try
+                {
                     using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
                     {
                         byte[] buffer = new byte[8192];
@@ -32,9 +34,17 @@ namespace FileSync
 
                         } while (bytesSoFar < size);
                     }
+                    //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+            else
+            {
+                File.Create(filePath);
                 //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
-            }catch(Exception e) { 
-                Console.WriteLine(e.ToString());
             }
         }
 
@@ -140,7 +150,7 @@ namespace FileSync
 
 
             }
-
+            Console.WriteLine("done with getting files");
         }
 
 

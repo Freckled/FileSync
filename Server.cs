@@ -158,16 +158,15 @@ namespace FileSync
                     //TODO check if we want to connect on PORT command or on GET command.
 
                     
-                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                            
 
                     Thread t = ActionThread(() =>
                     {
                         dataSocket.Listen();
                         Socket _dataSocket = dataSocket.Accept();
-
-                        Console.WriteLine("conrol socket connected {0}", controlSocket.Connected);
-                        Console.WriteLine("data socket connected {0}", _dataSocket.Connected);
+                        Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
+                        Console.WriteLine("getfilelist count :" + getFiles.Count);
                         if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
                         Console.WriteLine("putfilelist count :" + putFiles.Count);
                         if (putFiles.Count > 0) { 
