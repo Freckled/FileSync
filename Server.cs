@@ -150,7 +150,7 @@ namespace FileSync
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
-
+                Console.WriteLine("putfilelist count :" + putFiles.Count);
                 //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
                 if (putFiles.Count > 0 | getFiles.Count > 0) {
                     //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
