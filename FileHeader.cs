@@ -10,7 +10,7 @@ namespace FileSync
     public class FileHeader
     {
         private string _name;
-        private string _extension;
+        private string _dateModified;
         private long _size;
         private string _checksumAlgorithm;
         private string _checksum;
@@ -24,7 +24,7 @@ namespace FileSync
         {
             string[] header = fileHeader.Split(":");
             _name = header[1];
-            _extension = header[2];
+            _dateModified = header[2];
             _size = long.Parse(header[3]);
             _checksumAlgorithm = header[4];
             _checksum = header[5];
@@ -34,7 +34,7 @@ namespace FileSync
         public string getFileHeader(string filePath)
         {
             _name = new FileInfo(filePath).Name;
-            _extension = Path.GetExtension(filePath).Replace(".", "");
+            _dateModified = File.GetLastWriteTime(filePath).ToString("yyyy/MM/dd HH:mm:ss");
             _size = new FileInfo(filePath).Length;
             _checksumAlgorithm = Config.checkSumAlgo;
             _checksum = FileHelper.CalculateCheckSum(filePath);
@@ -45,7 +45,7 @@ namespace FileSync
         public override string ToString()
         {
             return "FileHeader:" + _name +
-                ":" + _extension + //TODO change to date modified or add it 
+                ":" + _dateModified + //TODO change to date modified or add it 
                 ":" + _size +
                 ":" + _checksumAlgorithm +
                 ":" + _checksum;
@@ -58,7 +58,7 @@ namespace FileSync
 
         public string getExtension()
         {
-            return _extension;
+            return _dateModified;
         }
 
         public long getSize()
