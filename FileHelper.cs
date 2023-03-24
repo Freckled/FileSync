@@ -30,6 +30,11 @@ namespace FileSync
             return System.IO.File.GetLastWriteTime(file);
         }
 
+        public static void SetModifiedDateTime(string filePath, DateTime newDT)
+        {
+            File.SetLastWriteTime(filePath, newDT);
+        }
+
         /// <summary>
         /// Send list to server client
         /// </summary>

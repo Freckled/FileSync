@@ -32,6 +32,7 @@ namespace FileSync
             reboot:
             try
             {
+                //TODO error handling for if socket is in use?
                 _socket.Bind(_ep);
                 //create a loop so it keeps listening
                 while (true)
@@ -40,20 +41,26 @@ namespace FileSync
                     Thread mainThread = Thread.CurrentThread;
                     
                     _socket.Listen(Config.serverPort);
+                    Console.WriteLine("Listening on {0}", _socket.LocalEndPoint.ToString());
                     Socket client = _socket.Accept();
                     
                     Thread t = ActionThread(() => {
                         clientConnection(client);
+                        while (client.Connected){}
                     });
                     
                     //TODO make sure connection are shutdown when thread is done
-                    while (t.IsAlive){
+                    if (!t.IsAlive){
+                        Console.WriteLine("Thread died");
                     }
-                    if (client.Connected)
-                    {                        
-                        //client.Shutdown(SocketShutdown.Both);
-                        //client.Close();
-                    }
+                    //Console.WriteLine("Thread died");
+                    //Console.WriteLine(client.Connected);
+                    //if (client.Connected)
+                    //{                        
+                    //    //client.Shutdown(SocketShutdown.Both);
+                    //    //client.Close();
+                        
+                    //}
                 }
             }
             catch (Exception e)
@@ -87,8 +94,7 @@ namespace FileSync
             try
             {
                 //TESTING synch files
-                synchFiles(controlSocket, _dataSocket);
-                
+                synchFiles(controlSocket, _dataSocket);                
 
             }   catch (Exception e) { 
                 Console.WriteLine(e.ToString()); 
@@ -117,13 +123,13 @@ namespace FileSync
             var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
 
             //get remote DIR
-            string response =  Connection.sendCommand(controlSocket, "DIR");
+            string response =  Connection.sendCommand(controlSocket, "LS");
             int responseCode = Transformer.GetResponseCode(response);
             
             
             if (ResponseCode.isValid(responseCode)) {             
             
-                string[] files = Transformer.RemoveResponseCode(response).Trim().Split(Config.linebreak);
+                string[] files = Transformer.RemoveResponseCode(response).Trim().Split(Config.fileSeperator);
 
 
                 Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
@@ -132,8 +138,8 @@ namespace FileSync
                     {
                         if (!file.Equals(""))
                         {
-                            var fileSplit = file.Trim().Split(" ");
-                            remoteFileList.Add(fileSplit[0], fileSplit[1] + " " + fileSplit[2]);
+                            var fileSplit = file.Trim().Split(Config.unitSeperator);
+                            remoteFileList.Add(fileSplit[0], fileSplit[1]);
                         }
                     }
 
@@ -144,34 +150,36 @@ namespace FileSync
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
-
+                Console.WriteLine("putfilelist count :" + putFiles.Count);
+                Console.WriteLine("getfilelist count :" + getFiles.Count);
                 //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
                 if (putFiles.Count > 0 | getFiles.Count > 0) {
                     //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
 
                     //TODO check if we want to connect on PORT command or on GET command.
 
-                    
-                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
-                           
-
                     Thread t = ActionThread(() =>
                     {
                         dataSocket.Listen();
+                        Console.WriteLine("datasocket listening on {0}", dataSocket.LocalEndPoint.ToString());                        
                         Socket _dataSocket = dataSocket.Accept();
 
-                        Console.WriteLine("conrol socket connected {0}", controlSocket.Connected);
-                        Console.WriteLine("data socket connected {0}", _dataSocket.Connected);
+                        Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
+                        
                         if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
-                        if (putFiles.Count > 0) { FileHandler.sendFiles(controlSocket, _dataSocket, putFiles); }
+                        Console.WriteLine("putfilelist count :" + putFiles.Count);
+                        if (putFiles.Count > 0) { 
+                            FileHandler.sendFiles(controlSocket, _dataSocket, putFiles); 
+                        }
                         Connection.sendCommandNoReply(controlSocket, "CLOSE");
                         
                         if (dataSocket.Connected) {
                             dataSocket.Shutdown(SocketShutdown.Both);
                             dataSocket.Close();
                         }
-
+                        //Thread.CurrentThread.Abort();
                     });
+                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
             }
 

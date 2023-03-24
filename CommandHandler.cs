@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Xml.Schema;
 
 namespace FileSync
 {
@@ -85,12 +86,14 @@ namespace FileSync
                     this.executeClose(_command);
                     break;
 
-                case "DIR":
+                case "LS":
                     this.executeDir(_command);
                     break;
 
                 default:
-                    throw new Exception("Command " + _command + " is not supported.");
+                    //throw new Exception("Command " + _command + " is not supported."); //WHY????
+                    Connection.sendCommandNoReply(socket, "Command" + _command + " is not supported.");
+                    break;
             }
 
             //return response code. Like 200, 205 etc...
@@ -111,10 +114,16 @@ namespace FileSync
             //generate string from list
             foreach (KeyValuePair<string, string> file in localfiles)
             {
-                dirList = dirList + file.Key + " " + file.Value + Config.linebreak;
+                //dirList = dirList + file.Key + " " + file.Value + Config.linebreak; //old remain until new tested
+                dirList = dirList + file.Key + Config.unitSeperator + file.Value + Config.fileSeperator;
 
             }
+            
+            
             dirList = "200" + " " + dirList;
+            
+            //TODO leave in or just send empty dirlist??
+            if (dirList.Equals("")){ dirList = "400 empty_dir"; }
             //string dirList = "filenumber1.txt 2/19/2023 3456kb"+Config.linebreak+ "filenumber2.pdf 2/17/2023 365kb"+Config.linebreak+"filenumber3.mp4 2/14/2023 2975kb"+Config.endTextChar;
             //byte[] msg = Encoding.UTF8.GetBytes(dirList);
             //socket.Send(msg);
@@ -151,21 +160,29 @@ namespace FileSync
             if (!dataSocket.Connected)
             {
                 dataSocket.Connect(dataEndpoint);
+                Console.WriteLine("Connected to {0} ", dataSocket.RemoteEndPoint.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Already connected to {0} ", dataSocket.RemoteEndPoint.ToString());
             }
         }
 
         private void executePut(string _command)
         {
-            string[] arguments = _command.Split(" ");
+            
+            
+            //string[] arguments = command.Split(":");
             //string fileName = arguments[1];
             //long filesize = long.Parse(arguments[2]);
-            string fileHeader = arguments[1];
-
+            //string fileHeader = arguments[1];
+            
+            string fileHeader = Transformer.RemoveCommand(_command);
             FileHeader fh = new FileHeader();
             fh.setFileHeader(fileHeader);
             string fileName = fh.getName();
             long filesize = fh.getSize();
-
+            DateTime dateModified = fh.getDateModified();
 
             ////Check if datasocket is connected
             //if (dataSocket.Connected)
@@ -188,7 +205,7 @@ namespace FileSync
                 }
 
                 string fileLoc = (Config.rootDir + fileName);
-                FileHandler.receiveFile(dataSocket, fileLoc, filesize);
+                FileHandler.receiveFile(dataSocket, fileLoc, filesize, dateModified);
                 //dataSocket.Close();
             });
 
@@ -197,10 +214,11 @@ namespace FileSync
 
         private void executeGet(string _command)
         {
-            string[] arguments = _command.Split(" ");
+            //string[] arguments = _command.Split(" ");
             //string fileName = arguments[1];
             //long filesize = long.Parse(arguments[2]);
-            string fileName = arguments[1];
+            //string fileName = arguments[1];
+            string fileName = Transformer.RemoveResponseCode(_command).Trim();
             string filePath = Config.rootDir + fileName;
 
             FileHeader fh = new FileHeader();

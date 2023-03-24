@@ -19,7 +19,14 @@ namespace FileSync
 
         public static string RemoveResponseCode(string str)
         {
-            return str.Substring(3);
+            return str.Substring(3).Trim();
+
+        }
+
+        public static string RemoveCommand(string str)
+        {
+            int commandEnd = str.IndexOf(" ", 0);
+            return str.Substring(commandEnd).Trim();
 
         }
 

@@ -14,15 +14,17 @@ namespace FileSync
 
         //TODO Error handling
         //receive files based on pre-determined size
-        public static void receiveFile(Socket socket, string filePath, long size)
+        public static void receiveFile(Socket socket, string filePath, long size, DateTime dateTimeModified)//TODO add, date last Modified --modDT
         {
-            try
+            if (size != 0)
             {
-                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                try
                 {
-                    byte[] buffer = new byte[8192];
-                    int read;
-                    int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
+                    using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                    {
+                        byte[] buffer = new byte[8192];
+                        int read;
+                        int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
 
                     do
                     {
@@ -30,13 +32,20 @@ namespace FileSync
                         fs.Write(buffer, 0, read);
                         bytesSoFar += read;
 
-                    } while (bytesSoFar < size);
+                        } while (bytesSoFar < size);
+                    }
+                    //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
+                    Console.WriteLine("File transfer of {0} complete", filePath);
                 }
-
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.ToString());
+                File.Create(filePath);
+                //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
             }
         }
 
@@ -77,7 +86,7 @@ namespace FileSync
             }
             finally
             {
-                Console.WriteLine("File send complete");
+                Console.WriteLine("File {0} sent", filePath);
                 //socket.Close();
                 file.Close();
             }
@@ -101,10 +110,8 @@ namespace FileSync
                 //TODO change to wait for response (Connection.sendCommandReply) before sending file (needs change in PUT commandhandler item to send response code)
                 //response = Connection.sendCommand(controlSocket, "PUT" + " " + fh.getName() + " " + fh.getSize()).Split(" ");
                 string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
-                if (response != null)
-                {
-                    string[] responseArr = response.Split(" ");
-                    int responseCode = int.Parse(responseArr[0]);
+                if (response != null && !response.Equals("")) { 
+                    int responseCode = Transformer.GetResponseCode(response);
 
                     if (ResponseCode.isValid(responseCode))
                     {
@@ -132,7 +139,8 @@ namespace FileSync
 
                     string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
                     long size = fh.getSize(); //TODO change placeholder
-                    FileHandler.receiveFile(dataSocket, filePath, size);
+                    DateTime dateModified = fh.getDateModified();
+                    FileHandler.receiveFile(dataSocket, filePath, size, dateModified);
                 }
                 else
                 {
@@ -141,7 +149,7 @@ namespace FileSync
 
 
             }
-
+            
         }
 
         public static bool DeleteFile(Socket socket, string filePath)
