@@ -14,7 +14,7 @@ namespace FileSync
         
         //TODO Error handling
         //receive files based on pre-determined size
-        public static void receiveFile(Socket socket, string filePath, long size)//TODO add, date last Modified --modDT
+        public static void receiveFile(Socket socket, string filePath, long size, DateTime dateTimeModified)//TODO add, date last Modified --modDT
         {
             try
             {
@@ -32,9 +32,9 @@ namespace FileSync
 
                         } while (bytesSoFar < size);
                     }
-                //FileHelper.SetModifiedDateTime(filePath, modDT);
+                FileHelper.SetModifiedDateTime(filePath, dateTimeModified);
             }catch(Exception e) { 
-            Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -128,7 +128,8 @@ namespace FileSync
 
                     string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
                     long size = fh.getSize(); //TODO change placeholder
-                    FileHandler.receiveFile(dataSocket, filePath, size);
+                    DateTime dateModified = fh.getDateModified();
+                    FileHandler.receiveFile(dataSocket, filePath, size, dateModified);
                 }
                 else
                 {

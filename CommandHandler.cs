@@ -157,7 +157,7 @@ namespace FileSync
             fh.setFileHeader(fileHeader);
             string fileName = fh.getName();
             long filesize = fh.getSize();
-
+            DateTime dateModified = fh.getDateModified();
 
             ////Check if datasocket is connected
             //if (dataSocket.Connected)
@@ -179,7 +179,7 @@ namespace FileSync
                 }
 
                 string fileLoc = (Config.rootDir + fileName);
-                FileHandler.receiveFile(dataSocket, fileLoc, filesize);
+                FileHandler.receiveFile(dataSocket, fileLoc, filesize, dateModified);
                 //dataSocket.Close();
             });
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,11 +11,11 @@ namespace FileSync
     public class FileHeader
     {
         private string _name;
-        private string _dateModified;
+        private DateTime _dateModified;
         private long _size;
         private string _checksumAlgorithm;
         private string _checksum;
-
+        private readonly string _dateFormat = "yyyy/MM/dd HH:mm:ss"; //TODO check the different formats and which to use. D f g etc.
         public FileHeader()
         {
 
@@ -24,7 +25,7 @@ namespace FileSync
         {
             string[] header = fileHeader.Split(":");
             _name = header[1];
-            _dateModified = header[2];
+            _dateModified = DateTime.ParseExact(header[2], _dateFormat, Config.cultureInfo);
             _size = long.Parse(header[3]);
             _checksumAlgorithm = header[4];
             _checksum = header[5];
@@ -34,7 +35,7 @@ namespace FileSync
         public string getFileHeader(string filePath)
         {
             _name = new FileInfo(filePath).Name;
-            _dateModified = File.GetLastWriteTime(filePath).ToString("yyyy/MM/dd HH:mm:ss");
+            _dateModified = File.GetLastWriteTime(filePath);
             _size = new FileInfo(filePath).Length;
             _checksumAlgorithm = Config.checkSumAlgo;
             _checksum = FileHelper.CalculateCheckSum(filePath);
@@ -56,7 +57,7 @@ namespace FileSync
             return _name;
         }
 
-        public string getExtension()
+        public DateTime getDateModified()
         {
             return _dateModified;
         }
