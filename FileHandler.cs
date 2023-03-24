@@ -35,6 +35,7 @@ namespace FileSync
                         } while (bytesSoFar < size);
                     }
                     //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
+                    Console.WriteLine("File transfer of {0} complete", filePath);
                 }
                 catch (Exception e)
                 {
@@ -85,7 +86,7 @@ namespace FileSync
             }
             finally
             {
-                Console.WriteLine("File send complete");
+                Console.WriteLine("File {0} sent", filePath);
                 //socket.Close();
                 file.Close();
             }
@@ -95,8 +96,6 @@ namespace FileSync
 
         public static void sendFiles(Socket controlSocket, Socket dataSocket, Dictionary<string, string> fileList)
         {
-            Console.WriteLine("ctrl socket connected:" + controlSocket.Connected);
-            Console.WriteLine("data socket connected:" + dataSocket.Connected);
             FileHeader fh = new FileHeader();
             foreach (KeyValuePair<string, string> file in fileList)
             {
@@ -150,7 +149,7 @@ namespace FileSync
 
 
             }
-            Console.WriteLine("done with getting files");
+            
         }
 
 

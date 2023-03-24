@@ -46,6 +46,7 @@ namespace FileSync
                     
                     Thread t = ActionThread(() => {
                         clientConnection(client);
+                        while (client.Connected){}
                     });
                     
                     //TODO make sure connection are shutdown when thread is done
@@ -93,8 +94,7 @@ namespace FileSync
             try
             {
                 //TESTING synch files
-                synchFiles(controlSocket, _dataSocket);
-                
+                synchFiles(controlSocket, _dataSocket);                
 
             }   catch (Exception e) { 
                 Console.WriteLine(e.ToString()); 
@@ -151,22 +151,21 @@ namespace FileSync
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
                 Console.WriteLine("putfilelist count :" + putFiles.Count);
+                Console.WriteLine("getfilelist count :" + getFiles.Count);
                 //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
                 if (putFiles.Count > 0 | getFiles.Count > 0) {
                     //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
 
                     //TODO check if we want to connect on PORT command or on GET command.
 
-                    
-                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
-                           
-
                     Thread t = ActionThread(() =>
                     {
                         dataSocket.Listen();
+                        Console.WriteLine("datasocket listening on {0}", dataSocket.LocalEndPoint.ToString());                        
                         Socket _dataSocket = dataSocket.Accept();
+
                         Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
-                        Console.WriteLine("getfilelist count :" + getFiles.Count);
+                        
                         if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
                         Console.WriteLine("putfilelist count :" + putFiles.Count);
                         if (putFiles.Count > 0) { 
@@ -178,8 +177,9 @@ namespace FileSync
                             dataSocket.Shutdown(SocketShutdown.Both);
                             dataSocket.Close();
                         }
-
+                        //Thread.CurrentThread.Abort();
                     });
+                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
             }
 

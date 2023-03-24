@@ -140,6 +140,11 @@ namespace FileSync
             if (!dataSocket.Connected)
             {
                 dataSocket.Connect(dataEndpoint);
+                Console.WriteLine("Connected to {0} ", dataSocket.RemoteEndPoint.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Already connected to {0} ", dataSocket.RemoteEndPoint.ToString());
             }
         }
 
