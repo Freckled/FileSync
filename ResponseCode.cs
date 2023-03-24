@@ -12,6 +12,7 @@ namespace FileSync
         private readonly static Dictionary<int, string> responseCodes = new Dictionary<int, string>()
         {
             { 125, "Data connection already open; transfer starting." },
+            { 200, "OK" },
             { 550, "Requested action not taken. File unavailable (e.g., file not found, no access)." },
             { 552, "Requested file action aborted. Exceeded storage allocation (for current directory or dataset)." },
             { 553, "Requested action not taken. File name not allowed." },
@@ -32,6 +33,7 @@ namespace FileSync
             switch (_responseCode)
             {
                 case 125:
+                case 200:
                 case 250:
                 case 225:
                     ret = true;

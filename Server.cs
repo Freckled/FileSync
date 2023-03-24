@@ -107,7 +107,7 @@ namespace FileSync
                 if (_dataSocket.Connected)
                 {
                     _dataSocket.Shutdown(SocketShutdown.Both);
-                    _dataSocket.Close();
+                    //_dataSocket.Close();
                 }
                 
             }
