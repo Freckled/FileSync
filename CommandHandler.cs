@@ -97,7 +97,7 @@ namespace FileSync
 
                 default:
                     //throw new Exception("Command " + _command + " is not supported."); //WHY????
-                    Connection.sendCommandNoReply(socket, "Command" + _command + " is not supported.");
+                    Connection.sendCommandNoReply(socket, "Command " + _command + " is not supported.");
                     break;
             }
 

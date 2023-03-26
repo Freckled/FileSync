@@ -99,27 +99,45 @@ namespace FileSync
                 commandHandler = new CommandHandler(controlSocket, _dataSocket);
                 Console.WriteLine("Waiting for command..");
                 string command = Transformer.ParseByteArrString(Connection.ReceiveAll(controlSocket));
-                                
+
                 commandHandler.processCommand(command, CommandHandler.Device.CLIENT);
+
 
                 /////////////////////////////////////////////////Receive Commands////////////////////////////////////////////////////
             }
-            catch (Exception e) { 
-                Console.WriteLine(e.ToString()); 
-                
-                if(controlSocket.Connected)
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+
+                if (controlSocket.Connected)
                 {
-                   controlSocket.Shutdown(SocketShutdown.Both);
-                   controlSocket.Close();
-                   controlSocket.Dispose();                   
+                    controlSocket.Shutdown(SocketShutdown.Both);
+                    controlSocket.Close();
+                    controlSocket.Dispose();
                 }
                 if (_dataSocket.Connected)
                 {
                     _dataSocket.Shutdown(SocketShutdown.Both);
                     _dataSocket.Close();
                     _dataSocket.Dispose();
-                }                
-            }                     
+                }
+            }
+            finally
+            {
+                if (controlSocket.Connected)
+                {
+                    Connection.sendCommand(controlSocket, "CLOSE" + Config.endTransmissionChar);
+                    controlSocket.Shutdown(SocketShutdown.Both);
+                    controlSocket.Close();
+                    controlSocket.Dispose();
+                }
+                if (_dataSocket.Connected)
+                {
+                    _dataSocket.Shutdown(SocketShutdown.Both);
+                    _dataSocket.Close();
+                    _dataSocket.Dispose();
+                }
+            }
         } 
     }
 }

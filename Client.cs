@@ -49,7 +49,10 @@ namespace FileSync
                 _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 
                 _socket.Connect(_rep);
-                serverConnection(_socket);                                       
+                serverConnection(_socket);
+
+                FileWatcher.Watch();
+
             }catch(SocketException e)
             {
                 Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
