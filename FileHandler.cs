@@ -279,7 +279,7 @@ namespace FileSync
                         dataSocket.Dispose();
 
                     });
-                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
+                    Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
             }
         }
