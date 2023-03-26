@@ -51,21 +51,21 @@ namespace FileSync
                 _socket.Connect(_rep);
                 serverConnection(_socket);
 
-                FileWatcher.Watch();
-
             }catch(SocketException e)
             {
                 Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
                 Thread.Sleep(2000);
-                Program.restart();
+                //Program.restart();
 
             }         
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 Thread.Sleep(1000);
-               
             }
+
+            FileWatcher.Watch();
+            
         }
 
 

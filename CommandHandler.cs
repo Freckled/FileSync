@@ -111,7 +111,6 @@ namespace FileSync
             Connection.sendCommandNoReply(socket, msg);
             Connection.Close(socket);
             Connection.Close(dataSocket);
-
         }
 
         private void executeSync(string _command)
