@@ -55,6 +55,8 @@ namespace FileSync
             {
                 Console.WriteLine(e.GetType().Name);
                 Console.WriteLine(e.GetType().ToString());
+                Console.WriteLine(e.ErrorCode.ToString());
+
                 Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
                 Thread.Sleep(2000);
                 //Program.restart();
