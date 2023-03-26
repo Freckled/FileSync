@@ -46,7 +46,7 @@ namespace FileSync
 
             foreach (var file in GetFilesFromDir(dir))
             {
-                serverList.Insert(i, new KeyValuePair<string, string>(Path.GetFileName(file), GetModifiedDateTime(file).ToString(Config.dateTimeFormat, Config.cultureInfo)));
+                serverList.Insert(i, new KeyValuePair<string, string>(Path.GetFileName(file), Transformer.parseDateToString(GetModifiedDateTime(file))));
                 i++;
             }
 
@@ -85,8 +85,8 @@ namespace FileSync
             {
                 if (list1.ContainsKey(entry.Key))
                 {
-                    var dateTimeL = DateTime.ParseExact(list1[entry.Key], Config.dateTimeFormat, Config.cultureInfo); //DateTime.Parse(list1[entry.Key], Config.cultureInfo);//
-                    var dateTimeR = DateTime.ParseExact(entry.Value, Config.dateTimeFormat, Config.cultureInfo); //DateTime.Parse(entry.Value, Config.cultureInfo);//
+                    var dateTimeL = Transformer.parseStringToDateTime(list1[entry.Key]); // DateTime.ParseExact(list1[entry.Key], Config.dateTimeFormat, Config.cultureInfo); //DateTime.Parse(list1[entry.Key], Config.cultureInfo);//
+                    var dateTimeR = Transformer.parseStringToDateTime(entry.Value);  //DateTime.ParseExact(entry.Value, Config.dateTimeFormat, Config.cultureInfo); //DateTime.Parse(entry.Value, Config.cultureInfo);//
 
                     if (dateTimeR > dateTimeL)
                     {
@@ -107,7 +107,7 @@ namespace FileSync
 
             foreach (var file in GetFilesFromDir(dir))
             {
-                serverList.Add(Path.GetFileName(file), GetModifiedDateTime(file).ToString(Config.dateTimeFormat, Config.cultureInfo));
+                serverList.Add(Path.GetFileName(file), Transformer.parseDateToString(GetModifiedDateTime(file)));
             }
 
             return serverList;
