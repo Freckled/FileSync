@@ -18,6 +18,7 @@ namespace FileSync
         private IPAddress _ipAdress;
         private IPEndPoint _rep;
         private int? _port;
+        public Socket serverControlSocket;
 
         public Client()
         {            
@@ -71,8 +72,10 @@ namespace FileSync
                 Console.WriteLine(e.ToString());
                 Thread.Sleep(1000);
             }
-
-            FileWatcher.Watch();
+            using (var disp = new DisposeSocketFileWatcher(_socket))
+            {
+                FileWatcher.Watch();
+            }
 
         }
 

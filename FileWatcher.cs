@@ -1,6 +1,9 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace FileSync
 {
@@ -8,7 +11,7 @@ namespace FileSync
     {
 
         //Monitors the dir for any changes in files (Change, Delete, Create, Rename)
-        public static void Watch()
+        public static void Watch(Socket _socket = null)
         {
             using var watcher = new FileSystemWatcher(Config.rootDir);
 
@@ -44,6 +47,23 @@ namespace FileSync
                 return;
             }
             Console.WriteLine($"Changed: {e.FullPath}");
+
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "PUT " + e.Name);
+                Int32.TryParse(response, out int responseCode);
+
+                if (ResponseCode.isValid(responseCode))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }
+            }
         }
 
         //If a file in a dir is created
@@ -51,6 +71,23 @@ namespace FileSync
         {
             string value = $"Created: {e.FullPath}";
             Console.WriteLine(value);
+
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "PUT " + e.Name);
+                Int32.TryParse(response, out int responseCode);
+
+                if (ResponseCode.isValid(responseCode))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }
+            }
         }
 
         //If a file in a dir is deleted
@@ -58,14 +95,22 @@ namespace FileSync
         private static void OnDeleted(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
-            IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "DELETE " + e.Name);
+                Int32.TryParse(response, out int responseCode);
 
-            //Old command, leaving it here for now TODO delete later
-            //Connection con = new Connection(endPoint);
-            //con.sendCommand("delete " + e.Name);
-
-            //Check of socket nog open is
-
+                if (ResponseCode.isValid(responseCode))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }    
+            }
         }
 
         //If a file in a dir is renamed
@@ -76,12 +121,22 @@ namespace FileSync
             Console.WriteLine($"    Old: {e.OldFullPath}");
             Console.WriteLine($"    New: {e.FullPath}");
 
-            IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "RENAME " + e.OldName + " " + e.Name);
+                Int32.TryParse(response, out int responseCode);
 
-            //Old command, leaving it here for now TODO delete later
-            //Connection con = new Connection(endPoint);
-            //con.sendCommand("rename " + e.OldName + " " + e.Name);
-
+                if (ResponseCode.isValid(responseCode))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }
+            }
         }
 
         private static void OnError(object sender, ErrorEventArgs e) =>
