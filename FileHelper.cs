@@ -38,7 +38,7 @@ namespace FileSync
         /// <summary>
         /// Send list to server client
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns>'The process cannot access the file 'F:\Github\FileSync\bin\Debug\net5.0\Home\disc ramp notes vault.txt' because it is being used by another process.'
         public static List<KeyValuePair<string, string>> listFilesWithDateTime(string dir)
         {
             var serverList = new List<KeyValuePair<string, string>>();

@@ -25,6 +25,7 @@ namespace FileSync
                         byte[] buffer = new byte[8192];
                         int read;
                         int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
+                        
 
                         do
                         {
@@ -52,8 +53,14 @@ namespace FileSync
             }
             else
             {
-                File.Create(filePath);
+                using (var fs = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                {
+                    fs.Write((byte[])null);
+                }
                 FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
+
+                
+                
             }
         }
 
