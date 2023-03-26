@@ -45,7 +45,16 @@ namespace FileSync
                         server.start();
                         break;
                     case "client":
-                        string input = args[1];
+                        string input = "";
+                        if (args[1] == null)
+                        {
+                            Console.Write("Input IP Adress of server: ");
+                            input = Console.ReadLine();
+                        }
+                        else
+                        {
+                            input = args[1];
+                        }                        
                         Client clientIP = new Client(input);
                         clientIP.start();
                         break;
