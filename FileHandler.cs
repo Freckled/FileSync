@@ -26,20 +26,28 @@ namespace FileSync
                         int read;
                         int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
 
-                    do
-                    {
-                        read = socket.Receive(buffer);
-                        fs.Write(buffer, 0, read);
-                        bytesSoFar += read;
+                        do
+                        {
+                            read = socket.Receive(buffer);
+                            fs.Write(buffer, 0, read);
+                            bytesSoFar += read;
 
                         } while (bytesSoFar < size);
                     }
-                    FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
-                    Console.WriteLine("File transfer of {0} complete", filePath);
+
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
+                }
+                finally {
+                    
+                    if (File.Exists(filePath))
+                    {
+                        FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
+                        //TODO CheckSumCheck here
+                        Console.WriteLine("File transfer of {0} complete", filePath);
+                    }                    
                 }
             }
             else
