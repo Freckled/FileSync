@@ -56,10 +56,17 @@ namespace FileSync
                 Console.WriteLine(e.GetType().Name);
                 Console.WriteLine(e.GetType().ToString());
                 Console.WriteLine(e.ErrorCode.ToString());
+                if (e.ErrorCode == 10057)
+                {
 
-                Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
-                Thread.Sleep(2000);
-                //Program.restart();
+                }
+                else
+                {
+                    Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
+                    Thread.Sleep(2000);
+                    Program.restart();
+                }
+
 
             }         
             catch (Exception e)
@@ -69,7 +76,7 @@ namespace FileSync
             }
 
             FileWatcher.Watch();
-            
+
         }
 
 
