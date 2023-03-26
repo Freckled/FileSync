@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Enumeration;
@@ -77,7 +78,7 @@ namespace FileSync
                 case "SIZE":
                     break;
 
-                case "PORT":
+                case "OPEN":
                     this.executePort(_command);
                     //Misschien dataEndPoint zetten tijdens PORT command. Komt van Server. 
                     break;
@@ -88,6 +89,10 @@ namespace FileSync
 
                 case "LS":
                     this.executeDir(_command);
+                    break;
+
+                case "SYNC":
+                    this.executeSync(_command);
                     break;
 
                 default:
@@ -102,7 +107,16 @@ namespace FileSync
         private void executeClose(string _command)
         {
             Console.WriteLine("Server orders close. Shutting down connections.");
-            FileWatcher.Watch();
+            string msg = "200" + Config.endTransmissionChar;
+            Connection.sendCommandNoReply(socket, msg);
+            Connection.Close(socket);
+            Connection.Close(dataSocket);
+
+        }
+
+        private void executeSync(string _command)
+        {
+            FileHandler.synchFiles(socket, dataSocket);
 
         }
 

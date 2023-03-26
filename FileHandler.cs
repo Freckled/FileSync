@@ -214,6 +214,83 @@ namespace FileSync
             return true;
         }
 
+        public static void synchFiles(Socket controlSocket, Socket dataSocket)
+        {
+            //---synch--
+            //get local DIR
+            var LocalfileList = FileHelper.DictFilesWithDateTime(Config.rootDir);
+
+            //get remote DIR
+            string response = Connection.sendCommand(controlSocket, "LS");
+            int responseCode = Transformer.GetResponseCode(response);
+
+
+            if (ResponseCode.isValid(responseCode))
+            {
+
+                string[] files = Transformer.RemoveResponseCode(response).Trim().Split(Config.fileSeperator);
+
+
+                Dictionary<string, string> remoteFileList = new Dictionary<string, string>();
+
+                foreach (string file in files)
+                {
+                    if (!file.Equals(""))
+                    {
+                        var fileSplit = file.Trim().Split(Config.unitSeperator);
+                        remoteFileList.Add(fileSplit[0], fileSplit[1]);
+                    }
+                }
+
+
+                Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
+                Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
+                Console.WriteLine("putfilelist count :" + putFiles.Count);
+                Console.WriteLine("getfilelist count :" + getFiles.Count);
+                //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+                if (putFiles.Count > 0 | getFiles.Count > 0)
+                {
+                    //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
+
+                    //TODO check if we want to connect on PORT command or on GET command.
+
+                    Thread t = ActionThread(() =>
+                    {
+                        dataSocket.Listen();
+                        Console.WriteLine("datasocket listening on {0}", dataSocket.LocalEndPoint.ToString());
+                        Socket _dataSocket = dataSocket.Accept();
+
+                        Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
+
+                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
+                        Console.WriteLine("putfilelist count :" + putFiles.Count);
+                        if (putFiles.Count > 0)
+                        {
+                            FileHandler.sendFiles(controlSocket, _dataSocket, putFiles);
+                        }
+                        Connection.sendCommandNoReply(controlSocket, "CLOSE");
+
+                        //Clean up after
+                        if (dataSocket.Connected)
+                        {
+                            dataSocket.Shutdown(SocketShutdown.Both);
+                            dataSocket.Close();
+                        }
+                        dataSocket.Dispose();
+
+                    });
+                    Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
+                }
+            }
+        }
+
+        private static Thread ActionThread(Action action)
+        {
+            Thread thread = new Thread(() => { action(); });
+            thread.Start();
+            return thread;
+        }
+
 
     }
 }

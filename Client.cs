@@ -75,9 +75,12 @@ namespace FileSync
 
             CommandHandler commandHandler = null;
             Socket dataSocket = Connection.createSocket();// new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+            Connection.sendCommandNoReply(socket, "SYNC");
 
             while (socket.Connected)
             {                
+                
+
                 command = Transformer.ParseByteArrString(Connection.ReceiveAll(socket));
                 string[] responsecode = command.Split(" ");
                                 

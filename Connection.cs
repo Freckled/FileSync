@@ -100,5 +100,13 @@ namespace FileSync
             return _socket;
         }
 
+        public static void Close(Socket socket)
+        {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
+            socket.Dispose();
+        }
+
+
     }
 }
