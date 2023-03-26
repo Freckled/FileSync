@@ -97,6 +97,7 @@ namespace FileSync
                 /////////////////////////////////////////////////Receive Commands////////////////////////////////////////////////////
                 CommandHandler commandHandler;
                 commandHandler = new CommandHandler(controlSocket, _dataSocket);
+                Console.WriteLine("Waiting for command..");
                 string command = Transformer.ParseByteArrString(Connection.ReceiveAll(controlSocket));
                                 
                 commandHandler.processCommand(command, CommandHandler.Device.CLIENT);
