@@ -11,7 +11,6 @@ namespace FileSync
         private long _size;
         private string _checksumAlgorithm;
         private string _checksum;
-        private readonly string _dateFormat = "g";//"yyyy/MM/dd HH:mm:ss"; //TODO check the different formats and which to use. D f g etc.
         public FileHeader()
         {
 
@@ -22,7 +21,7 @@ namespace FileSync
             //string[] header = fileHeader.Split(":");
             string[] header = fileHeader.Split(Config.unitSeperator);
             _name = header[1];
-            //_dateModified = DateTime.Parse(header[2]);// DateTime.ParseExact(header[2], _dateFormat, Config.cultureInfo);
+            _dateModified = DateTime.ParseExact(header[2], Config.dateTimeFormat, Config.cultureInfo);
             _size = long.Parse(header[3]);
             _checksumAlgorithm = header[4];
             _checksum = header[5];

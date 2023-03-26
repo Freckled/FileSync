@@ -34,7 +34,7 @@ namespace FileSync
 
                         } while (bytesSoFar < size);
                     }
-                    //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
+                    FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
                     Console.WriteLine("File transfer of {0} complete", filePath);
                 }
                 catch (Exception e)
@@ -45,7 +45,7 @@ namespace FileSync
             else
             {
                 File.Create(filePath);
-                //FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
+                FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
             }
         }
 

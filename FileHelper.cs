@@ -46,7 +46,7 @@ namespace FileSync
 
             foreach (var file in GetFilesFromDir(dir))
             {
-                serverList.Insert(i, new KeyValuePair<string, string>(Path.GetFileName(file), GetModifiedDateTime(file).ToString(Config.cultureInfo)));
+                serverList.Insert(i, new KeyValuePair<string, string>(Path.GetFileName(file), GetModifiedDateTime(file).ToString(Config.dateTimeFormat, Config.cultureInfo)));
                 i++;
             }
 
@@ -85,8 +85,8 @@ namespace FileSync
             {
                 if (list1.ContainsKey(entry.Key))
                 {
-                    var dateTimeL = DateTime.Parse(list1[entry.Key], Config.cultureInfo);
-                    var dateTimeR = DateTime.Parse(entry.Value, Config.cultureInfo);
+                    var dateTimeL = DateTime.ParseExact(list1[entry.Key], Config.dateTimeFormat, Config.cultureInfo); //DateTime.Parse(list1[entry.Key], Config.cultureInfo);//
+                    var dateTimeR = DateTime.ParseExact(entry.Value, Config.dateTimeFormat, Config.cultureInfo); //DateTime.Parse(entry.Value, Config.cultureInfo);//
 
                     if (dateTimeR > dateTimeL)
                     {
@@ -107,7 +107,7 @@ namespace FileSync
 
             foreach (var file in GetFilesFromDir(dir))
             {
-                serverList.Add(Path.GetFileName(file), GetModifiedDateTime(file).ToString(Config.cultureInfo));
+                serverList.Add(Path.GetFileName(file), GetModifiedDateTime(file).ToString(Config.dateTimeFormat, Config.cultureInfo));
             }
 
             return serverList;
@@ -123,6 +123,7 @@ namespace FileSync
                 case "MD5":
                     using (var md5 = MD5.Create())
                     {
+                        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         using (var stream = File.OpenRead(filePath))
                         {
                             var hash = md5.ComputeHash(stream);

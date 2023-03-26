@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -22,7 +23,7 @@ namespace FileSync
         /// Main entrypoint of the app.
         /// </summary>
         /// <returns></returns>
-        static async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
             StartupActions();
             Console.WriteLine(  "███████╗██╗██╗     ███████╗███████╗██╗   ██╗███╗   ██╗ ██████╗\r\n" +

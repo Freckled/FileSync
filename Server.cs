@@ -56,6 +56,11 @@ namespace FileSync
 
                 }
             }
+            catch(SocketException e)
+            {
+                Console.WriteLine("Port in use, disable applications using port number {0}", _ep.Port.ToString());
+                
+            }         
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
@@ -80,8 +85,8 @@ namespace FileSync
 
             //Assign data socket
             Socket _dataSocket = Connection.createSocket();
-            IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
-            //IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
+            //IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
+            IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
             _dataSocket.Bind(ep);
 
             try
