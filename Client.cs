@@ -53,9 +53,6 @@ namespace FileSync
 
             }catch(SocketException e)
             {
-                Console.WriteLine(e.GetType().Name);
-                Console.WriteLine(e.GetType().ToString());
-                Console.WriteLine(e.ErrorCode.ToString());
                 if (e.ErrorCode == 10057)
                 {
 
