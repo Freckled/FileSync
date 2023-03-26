@@ -23,7 +23,7 @@ namespace FileSync
 
                 // Send the data through the socket.
                 socket.Send(msg);
-                Console.WriteLine("Message to client: {0}", command);
+                Console.WriteLine("Message to remote connection: {0}", command);
                 // Receive the response from the remote device.
                 try
                 {
@@ -54,7 +54,7 @@ namespace FileSync
 
             // Send the data through the socket.
             socket.Send(msg);
-            Console.WriteLine("Message to client: {0}", command);
+            Console.WriteLine("Message to remote connection: {0}", command);
 
         }
 
