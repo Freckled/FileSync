@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
@@ -137,6 +138,13 @@ namespace FileSync
             catch(Exception e) {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        public static void restart()
+        {
+            Console.Clear();
+            Process.Start("FileSync.exe");
+            Environment.Exit(0);
         }
     }
 }

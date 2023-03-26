@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -49,7 +50,13 @@ namespace FileSync
                 
                 _socket.Connect(_rep);
                 serverConnection(_socket);                                       
-            }
+            }catch(SocketException e)
+            {
+                Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
+                Thread.Sleep(2000);
+                Program.restart();
+
+            }         
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());

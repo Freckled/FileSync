@@ -59,6 +59,7 @@ namespace FileSync
             catch(SocketException e)
             {
                 Console.WriteLine("Port in use, disable applications using port number {0}", _ep.Port.ToString());
+                Program.restart();
                 
             }         
             catch (Exception e)
