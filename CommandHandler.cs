@@ -136,7 +136,7 @@ namespace FileSync
             dirList = "200" + " " + dirList;
             
             //TODO leave in or just send empty dirlist??
-            if (dirList.Equals("")){ dirList = "400 empty_dir"; }
+            if (dirList.Equals("")){ dirList = "200 empty_dir"; }
             //string dirList = "filenumber1.txt 2/19/2023 3456kb"+Config.linebreak+ "filenumber2.pdf 2/17/2023 365kb"+Config.linebreak+"filenumber3.mp4 2/14/2023 2975kb"+Config.endTextChar;
             //byte[] msg = Encoding.UTF8.GetBytes(dirList);
             //socket.Send(msg);
@@ -220,7 +220,7 @@ namespace FileSync
             Thread t = ActionThread(() => {
                 if (!File.Exists(filePath))
                 {
-                    Connection.sendCommandNoReply(socket, "300 file_not_found");
+                    Connection.sendCommandNoReply(socket, "500 file_not_found");
                     return;
                 }
                 else
