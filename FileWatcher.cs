@@ -43,9 +43,9 @@ namespace FileSync
         {
             if (e.ChangeType != WatcherChangeTypes.Changed)
             {
-               // Program.SyncFiles(Global.remoteIP);
                 return;
             }
+
             Console.WriteLine($"Changed: {e.FullPath}");
 
             Socket controlSocket = Connection.createSocket();
@@ -58,10 +58,13 @@ namespace FileSync
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
             {
-                string response = Connection.sendCommand(controlSocket, "PUT " + e.Name);
-                Int32.TryParse(response, out int responseCode);
+                FileHeader fh = new FileHeader();
+                string filePath = Config.rootDir + e.Name;
+                string fileHeader = fh.getFileHeader(filePath);
 
-                if (ResponseCode.isValid(responseCode))
+                string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
+
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
                     return;
                 }
@@ -90,10 +93,13 @@ namespace FileSync
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
             {
-                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "PUT " + e.Name);
-                Int32.TryParse(response, out int responseCode);
+                FileHeader fh = new FileHeader();
+                string filePath = Config.rootDir + e.Name;
+                string fileHeader = fh.getFileHeader(filePath);
 
-                if (ResponseCode.isValid(responseCode))
+                string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
+
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
                     return;
                 }
@@ -122,10 +128,9 @@ namespace FileSync
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
             {
-                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "DELETE " + e.Name);
-                Int32.TryParse(response, out int responseCode);
+                string response = Connection.sendCommand(controlSocket, "DELETE " + e.Name);
 
-                if (ResponseCode.isValid(responseCode))
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
                     return;
                 }
@@ -156,10 +161,9 @@ namespace FileSync
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
             {
-                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "RENAME " + e.OldName + " " + e.Name);
-                Int32.TryParse(response, out int responseCode);
+                string response = Connection.sendCommand(controlSocket, "RENAME " + e.OldName + " " + e.Name);
 
-                if (ResponseCode.isValid(responseCode))
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
                     return;
                 }

@@ -74,10 +74,8 @@ namespace FileSync
                 Console.WriteLine(e.ToString());
                 Thread.Sleep(1000);
             }
-            using (var disp = new DisposeSocketFileWatcher(_socket))
-            {
-                FileWatcher.Watch();
-            }
+
+            FileWatcher.Watch();
 
         }
 
