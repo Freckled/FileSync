@@ -71,7 +71,7 @@ namespace FileSync
                     currByte = new Byte[1];
                     var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
 
-                    if (currByte[0] == endTextChar[0])// || currByte[0] == endTransChar[0])
+                    if (currByte[0] == endTextChar[0] || currByte[0] == endTransChar[0])
                     {
                         return buffer.ToArray();
                     }
