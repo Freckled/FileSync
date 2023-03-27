@@ -11,7 +11,7 @@ namespace FileSync
     {
 
         //Monitors the dir for any changes in files (Change, Delete, Create, Rename)
-        public static void Watch(Socket _socket = null)
+        public static void Watch()
         {
             using var watcher = new FileSystemWatcher(Config.rootDir);
 
