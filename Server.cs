@@ -92,23 +92,16 @@ namespace FileSync
 
             try
             {
-                //TESTING synch files
-                //synchFiles(controlSocket, _dataSocket);                
-                /////////////////////////////////////////////////Receive Commands////////////////////////////////////////////////////
                 CommandHandler commandHandler;
                 commandHandler = new CommandHandler(controlSocket, _dataSocket);
-                
-                
+            
+                Console.WriteLine("Waiting for command..");
+                string command = Transformer.ParseByteArrString(Connection.ReceiveAll(controlSocket));
 
-                    Console.WriteLine("Waiting for command..");
-                    string command = Transformer.ParseByteArrString(Connection.ReceiveAll(controlSocket));
 
-                while (controlSocket.Connected)
-                {
-                    commandHandler.processCommand(command, CommandHandler.Device.CLIENT);
-                }
+                commandHandler.processCommand(command, CommandHandler.Device.CLIENT);
+                while (controlSocket.Connected){}
 
-                /////////////////////////////////////////////////Receive Commands////////////////////////////////////////////////////
             }
             catch (Exception e)
             {
