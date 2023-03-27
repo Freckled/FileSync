@@ -268,7 +268,7 @@ namespace FileSync
                         {
                             FileHandler.sendFiles(controlSocket, _dataSocket, putFiles);
                         }
-                        Connection.sendCommandNoReply(controlSocket, "CLOSE");
+                        //Connection.sendCommandNoReply(controlSocket, "CLOSE");
 
                         //Clean up after
                         if (dataSocket.Connected)

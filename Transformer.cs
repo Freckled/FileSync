@@ -11,7 +11,7 @@ namespace FileSync
 
         public static int GetResponseCode(string str)
         {
-            if (!str.Equals("")){ 
+            if (!str.Equals("") && str.Length >= 3){ 
                 return int.Parse(str.Substring(0, 3));
             }
             return 0;
