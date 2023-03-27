@@ -138,6 +138,7 @@ namespace FileSync
 
                 //get fileheader
                 string response = Connection.sendCommand(controlSocket, "GET" + " " + file.Key);
+                                              
                 //parse fileheader
 
                 if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
