@@ -48,11 +48,17 @@ namespace FileSync
             }
             Console.WriteLine($"Changed: {e.FullPath}");
 
+            Socket controlSocket = Connection.createSocket();
+            
+            if (!controlSocket.Connected) { 
+                controlSocket.Connect(Global.remoteEP);
+            }
+
             var tries = 0;
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
             {
-                string response = Connection.sendCommand(DisposeSocketFileWatcher.current(), "PUT " + e.Name);
+                string response = Connection.sendCommand(controlSocket, "PUT " + e.Name);
                 Int32.TryParse(response, out int responseCode);
 
                 if (ResponseCode.isValid(responseCode))
@@ -64,6 +70,9 @@ namespace FileSync
                     numberOfRetries++;
                 }
             }
+
+            Connection.Close(controlSocket);
+
         }
 
         //If a file in a dir is created
@@ -72,6 +81,13 @@ namespace FileSync
             string value = $"Created: {e.FullPath}";
             Console.WriteLine(value);
 
+            Socket controlSocket = Connection.createSocket();
+
+            if (!controlSocket.Connected)
+            {
+                controlSocket.Connect(Global.remoteEP);
+            }
+
             var tries = 0;
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
@@ -88,6 +104,7 @@ namespace FileSync
                     numberOfRetries++;
                 }
             }
+            Connection.Close(controlSocket);
         }
 
         //If a file in a dir is deleted
@@ -95,6 +112,14 @@ namespace FileSync
         private static void OnDeleted(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
+
+            Socket controlSocket = Connection.createSocket();
+
+            if (!controlSocket.Connected)
+            {
+                controlSocket.Connect(Global.remoteEP);
+            }
+
             var tries = 0;
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
@@ -111,6 +136,7 @@ namespace FileSync
                     numberOfRetries++;
                 }    
             }
+            Connection.Close(controlSocket);
         }
 
         //If a file in a dir is renamed
@@ -120,6 +146,13 @@ namespace FileSync
             Console.WriteLine($"Renamed:");
             Console.WriteLine($"    Old: {e.OldFullPath}");
             Console.WriteLine($"    New: {e.FullPath}");
+
+            Socket controlSocket = Connection.createSocket();
+
+            if (!controlSocket.Connected)
+            {
+                controlSocket.Connect(Global.remoteEP);
+            }
 
             var tries = 0;
             var numberOfRetries = 3;
@@ -137,6 +170,7 @@ namespace FileSync
                     numberOfRetries++;
                 }
             }
+            Connection.Close(controlSocket);
         }
 
         private static void OnError(object sender, ErrorEventArgs e) =>
