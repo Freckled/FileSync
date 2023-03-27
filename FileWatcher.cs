@@ -70,9 +70,7 @@ namespace FileSync
                     numberOfRetries++;
                 }
             }
-
             Connection.Close(controlSocket);
-
         }
 
         //If a file in a dir is created
