@@ -48,7 +48,7 @@ namespace FileSync
             //    ":" + _checksum;
 
             return "FileHeader" + Config.unitSeperator +
-                _name + Config.unitSeperator + 
+                _name + Config.unitSeperator +
                 Transformer.parseDateToString(_dateModified) + Config.unitSeperator + //TODO change to date modified or add it 
                 _size + Config.unitSeperator +
                 _checksumAlgorithm + Config.unitSeperator +

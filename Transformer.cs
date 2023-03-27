@@ -11,7 +11,7 @@ namespace FileSync
 
         public static int GetResponseCode(string str)
         {
-            if (!str.Equals("")){ 
+            if (!str.Equals("") && str.Length >= 3){ 
                 return int.Parse(str.Substring(0, 3));
             }
             return 0;
@@ -33,6 +33,11 @@ namespace FileSync
         public static string ParseByteArrString(byte[] bytes)
         {
             return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+        }
+
+        public static byte[] ParseStringToByteArr(string str)
+        {
+            return Encoding.UTF8.GetBytes(str);
         }
 
         public static string parseDateToString(DateTime dateTime)

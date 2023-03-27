@@ -14,13 +14,11 @@ namespace FileSync
         public static string sendCommand(Socket socket, string command)
         {
             string response = null;
-            byte[] bytes = null;
 
             if (socket.Connected)
             {
-                bytes = new byte[1024];
-                byte[] msg = Encoding.UTF8.GetBytes(command + Config.endTextChar);
-
+                byte[] msg = Transformer.ParseStringToByteArr(command + Config.endTextChar);
+                 
                 // Send the data through the socket.
                 socket.Send(msg);
                 Console.WriteLine("Message to remote connection: {0}", command);
@@ -73,7 +71,7 @@ namespace FileSync
                     currByte = new Byte[1];
                     var byteCounter = socket.Receive(currByte, currByte.Length, SocketFlags.None);
 
-                    if (currByte[0] == endTextChar[0] | currByte[0] == endTransChar[0])
+                    if (currByte[0] == endTextChar[0] || currByte[0] == endTransChar[0])
                     {
                         return buffer.ToArray();
                     }

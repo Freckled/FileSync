@@ -24,7 +24,6 @@ namespace FileSync
         public static readonly string endTextChar = "\u0003";
         public static readonly string checkSumAlgo = "MD5";
         public static readonly string fileSeperator = "\u001C";
-        public static readonly string unitSeperator = "\u001F";
-        
+        public static readonly string unitSeperator = "\u001F";        
     }
 }
