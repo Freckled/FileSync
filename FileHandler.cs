@@ -57,10 +57,7 @@ namespace FileSync
                 {
                     fs.Write((byte[])null);
                 }
-                FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
-
-                
-                
+                FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed                               
             }
         }
 
@@ -246,13 +243,8 @@ namespace FileSync
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
-                Console.WriteLine("putfilelist count :" + putFiles.Count);
-                Console.WriteLine("getfilelist count :" + getFiles.Count);
-                //Connection.sendCommand(controlSocket, "PORT" + " " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
                 if (putFiles.Count > 0 | getFiles.Count > 0)
                 {
-                    //Connection.sendCommandNoReply(controlSocket, "PORT " + ((IPEndPoint)dataSocket.LocalEndPoint).Port);
-
                     //TODO check if we want to connect on PORT command or on GET command.
 
                     Thread t = ActionThread(() =>
@@ -271,14 +263,6 @@ namespace FileSync
                         }
                         Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
 
-                        ////Clean up after
-                        //if (dataSocket.Connected)
-                        //{
-                        //    dataSocket.Shutdown(SocketShutdown.Both);
-                        //    dataSocket.Close();
-                        //}
-                        //dataSocket.Dispose();
-
                     });
                     Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
@@ -291,7 +275,5 @@ namespace FileSync
             thread.Start();
             return thread;
         }
-
-
     }
 }
