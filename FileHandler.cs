@@ -268,15 +268,15 @@ namespace FileSync
                         {
                             FileHandler.sendFiles(controlSocket, _dataSocket, putFiles);
                         }
-                        //Connection.sendCommandNoReply(controlSocket, "CLOSE");
+                        Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
 
-                        //Clean up after
-                        if (dataSocket.Connected)
-                        {
-                            dataSocket.Shutdown(SocketShutdown.Both);
-                            dataSocket.Close();
-                        }
-                        dataSocket.Dispose();
+                        ////Clean up after
+                        //if (dataSocket.Connected)
+                        //{
+                        //    dataSocket.Shutdown(SocketShutdown.Both);
+                        //    dataSocket.Close();
+                        //}
+                        //dataSocket.Dispose();
 
                     });
                     Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?

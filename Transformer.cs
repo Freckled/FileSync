@@ -35,6 +35,11 @@ namespace FileSync
             return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
         }
 
+        public static byte[] ParseStringToByteArr(string str)
+        {
+            return Encoding.UTF8.GetBytes(str);
+        }
+
         public static string parseDateToString(DateTime dateTime)
         {
             return dateTime.ToString(Config.dateTimeFormat, Config.cultureInfo);
