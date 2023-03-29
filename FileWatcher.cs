@@ -1,6 +1,9 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace FileSync
 {
@@ -40,10 +43,37 @@ namespace FileSync
         {
             if (e.ChangeType != WatcherChangeTypes.Changed)
             {
-               // Program.SyncFiles(Global.remoteIP);
                 return;
             }
+
             Console.WriteLine($"Changed: {e.FullPath}");
+
+            Socket controlSocket = Connection.createSocket();
+            
+            if (!controlSocket.Connected) { 
+                controlSocket.Connect(Global.remoteEP);
+            }
+
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                FileHeader fh = new FileHeader();
+                string filePath = Config.rootDir + e.Name;
+                string fileHeader = fh.getFileHeader(filePath);
+
+                string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
+
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }
+            }
+            Connection.Close(controlSocket);
         }
 
         //If a file in a dir is created
@@ -51,6 +81,34 @@ namespace FileSync
         {
             string value = $"Created: {e.FullPath}";
             Console.WriteLine(value);
+
+            Socket controlSocket = Connection.createSocket();
+
+            if (!controlSocket.Connected)
+            {
+                controlSocket.Connect(Global.remoteEP);
+            }
+
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                FileHeader fh = new FileHeader();
+                string filePath = Config.rootDir + e.Name;
+                string fileHeader = fh.getFileHeader(filePath);
+
+                string response = Connection.sendCommand(controlSocket, "PUT" + " " + fileHeader);
+
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }
+            }
+            Connection.Close(controlSocket);
         }
 
         //If a file in a dir is deleted
@@ -58,14 +116,30 @@ namespace FileSync
         private static void OnDeleted(object sender, FileSystemEventArgs e)
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
-            IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
 
-            //Old command, leaving it here for now TODO delete later
-            //Connection con = new Connection(endPoint);
-            //con.sendCommand("delete " + e.Name);
+            Socket controlSocket = Connection.createSocket();
 
-            //Check of socket nog open is
+            if (!controlSocket.Connected)
+            {
+                controlSocket.Connect(Global.remoteEP);
+            }
 
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                string response = Connection.sendCommand(controlSocket, "DELETE " + e.Name);
+
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }    
+            }
+            Connection.Close(controlSocket);
         }
 
         //If a file in a dir is renamed
@@ -76,12 +150,29 @@ namespace FileSync
             Console.WriteLine($"    Old: {e.OldFullPath}");
             Console.WriteLine($"    New: {e.FullPath}");
 
-            IPEndPoint endPoint = new IPEndPoint(Global.remoteIP, Config.serverPort);
+            Socket controlSocket = Connection.createSocket();
 
-            //Old command, leaving it here for now TODO delete later
-            //Connection con = new Connection(endPoint);
-            //con.sendCommand("rename " + e.OldName + " " + e.Name);
+            if (!controlSocket.Connected)
+            {
+                controlSocket.Connect(Global.remoteEP);
+            }
 
+            var tries = 0;
+            var numberOfRetries = 3;
+            while (tries <= numberOfRetries)
+            {
+                string response = Connection.sendCommand(controlSocket, "RENAME " + e.OldName + " " + e.Name);
+
+                if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
+                {
+                    return;
+                }
+                else
+                {
+                    numberOfRetries++;
+                }
+            }
+            Connection.Close(controlSocket);
         }
 
         private static void OnError(object sender, ErrorEventArgs e) =>

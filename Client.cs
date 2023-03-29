@@ -18,6 +18,7 @@ namespace FileSync
         private IPAddress _ipAdress;
         private IPEndPoint _rep;
         private int? _port;
+        public Socket serverControlSocket;
 
         public Client()
         {            
@@ -46,6 +47,8 @@ namespace FileSync
                 _socket = Connection.createSocket();
                 _rep = new IPEndPoint(_ipAdress, port);
                 
+                Global.remoteEP = _rep;
+
                 _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 
                 _socket.Connect(_rep);

@@ -15,6 +15,7 @@ namespace FileSync
     {
         public static string rootDir { get; set; }
         public static IPAddress remoteIP { get; set; }
+        public static IPEndPoint remoteEP { get; set; }
         public static IPAddress localIP { get; set; }
         public static bool client { get; set; } 
     }
