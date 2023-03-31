@@ -151,7 +151,15 @@ namespace FileSync
             //string fileName = arguments[1];
             //long filesize = long.Parse(arguments[2]);
             string filePath = Config.rootDir + fileName;
-            FileHandler.DeleteFile(socket, filePath);
+            bool success = FileHandler.DeleteFile(socket, filePath);
+            if (success)
+            {
+                Connection.sendCommandNoReply(socket, "200 File Deleted");
+            }
+            else
+            {
+                Connection.sendCommandNoReply(socket, "500 File Could Not Be Deleted");
+            }
         }
 
         private void executeRename(string _command)
@@ -161,7 +169,16 @@ namespace FileSync
             string oldFileName = arguments[1];
             string newFileName = arguments[2];
             
-            FileHandler.RenameFile(socket, oldFileName, newFileName);
+            bool success = FileHandler.RenameFile(socket, oldFileName, newFileName);
+            
+            if (success)
+            {
+                Connection.sendCommandNoReply(socket, "200 File Deleted");
+            }
+            else
+            {
+                Connection.sendCommandNoReply(socket, "500 File Could Not Be Deleted");
+            }
         }
 
         private void executePort(string _command)
