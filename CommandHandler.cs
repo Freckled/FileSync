@@ -166,8 +166,8 @@ namespace FileSync
         {
             string fileName = Transformer.RemoveCommand(_command);
             string[] arguments = fileName.Split(Config.unitSeperator);
-            string oldFileName = arguments[1];
-            string newFileName = arguments[2];
+            string oldFileName = arguments[0];
+            string newFileName = arguments[1];
             
             bool success = FileHandler.RenameFile(socket, oldFileName, newFileName);
             
