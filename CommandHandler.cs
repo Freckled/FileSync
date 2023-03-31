@@ -212,7 +212,8 @@ namespace FileSync
 
         private void executeGet(string _command)
         {
-            string fileName = Transformer.RemoveResponseCode(_command).Trim();
+            //string fileName = Transformer.RemoveResponseCode(_command).Trim();
+            string fileName = Transformer.RemoveCommand(_command);
             string filePath = Config.rootDir + fileName;
 
             FileHeader fh = new FileHeader();
