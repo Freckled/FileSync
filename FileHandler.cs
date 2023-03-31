@@ -161,10 +161,10 @@ namespace FileSync
             FileStream file = new FileStream(filePath, FileMode.Open); ;
             try
             {
-                FileInfo fileInfo = new FileInfo(Config.rootDir + file.Name);
+                FileInfo fileInfo = new FileInfo(filePath);
                 if (fileInfo.Exists)
                 {
-                    File.Delete(Config.rootDir + file.Name);
+                    File.Delete(filePath);
                 }
                 socket.Shutdown(SocketShutdown.Both);
             }
