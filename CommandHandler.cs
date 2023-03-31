@@ -146,18 +146,19 @@ namespace FileSync
 
         private void executeDelete(string _command)
         {
-            string[] arguments = _command.Split(" ");
-            string fileName = arguments[1];
-            long filesize = long.Parse(arguments[2]);
-
+            string fileName = Transformer.RemoveCommand(_command);
+            //string[] arguments = _command.Split(" ");
+            //string fileName = arguments[1];
+            //long filesize = long.Parse(arguments[2]);
             FileHandler.DeleteFile(dataSocket, fileName);
         }
 
         private void executeRename(string _command)
         {
-            string[] arguments = _command.Split(" ");
-            string fileName = arguments[1];
-            long filesize = long.Parse(arguments[2]);
+            string fileName = Transformer.RemoveCommand(_command);
+            //string[] arguments = _command.Split(" ");
+            //string fileName = arguments[1];
+            //long filesize = long.Parse(arguments[2]);
 
             FileHandler.RenameFile(dataSocket, fileName);
         }
