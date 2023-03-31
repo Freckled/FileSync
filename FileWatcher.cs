@@ -49,7 +49,8 @@ namespace FileSync
             Console.WriteLine($"Changed: {e.FullPath}");
 
             Socket controlSocket = Connection.createSocket();
-            
+            Socket dataSocket = Connection.createSocket();
+
             if (!controlSocket.Connected) { 
                 controlSocket.Connect(Global.remoteEP);
             }
@@ -66,6 +67,13 @@ namespace FileSync
 
                 if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
+                    //get datasocket and connect to it.
+                    if (!dataSocket.Connected)
+                    {
+                        dataSocket.Connect(Global.remoteDataEP);
+                    }
+                    FileHandler.SendFile(dataSocket, filePath);
+                    //TODO Check if move file to folder counts as created.
                     return;
                 }
                 else
@@ -83,6 +91,7 @@ namespace FileSync
             Console.WriteLine(value);
 
             Socket controlSocket = Connection.createSocket();
+            Socket dataSocket = Connection.createSocket();
 
             if (!controlSocket.Connected)
             {
@@ -101,6 +110,13 @@ namespace FileSync
 
                 if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
+                    //get datasocket and connect to it.
+                    if (!dataSocket.Connected)
+                    {
+                        dataSocket.Connect(Global.remoteDataEP);
+                    }
+                    FileHandler.SendFile(dataSocket, filePath);
+                    //TODO Check if move file to folder counts as created.
                     return;
                 }
                 else
