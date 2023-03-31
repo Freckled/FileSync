@@ -182,13 +182,10 @@ namespace FileSync
             return true;
         }
 
-        public static bool RenameFile(Socket socket, string filePath)
+        public static bool RenameFile(Socket socket, string oldName="", string newName="")
         {
-            string newName = "";
-            string oldName = "";
-
             //TODO Check if we want socket...
-            FileStream file = new FileStream(filePath, FileMode.Open); ;
+            FileStream file = new FileStream(Config.rootDir + oldName, FileMode.Open); ;
             try
             {
                 FileInfo fileInfo = new FileInfo(Config.rootDir + oldName);
@@ -205,7 +202,7 @@ namespace FileSync
             }
             finally
             {
-                Console.WriteLine("File deletetion complete");
+                Console.WriteLine("File rename complete");
                 socket.Close();
                 file.Close();
             }

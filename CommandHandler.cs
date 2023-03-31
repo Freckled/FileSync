@@ -156,11 +156,11 @@ namespace FileSync
         private void executeRename(string _command)
         {
             string fileName = Transformer.RemoveCommand(_command);
-            //string[] arguments = _command.Split(" ");
-            //string fileName = arguments[1];
-            //long filesize = long.Parse(arguments[2]);
-
-            FileHandler.RenameFile(socket, fileName);
+            string[] arguments = fileName.Split(Config.unitSeperator);
+            string oldFileName = arguments[1];
+            string newFileName = arguments[2];
+            
+            FileHandler.RenameFile(socket, oldFileName, newFileName);
         }
 
         private void executePort(string _command)
