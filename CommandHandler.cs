@@ -159,7 +159,7 @@ namespace FileSync
             string fileName = arguments[1];
             long filesize = long.Parse(arguments[2]);
 
-            FileHandler.RenameFile(dataSocket, fileName);
+            //FileHandler.RenameFile(dataSocket, fileName);
         }
 
         private void executePort(string _command)
