@@ -35,27 +35,35 @@ namespace FileSync
                 //TODO error handling for if socket is in use?
                 _socket.Bind(_ep);
                 //create a loop so it keeps listening
+                _socket.Listen(Config.serverPort);
+                Console.WriteLine("Listening on {0}", _socket.LocalEndPoint.ToString());
+                Thread mainThread = Thread.CurrentThread;
+
+
+                //--------------Move this----------------
+                Socket dataSocket = Connection.createSocket();
+                IPEndPoint DataEP = new IPEndPoint(_ipAdress, Config.dataPort);
+                dataSocket.Bind(DataEP);
+                dataSocket.Listen();
+                //--------------Move this----------------
+
+
                 while (true)
-                {
-                    
-                    Thread mainThread = Thread.CurrentThread;
-                    
-                    _socket.Listen(Config.serverPort);
-                    Console.WriteLine("Listening on {0}", _socket.LocalEndPoint.ToString());
+                {                                                            
                     Socket client = _socket.Accept();
                     
                     Thread t = ActionThread(() => {
-
-                        //--------------Move this----------------
-                        Socket dataSocket = Connection.createSocket();
-                        IPEndPoint DataEP = new IPEndPoint(_ipAdress, Config.dataPort);
-                        dataSocket.Bind(DataEP);
-                        dataSocket.Listen();
-                        //--------------Move this----------------
+                        Console.WriteLine("Connected to {0}", client.RemoteEndPoint.ToString());
 
                         Console.WriteLine("Listening for data connection on {0}", dataSocket.LocalEndPoint.ToString());
                         Socket _dataSocket = dataSocket.Accept();
+                        Console.WriteLine("Connected to {0}", client.RemoteEndPoint.ToString());
+
+                        Console.WriteLine("Control socket connected {0}",client.Connected);
+                        Console.WriteLine("Data socket connected {0}", _dataSocket.Connected);                       
                         
+                        
+
                         clientConnection(client, _dataSocket);
                         while (client.Connected){}
                     });

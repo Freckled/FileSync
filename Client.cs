@@ -91,6 +91,7 @@ namespace FileSync
         private void serverConnection(Socket socket, Socket dataSocket)
         {
             Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote " + socket.RemoteEndPoint.ToString());
+            Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote " + dataSocket.RemoteEndPoint.ToString());
             string command = null;
 
 
@@ -99,9 +100,9 @@ namespace FileSync
             Connection.sendCommandNoReply(socket, "SYNC");
 
             while (socket.Connected)
-            {                
-                
+            {
 
+                Console.WriteLine("Waiting for response from remote..");
                 command = Transformer.ParseByteArrString(Connection.ReceiveAll(socket));
                 string[] responsecode = command.Split(" ");
                                 
