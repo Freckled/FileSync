@@ -45,7 +45,18 @@ namespace FileSync
                     Socket client = _socket.Accept();
                     
                     Thread t = ActionThread(() => {
-                        clientConnection(client);
+
+                        //--------------Move this----------------
+                        Socket dataSocket = Connection.createSocket();
+                        IPEndPoint DataEP = new IPEndPoint(_ipAdress, Config.dataPort);
+                        dataSocket.Bind(DataEP);
+                        dataSocket.Listen();
+                        //--------------Move this----------------
+
+
+                        Socket _dataSocket = dataSocket.Accept();
+                        
+                        clientConnection(client, _dataSocket);
                         while (client.Connected){}
                     });
                     
@@ -80,20 +91,14 @@ namespace FileSync
         }
 
         //handles connection with the client (todo, replace commandHandler part of communications)
-        private void clientConnection(Socket controlSocket)
+        private void clientConnection(Socket controlSocket, Socket dataSocket)
         {
             Console.WriteLine("Client {0}. connected to {1}", controlSocket.RemoteEndPoint.ToString(), controlSocket.LocalEndPoint.ToString());
-
-            //Assign data socket
-            Socket _dataSocket = Connection.createSocket();
-            //IPEndPoint ep = new IPEndPoint(_ipAdress, 0);
-            IPEndPoint ep = new IPEndPoint(_ipAdress, Config.dataPort);
-            _dataSocket.Bind(ep);
-
+                                   
             try
             {
                 CommandHandler commandHandler;
-                commandHandler = new CommandHandler(controlSocket, _dataSocket);
+                commandHandler = new CommandHandler(controlSocket, dataSocket);
             
                 Console.WriteLine("Waiting for command..");
                 string command = Transformer.ParseByteArrString(Connection.ReceiveAll(controlSocket));
@@ -113,11 +118,11 @@ namespace FileSync
                     controlSocket.Close();
                     controlSocket.Dispose();
                 }
-                if (_dataSocket.Connected)
+                if (dataSocket.Connected)
                 {
-                    _dataSocket.Shutdown(SocketShutdown.Both);
-                    _dataSocket.Close();
-                    _dataSocket.Dispose();
+                    dataSocket.Shutdown(SocketShutdown.Both);
+                    dataSocket.Close();
+                    dataSocket.Dispose();
                 }
             }
             finally
@@ -129,11 +134,11 @@ namespace FileSync
                     controlSocket.Close();
                     controlSocket.Dispose();
                 }
-                if (_dataSocket.Connected)
+                if (dataSocket.Connected)
                 {
-                    _dataSocket.Shutdown(SocketShutdown.Both);
-                    _dataSocket.Close();
-                    _dataSocket.Dispose();
+                    dataSocket.Shutdown(SocketShutdown.Both);
+                    dataSocket.Close();
+                    dataSocket.Dispose();
                 }
             }
         } 

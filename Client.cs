@@ -46,13 +46,20 @@ namespace FileSync
                 int port = _port ?? Config.serverPort;
                 _socket = Connection.createSocket();
                 _rep = new IPEndPoint(_ipAdress, port);
-                
+
+                Socket _dataSocket = Connection.createSocket();
+                IPEndPoint _dataREP = new IPEndPoint(_ipAdress, Config.dataPort);
+
+
                 Global.remoteEP = _rep;
 
                 _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 
                 _socket.Connect(_rep);
-                serverConnection(_socket);
+                _dataSocket.Connect(_dataREP);
+
+
+                serverConnection(_socket, _dataSocket);
 
             }catch(SocketException e)
             {
@@ -81,14 +88,14 @@ namespace FileSync
 
 
         //Handle server connection
-        private void serverConnection(Socket socket)
+        private void serverConnection(Socket socket, Socket dataSocket)
         {
             Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote " + socket.RemoteEndPoint.ToString());
             string command = null;
 
 
             CommandHandler commandHandler = null;
-            Socket dataSocket = Connection.createSocket();// new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+            //Socket dataSocket = Connection.createSocket();// new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             Connection.sendCommandNoReply(socket, "SYNC");
 
             while (socket.Connected)

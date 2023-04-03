@@ -241,22 +241,22 @@ namespace FileSync
 
                     Thread t = ActionThread(() =>
                     {
-                        dataSocket.Listen();
-                        Console.WriteLine("datasocket listening on {0}", dataSocket.LocalEndPoint.ToString());
-                        Socket _dataSocket = dataSocket.Accept();
+                        //dataSocket.Listen();
+                        //Console.WriteLine("datasocket listening on {0}", dataSocket.LocalEndPoint.ToString());
+                        //Socket _dataSocket = dataSocket.Accept();
 
-                        Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
+                        //Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
 
-                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
+                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, dataSocket, getFiles); }
                         Console.WriteLine("putfilelist count :" + putFiles.Count);
                         if (putFiles.Count > 0)
                         {
-                            FileHandler.sendFiles(controlSocket, _dataSocket, putFiles);
+                            FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
                         }
                         Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
 
                     });
-                    Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
+                    //Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
             }
         }
