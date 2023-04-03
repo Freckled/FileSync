@@ -188,12 +188,6 @@ namespace FileSync
             long filesize = fh.getSize();
             DateTime dateModified = fh.getDateModified();
 
-
-            if (dataEndpoint == null)
-            {
-                throw new Exception("Method executePut threw an error. No data end point is set.");
-            }
-
             Thread t = ActionThread(() => {
                 Connection.sendCommandNoReply(socket, "200 Ready_to_receive");
                 if (!dataSocket.Connected)
@@ -224,11 +218,6 @@ namespace FileSync
                 {
                     string fileHeader = fh.getFileHeader(filePath);
                     Connection.sendCommandNoReply(socket, "200 " + fileHeader);
-                }
-
-                if (dataEndpoint == null)
-                {
-                    throw new Exception("Method executePut threw an error. No data end point is set.");
                 }
 
                 //Check if datasocket is connected
