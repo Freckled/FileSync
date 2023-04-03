@@ -53,7 +53,7 @@ namespace FileSync
                         dataSocket.Listen();
                         //--------------Move this----------------
 
-
+                        Console.WriteLine("Listening for data connection on {0}", dataSocket.LocalEndPoint.ToString());
                         Socket _dataSocket = dataSocket.Accept();
                         
                         clientConnection(client, _dataSocket);
