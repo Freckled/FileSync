@@ -43,21 +43,24 @@ namespace FileSync
         {
         try
             {
-                int port = _port ?? Config.serverPort;
-                _socket = Connection.createSocket();
-                _rep = new IPEndPoint(_ipAdress, port);
+                //int port = _port ?? Config.serverPort;
+                //_socket = Connection.createSocket();
+                //_rep = new IPEndPoint(_ipAdress, port);
 
-                Socket _dataSocket = Connection.createSocket();
-                IPEndPoint _dataREP = new IPEndPoint(_ipAdress, Config.dataPort);
+                //Socket _dataSocket = Connection.createSocket();
+                //IPEndPoint _dataREP = new IPEndPoint(_ipAdress, Config.dataPort);
 
 
-                Global.remoteEP = _rep;
+                //Global.remoteEP = _rep;
 
-                _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                
-                _socket.Connect(_rep);
-                _dataSocket.Connect(_dataREP);
+                //_socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
+                //_socket.Connect(_rep);
+                //_dataSocket.Connect(_dataREP);
+
+                Socket[] sockets = Connection.ServerConnect(_ipAdress);
+                _socket = sockets[0];
+                Socket _dataSocket = sockets[1];
 
                 serverConnection(_socket, _dataSocket);
 
