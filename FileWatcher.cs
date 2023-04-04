@@ -153,7 +153,8 @@ namespace FileSync
             //}
             //-------------Setup server connection--------------
             Socket[] sockets = Connection.ServerConnect(Global.remoteIP);
-            Socket controlSocket = sockets[0];          
+            Socket controlSocket = sockets[0];
+            Socket dataSocket = sockets[1];
             //-------------Setup server connection--------------
 
             var tries = 0;
@@ -172,6 +173,7 @@ namespace FileSync
                 }    
             }
             Connection.Close(controlSocket);
+            Connection.Close(dataSocket);
         }
 
         //If a file in a dir is renamed
@@ -192,6 +194,7 @@ namespace FileSync
             //-------------Setup server connection--------------
             Socket[] sockets = Connection.ServerConnect(Global.remoteIP);
             Socket controlSocket = sockets[0];
+            Socket dataSocket = sockets[1];
             //-------------Setup server connection--------------
 
             var tries = 0;
@@ -211,6 +214,7 @@ namespace FileSync
                 }
             }
             Connection.Close(controlSocket);
+            Connection.Close(dataSocket);
         }
 
         private static void OnError(object sender, ErrorEventArgs e) =>
