@@ -13,6 +13,9 @@ namespace FileSync
         public static IPAddress remoteIP { get; set; }
         public static IPEndPoint remoteDataEP { get; set; }
         public static IPAddress localIP { get; set; }
+        public static Boolean server { get; set; } = false;
+        public static FileList fileList { get; set; } = new FileList();
+
     }
     class Program
     {
@@ -38,6 +41,7 @@ namespace FileSync
                 {
                     case "server":
                         Server server = new Server();
+                        Global.server = true;
                         server.start();
                         break;
                     case "client":
@@ -77,6 +81,7 @@ namespace FileSync
                 {
                     case "1":
                         Server server = new Server();
+                        Global.server = true;
                         server.start();
                         break;
 
@@ -141,7 +146,8 @@ namespace FileSync
             }
             catch(Exception e) {
                 Console.WriteLine(e.ToString());
-            }
+            }           
+
         }
 
         public static void restart()

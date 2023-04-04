@@ -225,6 +225,31 @@ namespace FileSync
                     }
                 }
 
+                //----------------Test keeping list, checking it twice to see if your naughty or nice----------------------
+                if (Global.fileList.Count() > 0)
+                {
+                    List<FileChanged> fileList = Global.fileList.GetList();
+                    foreach (FileChanged file in fileList)
+                    {
+                        if (remoteFileList.ContainsKey(file.getFileNameOld()))
+                        {
+
+                            switch (file.getType())
+                            {
+                                case MODIFYTYPE.RENAME:
+                                    //TODO add responsecode handling
+                                    Connection.sendCommand(controlSocket, "RENAME " + file.getFileNameOld() + Config.unitSeperator + file.getFileNameNew());
+                                    break;
+
+                                case MODIFYTYPE.DELETE:
+                                    //TODO add responsecode handling
+                                    Connection.sendCommand(controlSocket, "DELETE " + file.getFileNameOld());
+                                    break;
+                            }
+                        }
+                    }
+                }
+                //----------------Test keeping list, checking it twice to see if your naughty or nice----------------------
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
                 Dictionary<string, string> getFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.REMOTE);
@@ -246,6 +271,7 @@ namespace FileSync
                         {
                             FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
                         }
+                        
                         Connection.Close(controlSocket);
                         //Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
 
