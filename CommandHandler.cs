@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace FileSync
@@ -136,10 +137,13 @@ namespace FileSync
 
         private void executeDelete(string _command)
         {
-            FileHandler.DeleteFile(Transformer.RemoveCommand(_command));
-            FileChanged file = new FileChanged(MODIFYTYPE.DELETE, Transformer.RemoveCommand(_command));
+            string fileName = Transformer.RemoveCommand(_command);
+            FileHandler.DeleteFile(fileName);
+            
+            DateTime fileModDate = FileHelper.GetModifiedDateTime(Config.rootDir + fileName);
+            FileChanged file = new FileChanged(MODIFYTYPE.DELETE, fileModDate, Transformer.RemoveCommand(_command));
             Global.fileList.Add(file);
-            Connection.sendCommandNoReply(socket, "200 File Deleted");
+            Connection.sendCommandNoReply(socket, "200 File_Deleted");
         }
 
         private void executeRename(string _command)
@@ -148,11 +152,12 @@ namespace FileSync
             string oldFileName = arguments[0];
             string newFileName = arguments[1];
             FileHandler.RenameFile(oldFileName, newFileName);
-
-            FileChanged file = new FileChanged(MODIFYTYPE.DELETE, oldFileName, newFileName);
+            
+            DateTime fileModDate = FileHelper.GetModifiedDateTime(Config.rootDir + oldFileName);
+            FileChanged file = new FileChanged(MODIFYTYPE.DELETE, fileModDate, oldFileName, newFileName);
             Global.fileList.Add(file);
 
-            Connection.sendCommandNoReply(socket, "200 File Renamed");
+            Connection.sendCommandNoReply(socket, "200 File_Renamed");
         }
 
         private void executePort(string _command)

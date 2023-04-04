@@ -18,11 +18,13 @@ namespace FileSync
     {
         string _fileNameOld { get; set; }
         string _fileNameNew { get; set; }
+        DateTime _fileModDate { get; set; }
         MODIFYTYPE _type { get; set; }
 
-        public FileChanged(MODIFYTYPE type, string fileNameOld, string fileNameNew = "" ) {
+        public FileChanged(MODIFYTYPE type, DateTime fileModDate, string fileNameOld, string fileNameNew = "" ) {
             _type = type;
             _fileNameOld = fileNameOld;
+            _fileModDate = fileModDate;
             _fileNameNew = fileNameNew;            
         }                    
 
@@ -40,6 +42,12 @@ namespace FileSync
         {
             return _type;
         }
+
+        public DateTime getModDate()
+        {
+            return _fileModDate;
+        }
+
 
     }
     

@@ -206,7 +206,8 @@ namespace FileSync
             //get remote DIR
             string response = Connection.sendCommand(controlSocket, "LS");
             int responseCode = Transformer.GetResponseCode(response);
-
+            
+            Connection.sendCommandNoReply(controlSocket, "200 File_List_received");
 
             if (ResponseCode.isValid(responseCode))
             {
@@ -233,22 +234,31 @@ namespace FileSync
                     {
                         if (remoteFileList.ContainsKey(file.getFileNameOld()))
                         {
+                            //check the fileMOdDate here
+                            DateTime rfmoddate = Transformer.parseStringToDateTime(remoteFileList[file.getFileNameOld()]);
+                                if (file.getModDate() == rfmoddate) { 
+                                switch (file.getType())
+                                {
+                                    case MODIFYTYPE.RENAME:
+                                        //TODO add responsecode handling
+                                        Connection.sendCommand(controlSocket, "RENAME " + file.getFileNameOld() + Config.unitSeperator + file.getFileNameNew());
+                                        break;
 
-                            switch (file.getType())
-                            {
-                                case MODIFYTYPE.RENAME:
-                                    //TODO add responsecode handling
-                                    Connection.sendCommand(controlSocket, "RENAME " + file.getFileNameOld() + Config.unitSeperator + file.getFileNameNew());
-                                    break;
-
-                                case MODIFYTYPE.DELETE:
-                                    //TODO add responsecode handling
-                                    Connection.sendCommand(controlSocket, "DELETE " + file.getFileNameOld());
-                                    break;
+                                    case MODIFYTYPE.DELETE:
+                                        //TODO add responsecode handling
+                                        Connection.sendCommand(controlSocket, "DELETE " + file.getFileNameOld());
+                                        break;
+                                }
                             }
                         }
                     }
                 }
+
+
+                //for each file in fileList remove from local list //add mod date to fileChanged
+
+
+
                 //----------------Test keeping list, checking it twice to see if your naughty or nice----------------------
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
@@ -271,12 +281,16 @@ namespace FileSync
                         {
                             FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
                         }
-                        
+
                         Connection.Close(controlSocket);
                         //Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
 
                     });
                     //Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
+                }
+                else
+                {
+                    Connection.Close(controlSocket);
                 }
             }
         }
