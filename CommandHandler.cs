@@ -146,9 +146,6 @@ namespace FileSync
         private void executeDelete(string _command)
         {
             FileHandler.DeleteFile(Transformer.RemoveCommand(_command));
-            string[] arguments = _command.Split(" ");
-            string fileName = arguments[1];
-            FileHandler.DeleteFile(fileName);
             Connection.sendCommandNoReply(socket, "200 File Deleted");
         }
 
@@ -158,6 +155,7 @@ namespace FileSync
             string oldFileName = arguments[0];
             string newFileName = arguments[1];
             FileHandler.RenameFile(oldFileName, newFileName);
+            Connection.sendCommandNoReply(socket, "200 File Renamed");
         }
 
         private void executePort(string _command)
