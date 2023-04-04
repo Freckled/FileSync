@@ -13,13 +13,14 @@ COPY --from=build /app/out ./
 
 EXPOSE 42069/tcp
 EXPOSE 42068/tcp
+ENV IP = "192.168.1.130"
 ENTRYPOINT ["dotnet", "FileSync.dll"]
 
 #server start
-CMD [ "server" ]
+#CMD [ "server" ]
 
 #client start
 #CMD [ "client" ]
 
 #client start specific IP
-#CMD [ "client 192.168.1.120" ]
+CMD ["sh", "-c", "echo client ${IP}"]
