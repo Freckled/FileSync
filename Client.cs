@@ -52,12 +52,12 @@ namespace FileSync
 
 
                 //Global.remoteEP = _rep;
-
                 //_socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
                 //_socket.Connect(_rep);
                 //_dataSocket.Connect(_dataREP);
 
+                Global.remoteIP = _ipAdress;
                 Socket[] sockets = Connection.ServerConnect(_ipAdress);
                 _socket = sockets[0];
                 Socket _dataSocket = sockets[1];
