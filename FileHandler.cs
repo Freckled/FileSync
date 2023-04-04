@@ -155,14 +155,14 @@ namespace FileSync
             }            
         }
 
-        public static bool DeleteFile(string filePath)
+        public static bool DeleteFile(string fileName)
         {
             try
             {
-                FileInfo fileInfo = new FileInfo(Config.rootDir + filePath);
+                FileInfo fileInfo = new FileInfo(Config.rootDir + fileName);
                 if (fileInfo.Exists)
                 {
-                    File.Delete(Config.rootDir + filePath);
+                    File.Delete(Config.rootDir + fileName);
                 }
             }
             catch (Exception e)
