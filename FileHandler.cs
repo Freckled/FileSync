@@ -253,12 +253,6 @@ namespace FileSync
                         }
                     }
                 }
-
-
-                //for each file in fileList remove from local list //add mod date to fileChanged
-
-
-
                 //----------------Test keeping list, checking it twice to see if your naughty or nice----------------------
 
                 Dictionary<string, string> putFiles = FileHelper.CompareDir(LocalfileList, remoteFileList, outPutNewest.LOCAL);
