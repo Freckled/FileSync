@@ -198,7 +198,7 @@ namespace FileSync
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
             {
-                string response = Connection.sendCommand(controlSocket, "RENAME " + e.OldName + " " + e.Name);
+                string response = Connection.sendCommand(controlSocket, "RENAME " + e.OldName + Config.unitSeperator + e.Name);
 
                 if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
