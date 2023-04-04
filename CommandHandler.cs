@@ -140,9 +140,11 @@ namespace FileSync
             string fileName = Transformer.RemoveCommand(_command);
             FileHandler.DeleteFile(fileName);
             
-            DateTime fileModDate = FileHelper.GetModifiedDateTime(Config.rootDir + fileName);
-            FileChanged file = new FileChanged(MODIFYTYPE.DELETE, fileModDate, Transformer.RemoveCommand(_command));
-            Global.fileList.Add(file);
+            if (Global.server) { 
+                DateTime fileModDate = FileHelper.GetModifiedDateTime(Config.rootDir + fileName);
+                FileChanged file = new FileChanged(MODIFYTYPE.DELETE, fileModDate, Transformer.RemoveCommand(_command));
+                Global.fileList.Add(file);
+            }
             Connection.sendCommandNoReply(socket, "200 File_Deleted");
         }
 
@@ -153,10 +155,12 @@ namespace FileSync
             string newFileName = arguments[1];
             FileHandler.RenameFile(oldFileName, newFileName);
             
-            DateTime fileModDate = FileHelper.GetModifiedDateTime(Config.rootDir + oldFileName);
-            FileChanged file = new FileChanged(MODIFYTYPE.DELETE, fileModDate, oldFileName, newFileName);
-            Global.fileList.Add(file);
-
+            if (Global.server)
+            {
+                DateTime fileModDate = FileHelper.GetModifiedDateTime(Config.rootDir + oldFileName);
+                FileChanged file = new FileChanged(MODIFYTYPE.DELETE, fileModDate, oldFileName, newFileName);
+                Global.fileList.Add(file);
+            }
             Connection.sendCommandNoReply(socket, "200 File_Renamed");
         }
 
