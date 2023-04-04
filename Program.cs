@@ -1,24 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FileSync
 {
     public class Global
     {
-        public static string rootDir { get; set; }
         public static IPAddress remoteIP { get; set; }
-        public static IPEndPoint remoteEP { get; set; }
         public static IPEndPoint remoteDataEP { get; set; }
         public static IPAddress localIP { get; set; }
-        public static bool client { get; set; } 
     }
     class Program
     {

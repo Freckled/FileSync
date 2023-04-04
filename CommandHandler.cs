@@ -1,22 +1,14 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Enumeration;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
-using System.Xml.Schema;
 
 namespace FileSync
 {
     public class CommandHandler
-    {
-
-        private string _root;
-        private string _currentDirectory;
+    {      
         IPEndPoint dataEndpoint;
         Socket socket;
         Socket dataSocket;
@@ -30,7 +22,6 @@ namespace FileSync
 
         public CommandHandler(Socket _socket, Socket _dataSocket)
         {
-            _root = Config.rootDir;
             socket = _socket;
             dataSocket = _dataSocket;
         }

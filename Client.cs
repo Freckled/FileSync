@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace FileSync
 {
@@ -43,20 +37,6 @@ namespace FileSync
         {
         try
             {
-                //int port = _port ?? Config.serverPort;
-                //_socket = Connection.createSocket();
-                //_rep = new IPEndPoint(_ipAdress, port);
-
-                //Socket _dataSocket = Connection.createSocket();
-                //IPEndPoint _dataREP = new IPEndPoint(_ipAdress, Config.dataPort);
-
-
-                //Global.remoteEP = _rep;
-                //_socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
-                //_socket.Connect(_rep);
-                //_dataSocket.Connect(_dataREP);
-
                 Global.remoteIP = _ipAdress;
                 Socket[] sockets = Connection.ServerConnect(_ipAdress);
                 _socket = sockets[0];
@@ -68,7 +48,6 @@ namespace FileSync
             {
                 if (e.ErrorCode == 10057)
                 {
-
                 }
                 else
                 {
@@ -99,7 +78,6 @@ namespace FileSync
 
 
             CommandHandler commandHandler = null;
-            //Socket dataSocket = Connection.createSocket();// new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             Connection.sendCommandNoReply(socket, "SYNC");
 
             while (socket.Connected)
