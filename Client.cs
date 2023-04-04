@@ -43,16 +43,26 @@ namespace FileSync
         {
         try
             {
-                int port = _port ?? Config.serverPort;
-                _socket = Connection.createSocket();
-                _rep = new IPEndPoint(_ipAdress, port);
-                
-                Global.remoteEP = _rep;
+                //int port = _port ?? Config.serverPort;
+                //_socket = Connection.createSocket();
+                //_rep = new IPEndPoint(_ipAdress, port);
 
-                _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                
-                _socket.Connect(_rep);
-                serverConnection(_socket);
+                //Socket _dataSocket = Connection.createSocket();
+                //IPEndPoint _dataREP = new IPEndPoint(_ipAdress, Config.dataPort);
+
+
+                //Global.remoteEP = _rep;
+                //_socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
+                //_socket.Connect(_rep);
+                //_dataSocket.Connect(_dataREP);
+
+                Global.remoteIP = _ipAdress;
+                Socket[] sockets = Connection.ServerConnect(_ipAdress);
+                _socket = sockets[0];
+                Socket _dataSocket = sockets[1];
+
+                serverConnection(_socket, _dataSocket);
 
             }catch(SocketException e)
             {
@@ -62,7 +72,7 @@ namespace FileSync
                 }
                 else
                 {
-                    Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
+                    Console.WriteLine("No server listening on specified address : {0}", _ipAdress.ToString());
                     Thread.Sleep(2000);
                     Program.restart();
                 }
@@ -81,20 +91,21 @@ namespace FileSync
 
 
         //Handle server connection
-        private void serverConnection(Socket socket)
+        private void serverConnection(Socket socket, Socket dataSocket)
         {
             Console.WriteLine(socket.LocalEndPoint.ToString() + " is Connected to remote " + socket.RemoteEndPoint.ToString());
+            Console.WriteLine(dataSocket.LocalEndPoint.ToString() + " is Connected to remote " + dataSocket.RemoteEndPoint.ToString());
             string command = null;
 
 
             CommandHandler commandHandler = null;
-            Socket dataSocket = Connection.createSocket();// new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+            //Socket dataSocket = Connection.createSocket();// new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
             Connection.sendCommandNoReply(socket, "SYNC");
 
             while (socket.Connected)
-            {                
-                
+            {
 
+                Console.WriteLine("Waiting for response from remote..");
                 command = Transformer.ParseByteArrString(Connection.ReceiveAll(socket));
                 string[] responsecode = command.Split(" ");
                                 

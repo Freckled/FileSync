@@ -66,7 +66,7 @@ namespace FileSync
         public static bool SendFile(Socket socket, string filePath)
         {
             int lastStatus = 0;
-            FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read); ;
+            FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite); ;
             long totalBytes = file.Length, bytesSoFar = 0;
             socket.SendTimeout = 1000000; //timeout in milliseconds
 
@@ -155,40 +155,32 @@ namespace FileSync
             }            
         }
 
-        public static bool DeleteFile(Socket socket, string filePath)
+        public static bool DeleteFile(string filePath)
         {
-            //TODO Check if we want socket...
-            FileStream file = new FileStream(filePath, FileMode.Open); ;
             try
             {
-                FileInfo fileInfo = new FileInfo(Config.rootDir + file.Name);
+                FileInfo fileInfo = new FileInfo(Config.rootDir + filePath);
                 if (fileInfo.Exists)
                 {
-                    File.Delete(Config.rootDir + file.Name);
+                    File.Delete(Config.rootDir + filePath);
                 }
-                socket.Shutdown(SocketShutdown.Both);
             }
-            catch (SocketException e)
+            catch (Exception e)
             {
-                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                Console.WriteLine("Exception: {0}", e.Message.ToString());
                 return false;
             }
             finally
             {
                 Console.WriteLine("File deletetion complete");
-                socket.Close();
-                file.Close();
             }
             return true;
         }
 
-        public static bool RenameFile(Socket socket, string filePath)
+        public static bool RenameFile(Socket socket, string oldName, string newName)
         {
-            string newName = "";
-            string oldName = "";
-
-            //TODO Check if we want socket...
-            FileStream file = new FileStream(filePath, FileMode.Open); ;
+           // FileStream file = new FileStream(oldFilePath, FileMode.Open);
+           // FileStream fileNew = new FileStream(newFilePath, FileMode.Open);
             try
             {
                 FileInfo fileInfo = new FileInfo(Config.rootDir + oldName);
@@ -207,7 +199,7 @@ namespace FileSync
             {
                 Console.WriteLine("File deletetion complete");
                 socket.Close();
-                file.Close();
+                //file.Close();
             }
             return true;
         }
@@ -249,22 +241,23 @@ namespace FileSync
 
                     Thread t = ActionThread(() =>
                     {
-                        dataSocket.Listen();
-                        Console.WriteLine("datasocket listening on {0}", dataSocket.LocalEndPoint.ToString());
-                        Socket _dataSocket = dataSocket.Accept();
+                        //dataSocket.Listen();
+                        //Console.WriteLine("datasocket listening on {0}", dataSocket.LocalEndPoint.ToString());
+                        //Socket _dataSocket = dataSocket.Accept();
 
-                        Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
+                        //Console.WriteLine("datasocket connected. Remote :" + _dataSocket.RemoteEndPoint.ToString()); //TODO keep?
 
-                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, _dataSocket, getFiles); }
+                        if (getFiles.Count > 0) { FileHandler.getFiles(controlSocket, dataSocket, getFiles); }
                         Console.WriteLine("putfilelist count :" + putFiles.Count);
                         if (putFiles.Count > 0)
                         {
-                            FileHandler.sendFiles(controlSocket, _dataSocket, putFiles);
+                            FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
                         }
-                        Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
+                        Connection.Close(controlSocket);
+                        //Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
 
                     });
-                    Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
+                    //Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
             }
         }

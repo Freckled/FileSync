@@ -148,18 +148,15 @@ namespace FileSync
         {
             string[] arguments = _command.Split(" ");
             string fileName = arguments[1];
-            long filesize = long.Parse(arguments[2]);
-
-            FileHandler.DeleteFile(dataSocket, fileName);
+            FileHandler.DeleteFile(fileName);
+            Connection.sendCommandNoReply(socket, "200 File Deleted");
         }
 
         private void executeRename(string _command)
         {
             string[] arguments = _command.Split(" ");
             string fileName = arguments[1];
-            long filesize = long.Parse(arguments[2]);
-
-            FileHandler.RenameFile(dataSocket, fileName);
+            //FileHandler.RenameFile(dataSocket, fileName);
         }
 
         private void executePort(string _command)
@@ -169,6 +166,7 @@ namespace FileSync
 
             //TOD change adres. IPV6Any
             dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, port);
+            Global.remoteDataEP = dataEndpoint;
             //dataEndpoint = new IPEndPoint(((IPEndPoint)socket.RemoteEndPoint).Address, Config.dataPort);
             if (!dataSocket.Connected)
             {
@@ -190,12 +188,6 @@ namespace FileSync
             string fileName = fh.getName();
             long filesize = fh.getSize();
             DateTime dateModified = fh.getDateModified();
-
-
-            if (dataEndpoint == null)
-            {
-                throw new Exception("Method executePut threw an error. No data end point is set.");
-            }
 
             Thread t = ActionThread(() => {
                 Connection.sendCommandNoReply(socket, "200 Ready_to_receive");
@@ -228,11 +220,6 @@ namespace FileSync
                 {
                     string fileHeader = fh.getFileHeader(filePath);
                     Connection.sendCommandNoReply(socket, "200 " + fileHeader);
-                }
-
-                if (dataEndpoint == null)
-                {
-                    throw new Exception("Method executePut threw an error. No data end point is set.");
                 }
 
                 //Check if datasocket is connected

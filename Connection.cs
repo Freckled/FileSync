@@ -99,8 +99,35 @@ namespace FileSync
             return _socket;
         }
 
+        public static Socket[] ServerConnect(IPAddress IP)
+        {
+            Socket[] socketArray = new Socket[2];
+            Socket _controlSocket = Connection.createSocket();
+            Socket _dataSocket = Connection.createSocket();
+
+            IPEndPoint ep = new IPEndPoint(IP, Config.serverPort);
+            IPEndPoint dep = new IPEndPoint(IP, Config.dataPort);
+
+            _controlSocket.Connect(ep);
+            _dataSocket.Connect(dep);
+
+            socketArray[0] = _controlSocket;
+            socketArray[1] = _dataSocket;
+
+            return socketArray;
+        }
+
+
         public static void Close(Socket socket)
         {
+            if (((IPEndPoint)socket.LocalEndPoint).Port == Config.serverPort){          
+                try
+                {
+                    Connection.sendCommandNoReply(socket, "CLOSE" + Config.endTransmissionChar);
+                }catch(Exception e) { 
+                Console.WriteLine(e.ToString());
+                }
+            }
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             socket.Dispose();
