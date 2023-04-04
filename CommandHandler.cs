@@ -149,6 +149,7 @@ namespace FileSync
             string[] arguments = _command.Split(" ");
             string fileName = arguments[1];
             FileHandler.DeleteFile(fileName);
+            Connection.sendCommandNoReply(socket, "200 File Deleted");
         }
 
         private void executeRename(string _command)

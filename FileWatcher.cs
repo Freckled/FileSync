@@ -47,14 +47,18 @@ namespace FileSync
             }
 
             Console.WriteLine($"Changed: {e.FullPath}");
+            //-------------Setup server connection--------------
+            //Socket controlSocket = Connection.createSocket();
+            //Socket dataSocket = Connection.createSocket();
 
-            Socket controlSocket = Connection.createSocket();
-            Socket dataSocket = Connection.createSocket();
-
-            if (!controlSocket.Connected) { 
-                controlSocket.Connect(Global.remoteEP);
-            }
-
+            //if (!controlSocket.Connected) { 
+            //    controlSocket.Connect(Global.remoteEP);
+            //}
+            //-------------Setup server connection--------------
+            Socket[] sockets = Connection.ServerConnect(Global.remoteIP);
+            Socket controlSocket = sockets[0];
+            Socket dataSocket = sockets[1];
+            //-------------Setup server connection--------------
             var tries = 0;
             var numberOfRetries = 3;
             while (tries <= numberOfRetries)
@@ -82,6 +86,7 @@ namespace FileSync
                 }
             }
             Connection.Close(controlSocket);
+            Connection.Close(dataSocket);
         }
 
         //If a file in a dir is created
@@ -90,13 +95,18 @@ namespace FileSync
             string value = $"Created: {e.FullPath}";
             Console.WriteLine(value);
 
-            Socket controlSocket = Connection.createSocket();
-            Socket dataSocket = Connection.createSocket();
+            //-------------Setup server connection--------------
+            //Socket controlSocket = Connection.createSocket();
+            //Socket dataSocket = Connection.createSocket();
 
-            if (!controlSocket.Connected)
-            {
-                controlSocket.Connect(Global.remoteEP);
-            }
+            //if (!controlSocket.Connected) { 
+            //    controlSocket.Connect(Global.remoteEP);
+            //}
+            //-------------Setup server connection--------------
+            Socket[] sockets = Connection.ServerConnect(Global.remoteIP);
+            Socket controlSocket = sockets[0];
+            Socket dataSocket = sockets[1];
+            //-------------Setup server connection--------------
 
             var tries = 0;
             var numberOfRetries = 3;
@@ -125,6 +135,7 @@ namespace FileSync
                 }
             }
             Connection.Close(controlSocket);
+            Connection.Close(dataSocket);
         }
 
         //If a file in a dir is deleted
@@ -133,12 +144,17 @@ namespace FileSync
         {
             Console.WriteLine($"Deleted: {e.FullPath}");
 
-            Socket controlSocket = Connection.createSocket();
+            //-------------Setup server connection--------------
+            //Socket controlSocket = Connection.createSocket();
+            //Socket dataSocket = Connection.createSocket();
 
-            if (!controlSocket.Connected)
-            {
-                controlSocket.Connect(Global.remoteEP);
-            }
+            //if (!controlSocket.Connected) { 
+            //    controlSocket.Connect(Global.remoteEP);
+            //}
+            //-------------Setup server connection--------------
+            Socket[] sockets = Connection.ServerConnect(Global.remoteIP);
+            Socket controlSocket = sockets[0];          
+            //-------------Setup server connection--------------
 
             var tries = 0;
             var numberOfRetries = 3;
@@ -166,12 +182,17 @@ namespace FileSync
             Console.WriteLine($"    Old: {e.OldFullPath}");
             Console.WriteLine($"    New: {e.FullPath}");
 
-            Socket controlSocket = Connection.createSocket();
+            //-------------Setup server connection--------------
+            //Socket controlSocket = Connection.createSocket();
+            //Socket dataSocket = Connection.createSocket();
 
-            if (!controlSocket.Connected)
-            {
-                controlSocket.Connect(Global.remoteEP);
-            }
+            //if (!controlSocket.Connected) { 
+            //    controlSocket.Connect(Global.remoteEP);
+            //}
+            //-------------Setup server connection--------------
+            Socket[] sockets = Connection.ServerConnect(Global.remoteIP);
+            Socket controlSocket = sockets[0];
+            //-------------Setup server connection--------------
 
             var tries = 0;
             var numberOfRetries = 3;

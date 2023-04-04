@@ -120,6 +120,14 @@ namespace FileSync
 
         public static void Close(Socket socket)
         {
+            if (((IPEndPoint)socket.LocalEndPoint).Port == Config.serverPort){          
+                try
+                {
+                    Connection.sendCommandNoReply(socket, "CLOSE" + Config.endTransmissionChar);
+                }catch(Exception e) { 
+                Console.WriteLine(e.ToString());
+                }
+            }
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             socket.Dispose();

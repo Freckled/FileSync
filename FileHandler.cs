@@ -66,7 +66,7 @@ namespace FileSync
         public static bool SendFile(Socket socket, string filePath)
         {
             int lastStatus = 0;
-            FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read); ;
+            FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite); ;
             long totalBytes = file.Length, bytesSoFar = 0;
             socket.SendTimeout = 1000000; //timeout in milliseconds
 
@@ -253,7 +253,8 @@ namespace FileSync
                         {
                             FileHandler.sendFiles(controlSocket, dataSocket, putFiles);
                         }
-                        Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
+                        Connection.Close(controlSocket);
+                        //Connection.sendCommandNoReply(controlSocket, "CLOSE" + Config.endTransmissionChar);
 
                     });
                     //Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?

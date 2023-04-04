@@ -72,7 +72,7 @@ namespace FileSync
                 }
                 else
                 {
-                    Console.WriteLine("No server listening on specified address : {0}", _rep.ToString());
+                    Console.WriteLine("No server listening on specified address : {0}", _ipAdress.ToString());
                     Thread.Sleep(2000);
                     Program.restart();
                 }
