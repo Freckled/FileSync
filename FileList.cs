@@ -47,7 +47,9 @@ namespace FileSync
     {
         public List<FileChanged> filesChanged { get; }
 
-        public FileList() { }
+        public FileList() {
+            filesChanged = new List<FileChanged>();
+        }
         public void Add( FileChanged file )
         {  
             filesChanged.Add( file );
@@ -60,6 +62,9 @@ namespace FileSync
 
         public int Count()
         {
+            if (filesChanged == null ) {
+                return 0;
+            }
             return filesChanged.Count;
         }
 
