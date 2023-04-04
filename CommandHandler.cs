@@ -96,7 +96,6 @@ namespace FileSync
                     break;
 
                 default:
-                    //throw new Exception("Command " + _command + " is not supported."); //WHY????
                     Connection.sendCommandNoReply(socket, "500 Command " + _command + " is not supported.");
                     break;
             }
@@ -146,6 +145,7 @@ namespace FileSync
 
         private void executeDelete(string _command)
         {
+            FileHandler.DeleteFile(Transformer.RemoveCommand(_command));
             string[] arguments = _command.Split(" ");
             string fileName = arguments[1];
             FileHandler.DeleteFile(fileName);
@@ -154,9 +154,10 @@ namespace FileSync
 
         private void executeRename(string _command)
         {
-            string[] arguments = _command.Split(" ");
-            string fileName = arguments[1];
-            //FileHandler.RenameFile(dataSocket, fileName);
+            string[] arguments = Transformer.RemoveCommand(_command).Split(Config.unitSeperator);
+            string oldFileName = arguments[0];
+            string newFileName = arguments[1];
+            FileHandler.RenameFile(oldFileName, newFileName);
         }
 
         private void executePort(string _command)

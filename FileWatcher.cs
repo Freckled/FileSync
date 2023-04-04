@@ -202,7 +202,7 @@ namespace FileSync
 
                 if (ResponseCode.isValid(Transformer.GetResponseCode(response)))
                 {
-                    FileHandler.RenameFile(controlSocket, e.OldName, e.Name);
+                    FileHandler.RenameFile(e.OldName, e.Name);
                     return;
                 }
                 else

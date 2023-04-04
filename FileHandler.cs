@@ -177,10 +177,8 @@ namespace FileSync
             return true;
         }
 
-        public static bool RenameFile(Socket socket, string oldName, string newName)
+        public static bool RenameFile(string oldName, string newName)
         {
-           // FileStream file = new FileStream(oldFilePath, FileMode.Open);
-           // FileStream fileNew = new FileStream(newFilePath, FileMode.Open);
             try
             {
                 FileInfo fileInfo = new FileInfo(Config.rootDir + oldName);
@@ -190,16 +188,14 @@ namespace FileSync
                     fileInfo.MoveTo(Config.rootDir + newName);
                 }
             }
-            catch (SocketException e)
+            catch (Exception e)
             {
-                Console.WriteLine("Socket exception: {0}", e.Message.ToString());
+                Console.WriteLine("Exception: {0}", e.Message.ToString());
                 return false;
             }
             finally
             {
-                Console.WriteLine("File deletetion complete");
-                socket.Close();
-                //file.Close();
+                Console.WriteLine("File rename complete");
             }
             return true;
         }
