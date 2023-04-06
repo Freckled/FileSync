@@ -252,6 +252,10 @@ namespace FileSync
                     });
                     //Connection.sendCommandNoReply(controlSocket, "OPEN " + ((IPEndPoint)dataSocket.LocalEndPoint).Port); //TODO wait for response?
                 }
+                else
+                {
+                    Connection.Close(controlSocket);
+                }
             }
         }
 

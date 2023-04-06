@@ -59,74 +59,75 @@ namespace FileSync
                         break;
                 }
             }
+            else { 
 
 
-        start:
-            try {
+                start:
+                    try {
                 
-                Console.WriteLine("Choose your Mode;\n1-Server\n2-client\n3-client [input server IP]\n4-client [input server IP & PORT]\n5-Exit");
+                        Console.WriteLine("Choose your Mode;\n1-Server\n2-client\n3-client [input server IP]\n4-client [input server IP & PORT]\n5-Exit");
 
-                IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-                Console.Write("Selection: ");
-                string message = Console.ReadLine();
+                        IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+                        Console.Write("Selection: ");
+                        string message = Console.ReadLine();
 
-                Global.remoteIP = IP;
-                Global.localIP = IP;
+                        Global.remoteIP = IP;
+                        Global.localIP = IP;
 
-                switch (message)
-                {
-                    case "1":
-                        Server server = new Server();
-                        server.start();
-                        break;
+                        switch (message)
+                        {
+                            case "1":
+                                Server server = new Server();
+                                server.start();
+                                break;
 
-                    case "2":
-                        Client client = new Client();
-                        client.start();
+                            case "2":
+                                Client client = new Client();
+                                client.start();
 
-                        break;
+                                break;
 
-                    case "3":
-                        Console.Write("Input IP Adress of server: ");
-                        string input = Console.ReadLine();
-                        Client clientIP = new Client(input);
-                        clientIP.start();
-                        break;
+                            case "3":
+                                Console.Write("Input IP Adress of server: ");
+                                string input = Console.ReadLine();
+                                Client clientIP = new Client(input);
+                                clientIP.start();
+                                break;
 
-                    case "4":
-                        Console.Write("Input IP Adress of server: ");
-                        string inputIP2 = Console.ReadLine();
-                        Console.Write("Input PORT of server: ");
-                        string port = Console.ReadLine();
-                        Client clientIP2 = new Client(inputIP2, port);                        
-                        clientIP2.start();
-                        break;
-
-
-                    case "5":
-                        Environment.Exit(0);
-                        break;
+                            case "4":
+                                Console.Write("Input IP Adress of server: ");
+                                string inputIP2 = Console.ReadLine();
+                                Console.Write("Input PORT of server: ");
+                                string port = Console.ReadLine();
+                                Client clientIP2 = new Client(inputIP2, port);                        
+                                clientIP2.start();
+                                break;
 
 
-                    case "test":                                                      
+                            case "5":
+                                Environment.Exit(0);
+                                break;
 
-                        break;
 
-                   default:
-                        Console.Write("invalid input, try again");
+                            case "test":                                                      
+
+                                break;
+
+                           default:
+                                Console.Write("invalid input, try again");
+                                goto start;
+                                break;
+
+                    }
+                    Console.WriteLine("--------------------------------------");
+            
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
                         goto start;
-                        break;
-
+                    }
             }
-            Console.WriteLine("--------------------------------------");
-            
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                goto start;
-            }
-            
         }
 
         private static void StartupActions()
