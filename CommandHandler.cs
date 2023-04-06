@@ -188,7 +188,7 @@ namespace FileSync
                 }
 
                 string fileLoc = (Config.rootDir + fileName);
-                FileHandler.receiveFile(dataSocket, fileLoc, filesize, dateModified);
+                FileHandler.receiveFile(dataSocket, fileLoc, filesize, dateModified, fh.getCheckSum());
             });        
         }
 
