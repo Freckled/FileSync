@@ -20,9 +20,11 @@ ENTRYPOINT ["dotnet", "FileSync.dll"]
 #server start
 #CMD [ "server" ]
 
+#client start specific IP
+CMD [ "client","192.168.1.130" ]
+
 #client start
 #CMD ["sh", "-c", "client ${IP}"]
 
-#client start specific IP
-CMD [ "client","192.168.1.130" ]
-#CMD [ "client","${IP}" ]
+
+
