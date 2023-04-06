@@ -13,6 +13,7 @@ namespace FileSync
         {
             { 125, "Data connection already open; transfer starting." },
             { 200, "OK" },
+            { 500, "Error" },
             { 550, "Requested action not taken. File unavailable (e.g., file not found, no access)." },
             { 552, "Requested file action aborted. Exceeded storage allocation (for current directory or dataset)." },
             { 553, "Requested action not taken. File name not allowed." },
@@ -42,6 +43,7 @@ namespace FileSync
                 case 552:
                 case 553:
                 case 502:
+                case 500:
                     ret = false;
                     break;
                 default:
