@@ -65,7 +65,7 @@ namespace FileSync
                 start:
                     try {
                 
-                        Console.WriteLine("Choose your Mode;\n1-Server\n2-client\n3-client [input server IP]\n4-client [input server IP & PORT]\n5-Exit");
+                        Console.WriteLine("Choose your Mode;\n1-Server\n2-client [input server IP]\n3-client [input server IP & PORT]\n0-Exit");
 
                         IPAddress IP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
                         Console.Write("Selection: ");
@@ -81,20 +81,20 @@ namespace FileSync
                                 server.start();
                                 break;
 
-                            case "2":
+                            case "127":
                                 Client client = new Client();
                                 client.start();
 
                                 break;
 
-                            case "3":
+                            case "2":
                                 Console.Write("Input IP Adress of server: ");
                                 string input = Console.ReadLine();
                                 Client clientIP = new Client(input);
                                 clientIP.start();
                                 break;
 
-                            case "4":
+                            case "3":
                                 Console.Write("Input IP Adress of server: ");
                                 string inputIP2 = Console.ReadLine();
                                 Console.Write("Input PORT of server: ");
@@ -104,7 +104,7 @@ namespace FileSync
                                 break;
 
 
-                            case "5":
+                            case "0":
                                 Environment.Exit(0);
                                 break;
 
