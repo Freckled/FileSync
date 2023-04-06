@@ -188,7 +188,14 @@ namespace FileSync
                 }
 
                 string fileLoc = (Config.rootDir + fileName);
-                FileHandler.receiveFile(dataSocket, fileLoc, filesize, dateModified, fh.getCheckSum());
+                Boolean fileReceived = FileHandler.receiveFile(dataSocket, fileLoc, filesize, dateModified, fh.getCheckSum());
+                if (fileReceived)
+                {
+                    Connection.sendCommandNoReply(socket, "500 corrupt_file");
+                }else
+                {
+                    Connection.sendCommandNoReply(socket, "200 file_received");
+                }
             });        
         }
 

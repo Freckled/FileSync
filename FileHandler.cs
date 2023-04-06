@@ -11,8 +11,9 @@ namespace FileSync
 
         //TODO Error handling
         //receive files based on pre-determined size
-        public static void receiveFile(Socket socket, string filePath, long size, DateTime dateTimeModified, string checkSum)//TODO add, date last Modified --modDT
+        public static Boolean receiveFile(Socket socket, string filePath, long size, DateTime dateTimeModified, string checkSum)//TODO add, date last Modified --modDT
         {
+            Boolean succes = true;
             if (size != 0)
             {
                 try
@@ -43,10 +44,6 @@ namespace FileSync
                     if (File.Exists(filePath))
                     {
 
-                        if (FileHelper.CalculateCheckSum(filePath) != checkSum)
-                        {
-                            File.Delete(filePath);
-                        };
                         FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
                         Console.WriteLine("File transfer of {0} complete", filePath);
                     }                    
@@ -60,6 +57,13 @@ namespace FileSync
                 }
                 FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed                               
             }
+
+            if (FileHelper.CalculateCheckSum(filePath) != checkSum)
+            {
+                File.Delete(filePath);
+                succes = false;
+            };
+            return succes;
         }
 
         //Send the specified file over the specified socket
