@@ -11,8 +11,9 @@ namespace FileSync
 
         //TODO Error handling
         //receive files based on pre-determined size
-        public static void receiveFile(Socket socket, string filePath, long size, DateTime dateTimeModified)//TODO add, date last Modified --modDT
+        public static Boolean receiveFile(Socket socket, string filePath, long size, DateTime dateTimeModified, string checkSum)//TODO add, date last Modified --modDT
         {
+            Boolean succes = true;
             if (size != 0)
             {
                 try
@@ -21,7 +22,7 @@ namespace FileSync
                     {
                         byte[] buffer = new byte[8192];
                         int read;
-                        int bytesSoFar = 0; //Use this to keep track of how many bytes have been read
+                        long bytesSoFar = 0; //Use this to keep track of how many bytes have been read
                         
 
                         do
@@ -42,8 +43,8 @@ namespace FileSync
                     
                     if (File.Exists(filePath))
                     {
+
                         FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed
-                        //TODO CheckSumCheck here
                         Console.WriteLine("File transfer of {0} complete", filePath);
                     }                    
                 }
@@ -56,6 +57,13 @@ namespace FileSync
                 }
                 FileHelper.SetModifiedDateTime(filePath, dateTimeModified); //TODO enable after datetime format is fixed                               
             }
+
+            if (FileHelper.CalculateCheckSum(filePath) != checkSum)
+            {
+                File.Delete(filePath);
+                succes = false;
+            };
+            return succes;
         }
 
         //Send the specified file over the specified socket
@@ -143,7 +151,7 @@ namespace FileSync
                     string filePath = Config.rootDir + fh.getName(); //TODO change placeholder
                     long size = fh.getSize(); //TODO change placeholder
                     DateTime dateModified = fh.getDateModified();
-                    FileHandler.receiveFile(dataSocket, filePath, size, dateModified);
+                    FileHandler.receiveFile(dataSocket, filePath, size, dateModified, fh.getCheckSum());
                 }
                 else
                 {
